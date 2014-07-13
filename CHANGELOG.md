@@ -8,7 +8,7 @@
 
 ### Изменения, ломающие обратную совместимость
 
-* Технологии `bemdecl-from-bemjson`, `bemdecl-from-deps-by-tech`, `bemdecl-merge` и `bemdecl-provider` теперь предоставляют результат в `bemdecl` формате, вместо `deps` формата.
+* Технологии `bemdecl-from-bemjson`, `bemdecl-from-deps-by-tech` и `bemdecl-merge` теперь предоставляют результат в `bemdecl` формате, вместо `deps` формата.
 * Технологии `deps` и `deps-old` теперь ожидают от `bemdecl`-таргетов результаты в `bemdecl` формате.
 
 ### Крупные изменения
