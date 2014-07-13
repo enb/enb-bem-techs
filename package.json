@@ -1,0 +1,50 @@
+{
+  "author": "Andrew Abramov <andrewblond@yandex.com>",
+  "name": "enb-bem",
+  "version": "0.1.0",
+  "description": "BEM methodology for ENB",
+  "repository": "git://github.com/enb-bem/enb-bem",
+  "homepage": "https://github.com/enb-bem/enb-bem",
+  "bugs": "https://github.com/enb-bem/enb-bem/issues",
+  "licenses": [{
+    "type": "MIT",
+    "url": "https://github.com/enb-bem/enb-bem/blob/master/LICENSE"
+  }],
+  "contributors": [
+    {
+      "name": "Andrew Abramov",
+      "email": "andrewblond@yandex.com"
+    },
+    {
+      "name": "Marat Dulin",
+      "email": "mdevils@yandex.ru"
+    }
+  ],
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "peerDependencies": {
+    "enb": ">= 0.13.0 < 1.0.0"
+  },
+  "dependencies": {
+    "vow": "0.4.5",
+    "inherit": "2.2.2",
+    "js-yaml": "3.1.0"
+  },
+  "devDependencies": {
+    "enb": "git://github.com/enb-make/enb.git#18571c0d61a6b861f675352b8bb1d02166cdf59a",
+    "enb-validate-code": "0.0.1",
+    "jshint": "2.5.2",
+    "jscs": "1.4.5",
+    "mocha": "1.20.1",
+    "must": "0.12.0",
+    "istanbul": "0.3.0"
+  },
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "npm run lint && npm run techs-test && npm run cover",
+    "lint": "jshint . && jscs -c .jscs.js .",
+    "techs-test": "mocha test/techs",
+    "cover": "istanbul cover _mocha -- test/techs"
+  }
+}

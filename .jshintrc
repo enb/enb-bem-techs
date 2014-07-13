@@ -1,0 +1,25 @@
+{
+    "curly": true,
+    "eqeqeq": true,
+    "forin": true,
+    "freeze": true,
+    "immed": true,
+    "latedef": "nofucn",
+    "noarg": true,
+    "noempty": true,
+    "undef": true,
+    "unused": true,
+    "trailing": true,
+
+    "node": true,
+    "globals": {
+        "describe": false,
+        "it": false,
+        "before": false,
+        "beforeEach": false,
+        "after": false,
+        "afterEach": false
+    },
+
+    "expr": true
+}
