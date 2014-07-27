@@ -1,6 +1,6 @@
 var FileSystem = require('enb/lib/test/mocks/test-file-system');
 var TestNode = require('enb/lib/test/mocks/test-node');
-var subtractTech = require('../../techs/deps-subtract');
+var subtractTech = require('../../techs/subtract-deps');
 
 describe('techs', function () {
     describe('deps-subtract', function () {

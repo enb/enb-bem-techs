@@ -22,7 +22,7 @@ $ npm install --save-dev enb-bem
 * [`merge-deps`](#merge-deps)
 * [`deps-old`](#deps-old)
 * [`deps-provider`](#deps-provider)
-* [`deps-subtract`](#deps-subtract)
+* [`subtract-deps`](#subtract-deps)
 * [`files`](#files)
 * [`levels`](#levels)
 
@@ -209,7 +209,7 @@ nodeConfig.addTech([require('enb/techs/deps-provider'), {
 
 -------------------------------------------------------------------------------
 
-### deps-subtract
+### subtract-deps
 
 Формирует `deps` с помощью вычитания одного deps-файла из другого.
 Может применяться в паре с `deps-provider` для получения deps для bembundle.
@@ -229,7 +229,7 @@ nodeConfig.addTechs([
         node: 'pages/index',
         target: 'index.deps.js'
     }],
-    [require('enb-bem/techs/deps-subtract'), {
+    [require('enb-bem/techs/subtract-deps'), {
         what: 'index.deps.js',
         from: 'router.tmp.deps.js',
         target: 'router.deps.js'

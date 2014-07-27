@@ -1,5 +1,5 @@
 /**
- * deps-subtract
+ * subtract-deps
  * =============
  *
  * Формирует *deps* с помощью вычитания одного deps-файла из другого.
@@ -20,7 +20,7 @@
  *         node: 'pages/index',
  *         depsTarget: 'index.deps.js'
  *     }],
- *     [require('enb-bem/techs/deps-subtract'), {
+ *     [require('enb-bem/techs/subtract-deps'), {
  *         what: 'index.deps.js',
  *         from: 'router.tmp.deps.js',
  *         target: 'router.deps.js'
@@ -37,7 +37,7 @@ var deps = require('../lib/deps/deps');
 
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
-        return 'deps-subtract';
+        return 'subtract-deps';
     },
 
     configure: function () {
