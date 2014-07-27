@@ -238,7 +238,9 @@ describe('techs', function () {
                     { file: 'elems.bemdecl.js', content: stringifyBemdecl([{ name: 'elems' }]) },
                     { file: 'elem-bool-mod.bemdecl.js', content: stringifyBemdecl([{ name: 'elem-bool-mod' }]) },
                     { file: 'elem-mod.bemdecl.js', content: stringifyBemdecl([{ name: 'elem-mod' }]) },
-                    { file: 'loop.bemdecl.js', content: stringifyBemdecl([{ name: 'A' }]) }
+                    { file: 'loop.bemdecl.js', content: stringifyBemdecl([{ name: 'A' }]) },
+
+                    { file: 'block.deps.js', content: 'exports.deps = ' + JSON.stringify([{ block: 'block' }]) + ';' }
                 ]
             }, {
                 directory: 'data-bundle', items: []
@@ -256,13 +258,14 @@ describe('techs', function () {
 
             dataBundle = new TestNode('data-bundle');
             dataBundle.provideTechData('data.bemdecl.js', [{ name: 'block' }]);
+            dataBundle.provideTechData('data.deps.js', [{ block: 'block' }]);
         });
 
         afterEach(function () {
             fileSystem.teardown();
         });
 
-        it('must provide result target from data', function (done) {
+        it('must provide result target from data at bemdecl format', function (done) {
             dataBundle.runTech(levelsTech, { levels: [] })
                 .then(function (levels) {
                     dataBundle.provideTechData('?.levels', levels);
@@ -275,7 +278,7 @@ describe('techs', function () {
                 .then(done, done);
         });
 
-        it('must require result target from data', function (done) {
+        it('must require result target from data at bemdecl format', function (done) {
             dataBundle.runTech(levelsTech, { levels: [] })
                 .then(function (levels) {
                     dataBundle.provideTechData('?.levels', levels);
@@ -288,13 +291,48 @@ describe('techs', function () {
                 .then(done, done);
         });
 
+        it('must require result target from data at deps format', function (done) {
+            dataBundle.runTech(levelsTech, { levels: [] })
+                .then(function (levels) {
+                    dataBundle.provideTechData('?.levels', levels);
+
+                    return dataBundle.runTechAndRequire(depsTech, {
+                        sourceDepsFile: 'data.deps.js',
+                        format: 'data.deps.js'
+                    });
+                })
+                .spread(function (target) {
+                    target.deps.must.eql([{ block: 'block' }]);
+                })
+                .then(done, done);
+        });
+
         describe('deps.js format', function () {
-            it('must add should dep of block', function (done) {
+            it('must add should dep of block at bemdecl format', function (done) {
                 bundle.runTech(levelsTech, { levels: shouldJsLevels })
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
                         return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block.bemdecl.js' });
+                    })
+                    .spread(function (target) {
+                        target.deps.must.eql([
+                            { block: 'block' },
+                            { block: 'other-block' }
+                        ]);
+                    })
+                    .then(done, done);
+            });
+
+            it('must add should dep of block at deps format', function (done) {
+                bundle.runTech(levelsTech, { levels: shouldJsLevels })
+                    .then(function (levels) {
+                        bundle.provideTechData('?.levels', levels);
+
+                        return bundle.runTechAndRequire(depsTech, {
+                            sourceDepsFile: 'block.deps.js',
+                            format: 'deps'
+                        });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
