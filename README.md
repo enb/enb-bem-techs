@@ -14,17 +14,67 @@ $ npm install --save-dev enb-bem
 Технологии
 ----------
 
+* [`levels`](#levels)
+* [`provide-bemdecl`](#provide-bemdecl)
 * [`bemdecl-from-bemjson`](#bemdecl-from-bemjson)
 * [`bemdecl-from-deps-by-tech`](#bemdecl-from-deps-by-tech)
 * [`merge-bemdecl`](#merge-bemdecl)
-* [`provide-bemdecl`](#provide-bemdecl)
 * [`deps`](#deps)
-* [`merge-deps`](#merge-deps)
 * [`deps-old`](#deps-old)
 * [`provide-deps`](#provide-deps)
+* [`merge-deps`](#merge-deps)
 * [`subtract-deps`](#subtract-deps)
 * [`files`](#files)
-* [`levels`](#levels)
+
+### levels
+
+Собирает информацию об уровнях переопределения проекта, предоставляет `?.levels`. Результат выполнения этой
+технологии необходим технологиям `enb/techs/deps`, `enb/techs/deps-old` и `enb/techs/files`.
+
+**Опции**
+
+* *String* **target** — Результирующий таргет. По умолчанию — `?.levels`.
+* *(String|Object)[]* **levels** — Уровни переопределения. Полные пути к папкам с уровнями переопределения.
+Вместо строки с путем к уровню может использоваться объект вида
+`{path: '/home/user/www/proj/lego/blocks-desktop', check: false}` для того,
+чтобы закэшировать содержимое тех уровней переопределения, которые не модифицируются в рамках проекта.
+
+**Пример**
+
+```javascript
+nodeConfig.addTech([require('enb/techs/levels'), {
+    levels: [
+        {path: 'lego/blocks-desktop', check: false},
+        'desktop.blocks'
+    ].map(function (level) {
+        return config.resolvePath(level);
+    })
+}]);
+```
+
+-------------------------------------------------------------------------------
+
+### provide-bemdecl
+
+Копирует `bemdecl` в текущую ноду под нужным именем из другой ноды. Может понадобиться, например, для объединения bemdecl'ов.
+
+**Опции**
+
+* *String* **node** — Путь исходной ноды с нужным bemdecl'ом. Обязательная опция.
+* *String* **source** — Исходный bemdecl, который будет копироваться. По умолчанию — `?.bemdecl.js` (демаскируется в рамках исходной ноды).
+* *String* **target** — Результирующий bemdecl-таргет. По умолчанию — `?.bemdecl.js` (демаскируется в рамках текущей ноды).
+
+**Пример**
+
+```javascript
+nodeConfig.addTech([require('enb-bem/techs/provide-bemdecl'), {
+    node: 'bundles/router',
+    source: 'router.bemdecl.js',
+    target: 'router.bemdecl.js'
+}]);
+```
+
+-------------------------------------------------------------------------------
 
 ### bemdecl-from-bemjson
 
@@ -86,28 +136,6 @@ nodeConfig.addTech([require('enb-bem/techs/merge-bemdecl'), {
 
 -------------------------------------------------------------------------------
 
-### provide-bemdecl
-
-Копирует `bemdecl` в текущую ноду под нужным именем из другой ноды. Может понадобиться, например, для объединения bemdecl'ов.
-
-**Опции**
-
-* *String* **node** — Путь исходной ноды с нужным bemdecl'ом. Обязательная опция.
-* *String* **source** — Исходный bemdecl, который будет копироваться. По умолчанию — `?.bemdecl.js` (демаскируется в рамках исходной ноды).
-* *String* **target** — Результирующий bemdecl-таргет. По умолчанию — `?.bemdecl.js` (демаскируется в рамках текущей ноды).
-
-**Пример**
-
-```javascript
-nodeConfig.addTech([require('enb-bem/techs/provide-bemdecl'), {
-    node: 'bundles/router',
-    source: 'router.bemdecl.js',
-    target: 'router.bemdecl.js'
-}]);
-```
-
--------------------------------------------------------------------------------
-
 ### deps
 
 Раскрывает зависимости. Сохраняет в виде `?.deps.js`.
@@ -131,26 +159,6 @@ nodeConfig.addTech(require('enb-bem/techs/deps'));
 nodeConfig.addTech([require('enb-bem/techs/deps'), {
     sourceDepsFile: 'search.bemdecl.js',
     target: 'search.deps.js'
-}]);
-```
-
--------------------------------------------------------------------------------
-
-### merge-deps
-
-Формирует `deps` с помощью объединения других deps-файлов.
-
-**Опции**
-
-* *String[]* **sources** — Исходные deps-таргеты. Обязательная опция.
-* *String* **target** — Результирующий deps-таргет. По умолчанию — `?.deps.js`.
-
-**Пример**
-
-```javascript
-nodeConfig.addTech([require('enb-bem/techs/merge-deps'), {
-    sources: ['search.deps.js', 'router.deps.js'],
-    target: 'all.deps.js'
 }]);
 ```
 
@@ -209,6 +217,26 @@ nodeConfig.addTech([require('enb/techs/provide-deps'), {
 
 -------------------------------------------------------------------------------
 
+### merge-deps
+
+Формирует `deps` с помощью объединения других deps-файлов.
+
+**Опции**
+
+* *String[]* **sources** — Исходные deps-таргеты. Обязательная опция.
+* *String* **target** — Результирующий deps-таргет. По умолчанию — `?.deps.js`.
+
+**Пример**
+
+```javascript
+nodeConfig.addTech([require('enb-bem/techs/merge-deps'), {
+    sources: ['search.deps.js', 'router.deps.js'],
+    target: 'all.deps.js'
+}]);
+```
+
+-------------------------------------------------------------------------------
+
 ### subtract-deps
 
 Формирует `deps` с помощью вычитания одного deps-файла из другого.
@@ -255,32 +283,4 @@ nodeConfig.addTechs([
 
 ```javascript
 nodeConfig.addTech(require('enb-bem/techs/files'));
-```
-
--------------------------------------------------------------------------------
-
-### levels
-
-Собирает информацию об уровнях переопределения проекта, предоставляет `?.levels`. Результат выполнения этой
-технологии необходим технологиям `enb/techs/deps`, `enb/techs/deps-old` и `enb/techs/files`.
-
-**Опции**
-
-* *String* **target** — Результирующий таргет. По умолчанию — `?.levels`.
-* *(String|Object)[]* **levels** — Уровни переопределения. Полные пути к папкам с уровнями переопределения.
-Вместо строки с путем к уровню может использоваться объект вида
-`{path: '/home/user/www/proj/lego/blocks-desktop', check: false}` для того,
-чтобы закэшировать содержимое тех уровней переопределения, которые не модифицируются в рамках проекта.
-
-**Пример**
-
-```javascript
-nodeConfig.addTech([require('enb/techs/levels'), {
-    levels: [
-        {path: 'lego/blocks-desktop', check: false},
-        'desktop.blocks'
-    ].map(function (level) {
-        return config.resolvePath(level);
-    })
-}]);
 ```
