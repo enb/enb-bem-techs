@@ -19,7 +19,7 @@ $ npm install --save-dev enb-bem
 * [`merge-bemdecl`](#merge-bemdecl)
 * [`bemdecl-provider`](#bemdecl-provider)
 * [`deps`](#deps)
-* [`deps-merge`](#deps-merge)
+* [`merge-deps`](#merge-deps)
 * [`deps-old`](#deps-old)
 * [`deps-provider`](#deps-provider)
 * [`deps-subtract`](#deps-subtract)
@@ -136,7 +136,7 @@ nodeConfig.addTech([require('enb-bem/techs/deps'), {
 
 -------------------------------------------------------------------------------
 
-### deps-merge
+### merge-deps
 
 Формирует `deps` с помощью объединения других deps-файлов.
 
@@ -148,7 +148,7 @@ nodeConfig.addTech([require('enb-bem/techs/deps'), {
 **Пример**
 
 ```javascript
-nodeConfig.addTech([require('enb-bem/techs/deps-merge'), {
+nodeConfig.addTech([require('enb-bem/techs/merge-deps'), {
     sources: ['search.deps.js', 'router.deps.js'],
     target: 'all.deps.js'
 }]);

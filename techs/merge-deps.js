@@ -1,5 +1,5 @@
 /**
- * deps-merge
+ * merge-deps
  * ==========
  *
  * Формирует *deps* с помощью объединения других deps-файлов.
@@ -12,7 +12,7 @@
  * **Пример**
  *
  * ```javascript
- * nodeConfig.addTech([require('enb-bem/techs/deps-merge'), {
+ * nodeConfig.addTech([require('enb-bem/techs/merge-deps'), {
  *     sources: ['search.deps.js', 'router.deps.js'],
  *     target: 'all.deps.js'
  * }]);
@@ -27,7 +27,7 @@ var deps = require('../lib/deps/deps');
 
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
-        return 'deps-merge';
+        return 'merge-deps';
     },
 
     configure: function () {
