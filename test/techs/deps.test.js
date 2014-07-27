@@ -289,7 +289,7 @@ describe('techs', function () {
         });
 
         describe('deps.js format', function () {
-            it('must add should dep of block', function (done) {
+            it('must add should dep of block at bemdecl format', function (done) {
                 bundle.runTech(levelsTech, { levels: shouldJsLevels })
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
