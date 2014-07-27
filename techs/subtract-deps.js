@@ -16,7 +16,7 @@
  * ```javascript
  * nodeConfig.addTechs([
  *     [require('enb-bem/techs/deps'), { target: 'router.tmp.deps.js' }],
- *     [require('enb-bem/techs/deps-provider'), {
+ *     [require('enb-bem/techs/provide-deps'), {
  *         node: 'pages/index',
  *         depsTarget: 'index.deps.js'
  *     }],

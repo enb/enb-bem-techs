@@ -1,6 +1,6 @@
 /**
- * deps-provider
- * =============
+ * provide-deps
+ * ============
  *
  * Копирует *deps* в текущую ноду под нужным именем из другой ноды.
  * Может понадобиться, например, для объединения deps'ов.
@@ -16,7 +16,7 @@
  * **Пример**
  *
  * ```javascript
- * nodeConfig.addTech([require('enb/techs/deps-provider'), {
+ * nodeConfig.addTech([require('enb/techs/provide-deps'), {
  *     node: 'bundles/router',
  *     source: 'router.deps.js',
  *     target: 'router.deps.js'
@@ -31,7 +31,7 @@ var dropRequireCache = require('enb/lib/fs/drop-require-cache');
 
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
-        return 'deps-provider';
+        return 'provide-deps';
     },
 
     configure: function () {

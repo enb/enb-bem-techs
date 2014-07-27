@@ -1,6 +1,6 @@
 var FileSystem = require('enb/lib/test/mocks/test-file-system');
 var TestNode = require('enb/lib/test/mocks/test-node');
-var provideTech = require('../../techs/deps-provider');
+var provideTech = require('../../techs/provide-deps');
 
 describe('techs', function () {
     describe('deps-provider', function () {

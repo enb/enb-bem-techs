@@ -21,7 +21,7 @@ $ npm install --save-dev enb-bem
 * [`deps`](#deps)
 * [`merge-deps`](#merge-deps)
 * [`deps-old`](#deps-old)
-* [`deps-provider`](#deps-provider)
+* [`provide-deps`](#provide-deps)
 * [`subtract-deps`](#subtract-deps)
 * [`files`](#files)
 * [`levels`](#levels)
@@ -184,7 +184,7 @@ nodeConfig.addTech([require('enb-bem/techs/deps-old'), {
 
 -------------------------------------------------------------------------------
 
-### deps-provider
+### provide-deps
 
 Копирует `deps` в текущую ноду под нужным именем из другой ноды.
 Может понадобиться, например, для объединения deps'ов.
@@ -200,7 +200,7 @@ nodeConfig.addTech([require('enb-bem/techs/deps-old'), {
 **Пример**
 
 ```javascript
-nodeConfig.addTech([require('enb/techs/deps-provider'), {
+nodeConfig.addTech([require('enb/techs/provide-deps'), {
     node: 'bundles/router',
     source: 'router.deps.js',
     target: 'router.deps.js'
@@ -212,7 +212,7 @@ nodeConfig.addTech([require('enb/techs/deps-provider'), {
 ### subtract-deps
 
 Формирует `deps` с помощью вычитания одного deps-файла из другого.
-Может применяться в паре с `deps-provider` для получения deps для bembundle.
+Может применяться в паре с `provide-deps` для получения deps для bembundle.
 
 **Опции**
 
@@ -225,7 +225,7 @@ nodeConfig.addTech([require('enb/techs/deps-provider'), {
 ```javascript
 nodeConfig.addTechs([
     [require('enb-bem/techs/deps'), { target: 'router.tmp.deps.js' }],
-    [require('enb-bem/techs/deps-provider'), {
+    [require('enb-bem/techs/provide-deps'), {
         node: 'pages/index',
         target: 'index.deps.js'
     }],
