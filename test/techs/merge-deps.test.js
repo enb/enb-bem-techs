@@ -1,6 +1,6 @@
 var FileSystem = require('enb/lib/test/mocks/test-file-system');
 var TestNode = require('enb/lib/test/mocks/test-node');
-var mergeTech = require('../../techs/deps-merge');
+var mergeTech = require('../../techs/merge-deps');
 
 describe('techs', function () {
     describe('deps-merge', function () {

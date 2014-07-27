@@ -1,9 +1,9 @@
 var FileSystem = require('enb/lib/test/mocks/test-file-system');
 var TestNode = require('enb/lib/test/mocks/test-node');
-var mergeTech = require('../../techs/bemdecl-merge');
+var mergeTech = require('../../techs/merge-bemdecl');
 
 describe('techs', function () {
-    describe('bemdecl-merge', function () {
+    describe('merge-bemdecl', function () {
         var fileSystem;
         var bundle;
         var dataBundle;

@@ -1,9 +1,9 @@
 var FileSystem = require('enb/lib/test/mocks/test-file-system');
 var TestNode = require('enb/lib/test/mocks/test-node');
-var provideTech = require('../../techs/deps-provider');
+var provideTech = require('../../techs/provide-bemdecl');
 
 describe('techs', function () {
-    describe('deps-provider', function () {
+    describe('bemdecl-provider', function () {
         var fileSystem;
         var fromFileBundle;
         var fromDataBundle;
@@ -14,8 +14,8 @@ describe('techs', function () {
                 {
                     directory: 'from-file-bundle',
                     items: [{
-                        file: 'from-file-bundle.deps.js',
-                        content: stringify([{ block: 'block' }])
+                        file: 'from-file-bundle.bemdecl.js',
+                        content: stringify([{ name: 'block' }])
                     }]
                 },
                 { directory: 'from-data-bundle', items: [] },
@@ -27,49 +27,49 @@ describe('techs', function () {
             fromDataBundle = new TestNode('from-data-bundle');
 
             toBundle = new TestNode('to-bundle');
-            toBundle.provideNodeTechData('from-data-bundle', 'from-data-bundle.deps.js', [{ block: 'block' }]);
+            toBundle.provideNodeTechData('from-data-bundle', 'from-data-bundle.bemdecl.js', [{ name: 'block' }]);
         });
 
         afterEach(function () {
             fileSystem.teardown();
         });
 
-        it('must provide `?.deps.js` target from file', function (done) {
+        it('must provide `?.bemdecl.js` target from file', function (done) {
             toBundle.runTech(provideTech, {
                     node: 'from-file-bundle',
-                    source: 'from-file-bundle.deps.js' })
+                    source: 'from-file-bundle.bemdecl.js' })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([{ block: 'block' }]);
+                    bemdecl.must.eql([{ name: 'block' }]);
                 })
                 .then(done, done);
         });
 
-        it('must provide `?.deps.js` target from data', function (done) {
+        it('must provide `?.bemdecl.js` target from data', function (done) {
             toBundle.runTech(provideTech, {
                     node: 'from-data-bundle',
-                    source: 'from-data-bundle.deps.js' })
+                    source: 'from-data-bundle.bemdecl.js' })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([{ block: 'block' }]);
+                    bemdecl.must.eql([{ name: 'block' }]);
                 })
                 .then(done, done);
         });
 
-        it('must require `?.deps.js` target from file', function (done) {
+        it('must require `?.bemdecl.js` target from file', function (done) {
             toBundle.runTechAndRequire(provideTech, {
                     node: 'from-file-bundle',
-                    source: 'from-file-bundle.deps.js' })
+                    source: 'from-file-bundle.bemdecl.js' })
                 .spread(function (bemdecl) {
-                    bemdecl.deps.must.eql([{ block: 'block' }]);
+                    bemdecl.blocks.must.eql([{ name: 'block' }]);
                 })
                 .then(done, done);
         });
 
-        it('must require `?.deps.js` target from data', function (done) {
+        it('must require `?.bemdecl.js` target from data', function (done) {
             toBundle.runTechAndRequire(provideTech, {
                     node: 'from-data-bundle',
-                    source: 'from-data-bundle.deps.js' })
+                    source: 'from-data-bundle.bemdecl.js' })
                 .spread(function (bemdecl) {
-                    bemdecl.deps.must.eql([{ block: 'block' }]);
+                    bemdecl.blocks.must.eql([{ name: 'block' }]);
                 })
                 .then(done, done);
         });
@@ -77,5 +77,5 @@ describe('techs', function () {
 });
 
 function stringify(bemjson) {
-    return 'exports.deps = ' + JSON.stringify(bemjson) + ';';
+    return 'exports.blocks = ' + JSON.stringify(bemjson) + ';';
 }
