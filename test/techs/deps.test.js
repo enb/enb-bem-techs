@@ -267,7 +267,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     dataBundle.provideTechData('?.levels', levels);
 
-                    return dataBundle.runTechAndGetResults(depsTech, { bemdeclFile: 'data.bemdecl.js' });
+                    return dataBundle.runTechAndGetResults(depsTech, { sourceDepsFile: 'data.bemdecl.js' });
                 })
                 .then(function (results) {
                     results['data-bundle.deps.js'].must.eql([{ block: 'block' }]);
@@ -280,7 +280,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     dataBundle.provideTechData('?.levels', levels);
 
-                    return dataBundle.runTechAndRequire(depsTech, { bemdeclFile: 'data.bemdecl.js' });
+                    return dataBundle.runTechAndRequire(depsTech, { sourceDepsFile: 'data.bemdecl.js' });
                 })
                 .spread(function (target) {
                     target.deps.must.eql([{ block: 'block' }]);
@@ -294,7 +294,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -310,7 +310,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-bool-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-bool-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -328,7 +328,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -346,7 +346,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -362,7 +362,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elems.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elems.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -380,7 +380,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-bool-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-bool-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -398,7 +398,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -416,7 +416,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'loop.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'loop.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -432,7 +432,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -448,7 +448,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-bool-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-bool-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -466,7 +466,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -484,7 +484,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -500,7 +500,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elems.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elems.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -518,7 +518,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-bool-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-bool-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -536,7 +536,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -554,7 +554,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'loop.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'loop.bemdecl.js' });
                     })
                     .fail(function (err) {
                         err.must.throw();
@@ -567,7 +567,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([{ block: 'block' }]);
@@ -580,7 +580,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-bool-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-bool-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([{ block: 'block-bool-mod' }]);
@@ -593,7 +593,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([{ block: 'block-mod' }]);
@@ -606,7 +606,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([{ block: 'elem' }]);
@@ -619,7 +619,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elems.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elems.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([{ block: 'elems' }]);
@@ -632,7 +632,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-bool-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-bool-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([{ block: 'elem-bool-mod' }]);
@@ -645,7 +645,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([{ block: 'elem-mod' }]);
@@ -658,7 +658,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'loop.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'loop.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -674,7 +674,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([{ block: 'block' }]);
@@ -687,7 +687,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-bool-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-bool-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([{ block: 'block-bool-mod' }]);
@@ -700,7 +700,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([{ block: 'block-mod' }]);
@@ -713,7 +713,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([{ block: 'elem' }]);
@@ -726,7 +726,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elems.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elems.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([{ block: 'elems' }]);
@@ -739,7 +739,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-bool-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-bool-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([{ block: 'elem-bool-mod' }]);
@@ -752,7 +752,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([{ block: 'elem-mod' }]);
@@ -765,7 +765,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'loop.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'loop.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -783,7 +783,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -799,7 +799,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-bool-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-bool-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -817,7 +817,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -835,7 +835,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -851,7 +851,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elems.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elems.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -869,7 +869,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-bool-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-bool-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -887,7 +887,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -905,7 +905,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'loop.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'loop.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -921,7 +921,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -937,7 +937,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-bool-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-bool-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -955,7 +955,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -973,7 +973,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -989,7 +989,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elems.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elems.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -1007,7 +1007,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-bool-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-bool-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -1025,7 +1025,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-mod.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-mod.bemdecl.js' });
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
@@ -1043,7 +1043,7 @@ describe('techs', function () {
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
-                        return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'loop.bemdecl.js' });
+                        return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'loop.bemdecl.js' });
                     })
                     .fail(function (err) {
                         err.must.throw();
