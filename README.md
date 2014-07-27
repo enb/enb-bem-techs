@@ -16,7 +16,7 @@ $ npm install --save-dev enb-bem
 
 * [`bemdecl-from-bemjson`](#bemdecl-from-bemjson)
 * [`bemdecl-from-deps-by-tech`](#bemdecl-from-deps-by-tech)
-* [`bemdecl-merge`](#bemdecl-merge)
+* [`merge-bemdecl`](#merge-bemdecl)
 * [`bemdecl-provider`](#bemdecl-provider)
 * [`deps`](#deps)
 * [`deps-merge`](#deps-merge)
@@ -66,7 +66,7 @@ nodeConfig.addTech(require('enb-bem/techs/bemdecl-from-deps-by-tech'), {
 
 -------------------------------------------------------------------------------
 
-### bemdecl-merge
+### merge-bemdecl
 
 Формирует `bemdecl` с помощью объединения других bemdecl-файлов.
 
@@ -78,7 +78,7 @@ nodeConfig.addTech(require('enb-bem/techs/bemdecl-from-deps-by-tech'), {
 **Пример**
 
 ```javascript
-nodeConfig.addTech([require('enb-bem/techs/bemdecl-merge'), {
+nodeConfig.addTech([require('enb-bem/techs/merge-bemdecl'), {
   sources: ['search.bemdecl.js', 'router.bemdecl.js'],
   target: 'all.bemdecl.js'
 }]);
