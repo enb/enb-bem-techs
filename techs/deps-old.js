@@ -2,12 +2,12 @@
  * deps-old
  * ========
  *
- * Собирает *deps.js*-файл на основе *levels* и *bemdecl*, раскрывая зависимости.
- * Сохраняет в виде `?.deps.js`. Использует алгоритм, заимствованный из bem-tools.
+ * Раскрывает зависимости. Сохраняет в виде `?.deps.js`. Использует алгоритм, заимствованный из bem-tools.
  *
  * **Опции**
  *
- * * *String* **bemdeclFile** — Исходный bemdecl. По умолчанию — `?.bemdecl.js`.
+ * * *String* **sourceDepsFile** — Файл с исходными зависимостями. По умолчанию — `?.bemdecl.js`.
+ * * *String* **format** — Формат исходных зависимостей. По умолчанию — `bemdecl`.
  * * *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
  * * *String* **target** — Результирующий deps. По умолчанию — `?.deps.js`.
  *
@@ -21,7 +21,7 @@
  * Сборка специфического deps:
  * ```javascript
  * nodeConfig.addTech([require('enb-bem/techs/deps-old'), {
- *     bemdeclFile: 'search.bemdecl.js',
+ *     sourceDepsFile: 'search.bemdecl.js',
  *     target: 'search.deps.js'
  * }]);
  * ```
