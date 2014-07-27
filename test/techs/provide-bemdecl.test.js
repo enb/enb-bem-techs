@@ -1,6 +1,6 @@
 var FileSystem = require('enb/lib/test/mocks/test-file-system');
 var TestNode = require('enb/lib/test/mocks/test-node');
-var provideTech = require('../../techs/bemdecl-provider');
+var provideTech = require('../../techs/provide-bemdecl');
 
 describe('techs', function () {
     describe('bemdecl-provider', function () {

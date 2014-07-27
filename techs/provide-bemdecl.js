@@ -1,6 +1,6 @@
 /**
- * bemdecl-provider
- * ================
+ * provide-bemdecl
+ * ===============
  *
  * Копирует *bemdecl* в текущую ноду под нужным именем из другой ноды. Может понадобиться, например,
  * для объединения bemdecl'ов.
@@ -16,7 +16,7 @@
  * **Пример**
  *
  * ```javascript
- * nodeConfig.addTech([require('enb-bem/techs/bemdecl-provider'), {
+ * nodeConfig.addTech([require('enb-bem/techs/provide-bemdecl'), {
  *     node: 'bundles/router',
  *     source: 'router.bemdecl.js',
  *     target: 'router.bemdecl.js'
@@ -31,7 +31,7 @@ var dropRequireCache = require('enb/lib/fs/drop-require-cache');
 
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
-        return 'bemdecl-provider';
+        return 'provide-bemdecl';
     },
 
     configure: function () {

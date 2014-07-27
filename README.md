@@ -17,7 +17,7 @@ $ npm install --save-dev enb-bem
 * [`bemdecl-from-bemjson`](#bemdecl-from-bemjson)
 * [`bemdecl-from-deps-by-tech`](#bemdecl-from-deps-by-tech)
 * [`merge-bemdecl`](#merge-bemdecl)
-* [`bemdecl-provider`](#bemdecl-provider)
+* [`provide-bemdecl`](#provide-bemdecl)
 * [`deps`](#deps)
 * [`merge-deps`](#merge-deps)
 * [`deps-old`](#deps-old)
@@ -86,7 +86,7 @@ nodeConfig.addTech([require('enb-bem/techs/merge-bemdecl'), {
 
 -------------------------------------------------------------------------------
 
-### bemdecl-provider
+### provide-bemdecl
 
 Копирует `bemdecl` в текущую ноду под нужным именем из другой ноды. Может понадобиться, например, для объединения bemdecl'ов.
 
@@ -99,7 +99,7 @@ nodeConfig.addTech([require('enb-bem/techs/merge-bemdecl'), {
 **Пример**
 
 ```javascript
-nodeConfig.addTech([require('enb-bem/techs/bemdecl-provider'), {
+nodeConfig.addTech([require('enb-bem/techs/provide-bemdecl'), {
     node: 'bundles/router',
     source: 'router.bemdecl.js',
     target: 'router.bemdecl.js'
