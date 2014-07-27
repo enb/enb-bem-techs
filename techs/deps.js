@@ -2,13 +2,12 @@
  * deps
  * ====
  *
- * Быстро собирает *deps.js*-файл на основе *levels* и *bemdecl*, раскрывая зависимости. Сохраняет в виде `?.deps.js`.
- * Следует использовать с осторожностью: в bem-bl не хватает зависимостей, потому проект может собраться иначе,
- * чем с помощью bem-tools.
+ * Раскрывает зависимости. Сохраняет в виде `?.deps.js`.
  *
  * **Опции**
  *
- * * *String* **bemdeclFile** — Исходный bemdecl. По умолчанию — `?.bemdecl.js`.
+ * * *String* **sourceDepsFile** — Файл с исходными зависимостями. По умолчанию — `?.bemdecl.js`.
+ * * *String* **format** — Формат исходных зависимостей. По умолчанию — `bemdecl`.
  * * *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
  * * *String* **target** — Результирующий deps. По умолчанию — `?.deps.js`.
  *
@@ -22,7 +21,7 @@
  * Сборка специфического deps:
  * ```javascript
  * nodeConfig.addTech([require('enb-bem/techs/deps'), {
- *     bemdeclFile: 'search.bemdecl.js',
+ *     sourceDepsFile: 'search.bemdecl.js',
  *     target: 'search.deps.js'
  * }]);
  * ```
@@ -48,11 +47,12 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         }
         this._target = this.node.unmaskTargetName(this._target);
 
-        this._bemdeclTarget = this.getOption('bemdeclTarget');
-        if (!this._bemdeclTarget) {
-            this._bemdeclTarget = this.getOption('bemdeclFile', this.node.getTargetName('bemdecl.js'));
+        this._sourceDepsFile = this.getOption('bemdeclTarget');
+        if (!this._sourceDepsFile) {
+            this._sourceDepsFile = this.getOption('sourceDepsFile', this.node.getTargetName('bemdecl.js'));
         }
-        this._bemdeclTarget = this.node.unmaskTargetName(this._bemdeclTarget);
+        this._sourceDepsFile = this.node.unmaskTargetName(this._sourceDepsFile);
+        this._format = this.getOption('format', 'bemdecl');
 
         this._levelsTarget = this.node.unmaskTargetName(
             this.getOption('levelsTarget', this.node.getTargetName('levels')));
@@ -67,20 +67,21 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         var target = this._target;
         var targetFilename = node.resolvePath(target);
         var cache = node.getNodeCache(target);
-        var bemdeclFilename = this.node.resolvePath(this._bemdeclTarget);
+        var format = this._format;
+        var sourceDepsFilename = this.node.resolvePath(this._sourceDepsFile);
 
-        return this.node.requireSources([this._levelsTarget, this._bemdeclTarget])
-            .spread(function (levels, bemdecl) {
+        return this.node.requireSources([this._levelsTarget, this._sourceDepsFile])
+            .spread(function (levels, sourceDeps) {
                 var depFiles = levels.getFilesBySuffix('deps.js').concat(levels.getFilesBySuffix('deps.yaml'));
 
                 if (cache.needRebuildFile('deps-file', targetFilename) ||
-                    cache.needRebuildFile('bemdecl-file', bemdeclFilename) ||
+                    cache.needRebuildFile('source-deps-file', sourceDepsFilename) ||
                     cache.needRebuildFileList('deps-file-list', depFiles)
                 ) {
-                    return requireBemdecl(bemdecl, bemdeclFilename)
-                        .then(function (bemdecl) {
+                    return requireSourceDeps(sourceDeps, sourceDepsFilename, format)
+                        .then(function (sourceDeps) {
                             var resolver = new DepsResolver(levels);
-                            var decls = resolver.normalizeDeps(deps.fromBemdecl(bemdecl));
+                            var decls = resolver.normalizeDeps(sourceDeps);
 
                             return resolver.addDecls(decls)
                                 .then(function () {
@@ -90,7 +91,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                                     return vfs.write(targetFilename, str, 'utf8')
                                         .then(function () {
                                             cache.cacheFileInfo('deps-file', targetFilename);
-                                            cache.cacheFileInfo('bemdecl-file', bemdeclFilename);
+                                            cache.cacheFileInfo('source-deps-file', sourceDepsFilename);
                                             cache.cacheFileList('deps-file-list', depFiles);
                                             node.resolveTarget(target, resolvedDeps);
                                         });
@@ -110,15 +111,25 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
     }
 });
 
-function requireBemdecl(bemdecl, filename) {
-    if (bemdecl) {
-        return vow.resolve(bemdecl);
-    }
+function requireSourceDeps(data, filename, format) {
+    return (data ? vow.resolve(data) : (
+        dropRequireCache(require, filename),
+        asyncRequire(filename)
+            .then(function (result) {
+                if ('bemdecl' === format) {
+                    return result.blocks;
+                }
 
-    dropRequireCache(require, filename);
+                if ('deps' === format) {
+                    return result.deps;
+                }
+            })
+        ))
+        .then(function (sourceDeps) {
+            if ('bemdecl' === format) {
+                sourceDeps = deps.fromBemdecl(sourceDeps);
+            }
 
-    return asyncRequire(filename)
-        .then(function (result) {
-            return result.blocks;
+            return sourceDeps;
         });
 }

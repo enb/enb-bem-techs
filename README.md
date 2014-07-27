@@ -110,13 +110,12 @@ nodeConfig.addTech([require('enb-bem/techs/bemdecl-provider'), {
 
 ### deps
 
-Быстро собирает `deps.js`-файл на основе *levels* и *bemdecl*, раскрывая зависимости. Сохраняет в виде `?.deps.js`.
-Следует использовать с осторожностью: в bem-bl не хватает зависимостей, потому проект может собраться иначе,
-чем с помощью bem-tools.
+Раскрывает зависимости. Сохраняет в виде `?.deps.js`.
 
 **Опции**
 
-* *String* **bemdeclFile** — Исходный bemdecl. По умолчанию — `?.bemdecl.js`.
+* *String* **sourceDepsFile** — Файл с исходными зависимостями. По умолчанию — `?.bemdecl.js`.
+* *String* **format** — Формат исходных зависимостей. По умолчанию — `bemdecl`.
 * *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
 * *String* **target** — Результирующий deps. По умолчанию — `?.deps.js`.
 
@@ -130,7 +129,7 @@ nodeConfig.addTech(require('enb-bem/techs/deps'));
 Сборка специфического deps:
 ```javascript
 nodeConfig.addTech([require('enb-bem/techs/deps'), {
-    bemdeclFile: 'search.bemdecl.js',
+    sourceDepsFile: 'search.bemdecl.js',
     target: 'search.deps.js'
 }]);
 ```
@@ -159,12 +158,12 @@ nodeConfig.addTech([require('enb-bem/techs/deps-merge'), {
 
 ### deps-old
 
-Собирает `deps.js`-файл на основе *levels* и *bemdecl*, раскрывая зависимости.
-Сохраняет в виде `?.deps.js`. Использует алгоритм, заимствованный из bem-tools.
+Раскрывает зависимости. Сохраняет в виде `?.deps.js`. Использует алгоритм, заимствованный из bem-tools.
 
 **Опции**
 
-* *String* **bemdeclFile** — Исходный bemdecl. По умолчанию — `?.bemdecl.js`.
+* *String* **sourceDepsFile** — Файл с исходными зависимостями. По умолчанию — `?.bemdecl.js`.
+* *String* **format** — Формат исходных зависимостей. По умолчанию — `bemdecl`.
 * *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
 * *String* **target** — Результирующий deps. По умолчанию — `?.deps.js`.
 
@@ -178,7 +177,7 @@ nodeConfig.addTech(require('enb-bem/techs/deps-old'));
 Сборка специфического deps:
 ```javascript
 nodeConfig.addTech([require('enb-bem/techs/deps-old'), {
-    bemdeclFile: 'search.bemdecl.js',
+    sourceDepsFile: 'search.bemdecl.js',
     target: 'search.deps.js'
 }]);
 ```
