@@ -32,6 +32,7 @@ var vfs = require('enb/lib/fs/async-fs');
 var asyncRequire = require('enb/lib/fs/async-require');
 var dropRequireCache = require('enb/lib/fs/drop-require-cache');
 var OldDeps = require('../exlib/deps-old').OldDeps;
+var deps = require('../lib/deps/deps');
 
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
@@ -51,6 +52,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             this._sourceDepsFile = this.getOption('sourceDepsFile', this.node.getTargetName('bemdecl.js'));
         }
         this._sourceDepsFile = this.node.unmaskTargetName(this._sourceDepsFile);
+        this._format = this.getOption('format', 'bemdecl');
 
         this._levelsTarget = this.node.unmaskTargetName(
             this.getOption('levelsTarget', this.node.getTargetName('levels')));
@@ -65,6 +67,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         var target = this._target;
         var targetFilename = node.resolvePath(target);
         var cache = node.getNodeCache(target);
+        var format = this._format;
         var sourceDepsFilename = this.node.resolvePath(this._sourceDepsFile);
 
         return this.node.requireSources([this._levelsTarget, this._sourceDepsFile])
@@ -75,7 +78,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                     cache.needRebuildFile('source-deps-file', sourceDepsFilename) ||
                     cache.needRebuildFileList('deps-file-list', depFiles)
                 ) {
-                    return requireSourceDeps(sourceDeps, sourceDepsFilename)
+                    return requireSourceDeps(sourceDeps, sourceDepsFilename, format)
                         .then(function (sourceDeps) {
                             return (new OldDeps(sourceDeps).expandByFS({ levels: levels }))
                                 .then(function (resolvedDeps) {
@@ -105,15 +108,25 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
     }
 });
 
-function requireSourceDeps(data, filename) {
-    if (data) {
-        return vow.resolve(data);
-    }
+function requireSourceDeps(data, filename, format) {
+    return (data ? vow.resolve(data) : (
+        dropRequireCache(require, filename),
+            asyncRequire(filename)
+                .then(function (result) {
+                    if ('bemdecl' === format) {
+                        return result.blocks;
+                    }
 
-    dropRequireCache(require, filename);
+                    if ('deps' === format) {
+                        return result.deps;
+                    }
+                })
+        ))
+        .then(function (sourceDeps) {
+            if ('deps' === format) {
+                sourceDeps = deps.toBemdecl(sourceDeps);
+            }
 
-    return asyncRequire(filename)
-        .then(function (result) {
-            return result.blocks;
+            return sourceDeps;
         });
 }
