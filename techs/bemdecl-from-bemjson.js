@@ -91,6 +91,7 @@ function getDepsFromBemjson(bemjson) {
 }
 
 function addDepsFromBemjson(bemjson, deps, depsIndex, parentBlockName) {
+    if (!bemjson) { return; }
     if (Array.isArray(bemjson)) {
         bemjson.forEach(function (bemjsonItem) {
             addDepsFromBemjson(bemjsonItem, deps, depsIndex, parentBlockName);

@@ -57,6 +57,10 @@ describe('techs', function () {
                                 two: { block: 'block-2' }
                             }
                         })
+                    },
+                    {
+                        file: 'undefined.bemjson.js',
+                        content: stringify([undefined])
                     }
                 ]
             }]);
@@ -154,6 +158,14 @@ describe('techs', function () {
                         { name: 'block-1' },
                         { name: 'block-2' }
                     ]);
+                })
+                .then(done, done);
+        });
+
+        it('must not fail when entity equals undefined', function (done) {
+            bundle.runTech(bemdeclTech, { source: 'undefined.bemjson.js' })
+                .then(function (bemdecl) {
+                    bemdecl.must.eql([]);
                 })
                 .then(done, done);
         });
