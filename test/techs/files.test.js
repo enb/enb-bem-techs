@@ -367,5 +367,24 @@ describe('techs', function () {
                 })
                 .then(done, done);
         });
+
+        it('must not add a few duplicate files', function (done) {
+            bundle.runTech(levelsTech, { levels: fileLevels })
+                .then(function (levels) {
+                    bundle.provideTechData('?.levels', levels);
+                    bundle.provideTechData('?.deps.js', [
+                        { block: 'block', mod: 'mod' },
+                        { block: 'block', mod: 'mod', val: true }
+                    ]);
+
+                    return bundle.runTechAndGetResults(filesTech);
+                })
+                .then(function (result) {
+                    var files = result['bundle.files'];
+
+                    files.items.length.must.be(1);
+                })
+                .then(done, done);
+        });
     });
 });

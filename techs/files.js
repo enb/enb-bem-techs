@@ -49,8 +49,10 @@ module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
 
         return this.node.requireSources([this._depsTarget, this._levelsTarget])
             .spread(function (deps, levels) {
-                var files = new FileList();
-                var dirs = new FileList();
+                var fileList = new FileList();
+                var dirList = new FileList();
+                var files = {};
+                var dirs = {};
 
                 for (var i = 0, l = deps.length; i < l; i++) {
                     var dep = deps[i];
@@ -60,12 +62,30 @@ module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
                     } else {
                         entities = levels.getBlockEntities(dep.block, dep.mod, dep.val);
                     }
-                    files.addFiles(entities.files);
-                    dirs.addFiles(entities.dirs);
+
+                    addEntityFiles(entities);
                 }
 
-                _this.node.resolveTarget(filesTarget, files);
-                _this.node.resolveTarget(dirsTarget, dirs);
+                fileList.addFiles(Object.keys(files).map(function (filename) {
+                    return files[filename];
+                }));
+
+                dirList.addFiles(Object.keys(dirs).map(function (dirname) {
+                    return dirs[dirname];
+                }));
+
+                function addEntityFiles(entities) {
+                    entities.files.forEach(function (file) {
+                        files[file.fullname] = file;
+                    });
+
+                    entities.dirs.forEach(function (dir) {
+                        dirs[dir.fullname] = dir;
+                    });
+                }
+
+                _this.node.resolveTarget(filesTarget, fileList);
+                _this.node.resolveTarget(dirsTarget, dirList);
             });
     },
 
