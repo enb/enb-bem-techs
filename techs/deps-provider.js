@@ -14,7 +14,7 @@ module.exports = inherit(require('./provide-deps'), {
     build: function () {
         var logger = this.node.getLogger();
 
-        logger.logTechIsDeprecated(this._target, this.getName(), 'enb-bem', 'provide-deps');
+        logger.logTechIsDeprecated(this._target, this.getName(), 'enb-bem', 'provide-deps', 'enb-bem');
         this.__base();
     }
 });
