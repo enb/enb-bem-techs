@@ -41,21 +41,30 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
     },
 
     configure: function () {
+        var logger = this.node.getLogger();
+
+        this._target = this.getOption('depsTarget');
+        if (this._target) {
+            logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem', this.getName(),
+                'depsTarget', 'target');
+        } else {
+            this._target = this.getOption('target', '?.deps.js');
+        }
+        this._target = this.node.unmaskTargetName(this._target);
+
         this._fromTarget = this.getOption('subtractFromTarget');
-        if (!this._fromTarget) {
+        if (this._fromTarget) {
+            logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(), 'subtractFromTarget', 'from');
+        } else {
             this._fromTarget = this.getRequiredOption('from');
         }
 
         this._whatTarget = this.getOption('subtractWhatTarget');
-        if (!this._whatTarget) {
+        if (this._whatTarget) {
+            logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(), 'subtractWhatTarget', 'what');
+        } else {
             this._whatTarget = this.getRequiredOption('what');
         }
-
-        this._target = this.getOption('depsTarget');
-        if (!this._target) {
-            this._target = this.getOption('target', '?.deps.js');
-        }
-        this._target = this.node.unmaskTargetName(this._target);
     },
 
     getTargets: function () {
