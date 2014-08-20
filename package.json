@@ -32,11 +32,11 @@
     "js-yaml": "3.1.0"
   },
   "devDependencies": {
-    "enb": "git://github.com/enb-make/enb.git#18571c0d61a6b861f675352b8bb1d02166cdf59a",
+    "enb": ">= 0.13.0 < 1.0.0",
     "enb-validate-code": "0.0.1",
-    "jshint": "2.5.2",
+    "jshint": "2.5.4",
     "jscs": "1.4.5",
-    "mocha": "1.21.1",
+    "mocha": "1.21.4",
     "must": "0.12.0",
     "istanbul": "0.3.0"
   },
