@@ -35,22 +35,31 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
     },
 
     configure: function () {
+        var logger = this.node.getLogger();
+
+        this._target = this.getOption('depsTarget');
+        if (this._target) {
+            logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem', this.getName(),
+                'depsTarget', 'target');
+        } else {
+            this._target = this.getOption('target', '?.deps.js');
+        }
+        this._target = this.node.unmaskTargetName(this._target);
+
         this._fromNode = this.getOption('sourceNodePath');
-        if (!this._fromNode) {
+        if (this._fromNode) {
+            logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(), 'sourceNodePath', 'node');
+        } else {
             this._fromNode = this.getRequiredOption('node');
         }
 
         this._sourceTarget = this.getOption('sourceTarget');
-        if (!this._sourceTarget) {
+        if (this._sourceTarget) {
+            logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(), 'sourceTarget', 'source');
+        } else {
             this._sourceTarget = this.getOption('source', '?.deps.js');
         }
         this._sourceTarget = this.node.unmaskNodeTargetName(this._fromNode, this._sourceTarget);
-
-        this._target = this.getOption('depsTarget');
-        if (!this._target) {
-            this._target = this.getOption('target', '?.deps.js');
-        }
-        this._target = this.node.unmaskTargetName(this._target);
     },
 
     getTargets: function () {

@@ -22,26 +22,34 @@ var inherit = require('inherit');
 var FileList = require('enb/lib/file-list');
 
 module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
+    getName: function () {
+        return 'files';
+    },
+
     configure: function () {
-        this._depsTarget = this.getOption('depsTarget');
-        if (!this._depsTarget) {
-            this._depsTarget = this.getOption('depsFile', '?.deps.js');
-        }
-        this._depsTarget = this.node.unmaskTargetName(this._depsTarget);
+        var logger = this.node.getLogger();
 
         this._filesTarget = this.node.unmaskTargetName(this.getOption('filesTarget', '?.files'));
         this._dirsTarget = this.node.unmaskTargetName(this.getOption('dirsTarget', '?.dirs'));
         this._levelsTarget = this.node.unmaskTargetName(this.getOption('levelsTarget', '?.levels'));
+
+        this._depsTarget = this.getOption('depsTarget');
+        if (this._depsTarget) {
+            logger.logOptionIsDeprecated(this._filesTarget, 'enb-bem', this.getName(), 'depsTarget', 'depsFile');
+            logger.logOptionIsDeprecated(this._dirsTarget, 'enb-bem', this.getName(), 'depsTarget', 'depsFile');
+        } else {
+            this._depsTarget = this.getOption('depsFile', '?.deps.js');
+        }
+        this._depsTarget = this.node.unmaskTargetName(this._depsTarget);
     },
-    getName: function () {
-        return 'files';
-    },
+
     getTargets: function () {
         return [
             this._filesTarget,
             this._dirsTarget
         ];
     },
+
     build: function () {
         var _this = this;
         var filesTarget = this._filesTarget;

@@ -41,14 +41,21 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
     },
 
     configure: function () {
+        var logger = this.node.getLogger();
+
         this._target = this.getOption('depsTarget');
-        if (!this._target) {
+        if (this._target) {
+            logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem', this.getName(),
+                'depsTarget', 'target');
+        } else {
             this._target = this.getOption('target', this.node.getTargetName('deps.js'));
         }
         this._target = this.node.unmaskTargetName(this._target);
 
         this._sourceDepsFile = this.getOption('bemdeclTarget');
-        if (!this._sourceDepsFile) {
+        if (this._sourceDepsFile) {
+            logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(), 'bemdeclTarget', 'sourceDepsFile');
+        } else {
             this._sourceDepsFile = this.getOption('sourceDepsFile', this.node.getTargetName('bemdecl.js'));
         }
         this._sourceDepsFile = this.node.unmaskTargetName(this._sourceDepsFile);
