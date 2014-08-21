@@ -12,6 +12,15 @@
     "trailing": true,
 
     "node": true,
+    "globals": {
+        "set": false,
+        "suite": false,
+        "bench": false,
+        "before": false,
+        "beforeEach": false,
+        "after": false,
+        "afterEach": false
+    },
 
     "expr": true
 }
