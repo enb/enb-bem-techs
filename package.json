@@ -38,6 +38,7 @@
     "jscs": "1.4.5",
     "mocha": "1.21.4",
     "must": "0.12.0",
+    "matcha": "0.5.0",
     "istanbul": "0.3.0"
   },
   "main": "lib/index.js",
@@ -45,6 +46,8 @@
     "test": "npm run lint && npm run techs-test && npm run cover",
     "lint": "jshint . && jscs -c .jscs.js .",
     "techs-test": "mocha test/techs",
+    "bench": "npm run bench-deps && matcha benchmark/*.js",
+    "bench-deps": "cd benchmark/fixtures && bower i",
     "cover": "istanbul cover _mocha -- test/techs"
   }
 }

@@ -1,0 +1,9 @@
+{
+    "name": "enb-bem-bench-fixtures",
+    "private": true,
+    "dependencies": {
+        "bem-bl": "2.0.4",
+        "bem-core": "2.4.0",
+        "bem-components": "5cbcdb7d167469e5b50d568d6f087d02697c6cb1"
+    }
+}

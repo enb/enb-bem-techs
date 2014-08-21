@@ -1,3 +1,4 @@
 node_modules
 exlib
+benchmark/fixtures
 coverage
