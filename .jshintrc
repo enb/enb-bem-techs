@@ -1,17 +1,21 @@
 {
+    "bitwise": true,
     "curly": true,
     "eqeqeq": true,
+    "es3": true,
     "forin": true,
     "freeze": true,
     "immed": true,
     "latedef": "nofucn",
     "noarg": true,
     "noempty": true,
+    "nonbsp": true,
+    "nonew": true,
     "undef": true,
     "unused": true,
-    "trailing": true,
 
     "node": true,
 
-    "expr": true
+    "expr": true,
+    "sub": true
 }
