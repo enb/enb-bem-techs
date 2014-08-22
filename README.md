@@ -1,7 +1,7 @@
 enb-bem
 =======
 
-[![NPM version](http://img.shields.io/npm/v/enb-bem.svg?style=flat)](http://www.npmjs.org/package/enb-bem) [![Build Status](http://img.shields.io/travis/enb-bem/enb-bem/master.svg?style=flat)](https://travis-ci.org/enb-bem/enb-bem) [![Coverage Status](https://img.shields.io/coveralls/enb-bem/enb-bem.svg)](https://coveralls.io/r/enb-bem/enb-bem?branch=master) [![Dependency Status](http://img.shields.io/david/enb-bem/enb-bem.svg?style=flat)](https://david-dm.org/enb-bem/enb-bem)
+[![NPM version](http://img.shields.io/npm/v/enb-bem.svg?style=flat)](http://www.npmjs.org/package/enb-bem) [![Build Status](http://img.shields.io/travis/enb-bem/enb-bem/master.svg?style=flat)](https://travis-ci.org/enb-bem/enb-bem) [![Coverage Status](https://img.shields.io/coveralls/enb-bem/enb-bem.svg?style=flat)](https://coveralls.io/r/enb-bem/enb-bem?branch=master) [![Dependency Status](http://img.shields.io/david/enb-bem/enb-bem.svg?style=flat)](https://david-dm.org/enb-bem/enb-bem)
 
 Установка:
 ----------
