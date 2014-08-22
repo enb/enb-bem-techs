@@ -18,12 +18,12 @@
  *}]);
  *```
  */
-var inherit = require('inherit');
-var vow = require('vow');
-var vfs = require('enb/lib/fs/async-fs');
-var asyncRequire = require('enb/lib/fs/async-require');
-var dropRequireCache = require('enb/lib/fs/drop-require-cache');
-var deps = require('../lib/deps/deps');
+var inherit = require('inherit'),
+    vow = require('vow'),
+    vfs = require('enb/lib/fs/async-fs'),
+    asyncRequire = require('enb/lib/fs/async-require'),
+    dropRequireCache = require('enb/lib/fs/drop-require-cache'),
+    deps = require('../lib/deps/deps');
 
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
@@ -31,8 +31,8 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
     },
 
     configure: function () {
-        var _this = this;
-        var logger = this.node.getLogger();
+        var _this = this,
+            logger = this.node.getLogger();
 
         this._target = this.getOption('bemdeclTarget');
         if (this._target) {
@@ -60,15 +60,15 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
     },
 
     build: function () {
-        var _this = this;
-        var node = this.node;
-        var target = this._target;
-        var sources = this._sources;
-        var cache = node.getNodeCache(target);
-        var targetFilename = node.resolvePath(target);
-        var sourceFilenames = sources.map(function (sourceTarget) {
-            return node.resolvePath(sourceTarget);
-        });
+        var _this = this,
+            node = this.node,
+            target = this._target,
+            sources = this._sources,
+            cache = node.getNodeCache(target),
+            targetFilename = node.resolvePath(target),
+            sourceFilenames = sources.map(function (sourceTarget) {
+                return node.resolvePath(sourceTarget);
+            });
 
         return this.node.requireSources(sources)
             .then(function (sourceBemdecls) {
@@ -87,9 +87,9 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                                 });
                         }))
                         .then(function (sourceDeps) {
-                            var mergedDeps = deps.merge(sourceDeps);
-                            var mergedBemdecl = deps.toBemdecl(mergedDeps);
-                            var str = 'exports.blocks = ' + JSON.stringify(mergedBemdecl, null, 4) + ';';
+                            var mergedDeps = deps.merge(sourceDeps),
+                                mergedBemdecl = deps.toBemdecl(mergedDeps),
+                                str = 'exports.blocks = ' + JSON.stringify(mergedBemdecl, null, 4) + ';';
 
                             return vfs.write(targetFilename, str, 'utf-8')
                                 .then(function () {

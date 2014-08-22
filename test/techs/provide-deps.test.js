@@ -1,13 +1,13 @@
-var FileSystem = require('enb/lib/test/mocks/test-file-system');
-var TestNode = require('enb/lib/test/mocks/test-node');
-var provideTech = require('../../techs/provide-deps');
+var FileSystem = require('enb/lib/test/mocks/test-file-system'),
+    TestNode = require('enb/lib/test/mocks/test-node'),
+    provideTech = require('../../techs/provide-deps');
 
 describe('techs', function () {
     describe('deps-provider', function () {
-        var fileSystem;
-        var fromFileBundle;
-        var fromDataBundle;
-        var toBundle;
+        var fileSystem,
+            fromFileBundle,
+            fromDataBundle,
+            toBundle;
 
         beforeEach(function () {
             fileSystem = new FileSystem([

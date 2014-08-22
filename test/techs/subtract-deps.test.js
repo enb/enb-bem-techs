@@ -1,12 +1,12 @@
-var FileSystem = require('enb/lib/test/mocks/test-file-system');
-var TestNode = require('enb/lib/test/mocks/test-node');
-var subtractTech = require('../../techs/subtract-deps');
+var FileSystem = require('enb/lib/test/mocks/test-file-system'),
+    TestNode = require('enb/lib/test/mocks/test-node'),
+    subtractTech = require('../../techs/subtract-deps');
 
 describe('techs', function () {
     describe('deps-subtract', function () {
-        var fileSystem;
-        var bundle;
-        var dataBundle;
+        var fileSystem,
+            bundle,
+            dataBundle;
 
         beforeEach(function () {
             fileSystem = new FileSystem([{

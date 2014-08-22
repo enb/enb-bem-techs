@@ -1,16 +1,16 @@
-var path = require('path');
-var FileSystem = require('enb/lib/test/mocks/test-file-system');
-var TestNode = require('enb/lib/test/mocks/test-node');
-var levelsTech = require('../../techs/levels');
-var filesTech = require('../../techs/files');
+var path = require('path'),
+    FileSystem = require('enb/lib/test/mocks/test-file-system'),
+    TestNode = require('enb/lib/test/mocks/test-node'),
+    levelsTech = require('../../techs/levels'),
+    filesTech = require('../../techs/files');
 
 describe('techs', function () {
     describe('files', function () {
-        var fileSystem;
-        var bundle;
-        var fileLevels;
-        var dirLevels;
-        var suffixLevels;
+        var fileSystem,
+            bundle,
+            fileLevels,
+            dirLevels,
+            suffixLevels;
 
         beforeEach(function () {
             fileSystem = new FileSystem([{
@@ -26,7 +26,7 @@ describe('techs', function () {
                                 items: [
                                     { file: 'block__elem' },
                                     { directory: '_mod', items: [ { file: 'block__elem_mod' }] },
-                                    { directory: '_modName', items: [{ file: 'block__elem_modName_modVal'}] }
+                                    { directory: '_modName', items: [{ file: 'block__elem_modName_modVal' }] }
                                 ]
                             }
                         ]
@@ -46,10 +46,10 @@ describe('techs', function () {
                                     { directory: 'block__elem.dir', items: [] },
                                     { directory: '_mod', items: [
                                         { directory: 'block__elem_mod.dir', items: [] }
-                                    ]},
+                                    ] },
                                     { directory: '_modName', items: [
                                         { directory: 'block__elem_modName_modVal.dir', items: [] }
-                                    ]}
+                                    ] }
                                 ]
                             }
                         ]
@@ -103,9 +103,9 @@ describe('techs', function () {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
-                    var files = result['bundle.files'];
-                    var file = files.getByName('block')[0];
-                    var filename = path.join(fileLevels[0], 'block', 'block');
+                    var files = result['bundle.files'],
+                        file = files.getByName('block')[0],
+                        filename = path.join(fileLevels[0], 'block', 'block');
 
                     file.fullname.must.be(filename);
                 })
@@ -121,9 +121,9 @@ describe('techs', function () {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
-                    var files = result['bundle.files'];
-                    var file = files.getByName('block_mod')[0];
-                    var filename = path.join(fileLevels[0], 'block', '_mod', 'block_mod');
+                    var files = result['bundle.files'],
+                        file = files.getByName('block_mod')[0],
+                        filename = path.join(fileLevels[0], 'block', '_mod', 'block_mod');
 
                     file.fullname.must.be(filename);
                 })
@@ -139,9 +139,9 @@ describe('techs', function () {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
-                    var files = result['bundle.files'];
-                    var file = files.getByName('block_modName_modVal')[0];
-                    var filename = path.join(fileLevels[0], 'block', '_modName', 'block_modName_modVal');
+                    var files = result['bundle.files'],
+                        file = files.getByName('block_modName_modVal')[0],
+                        filename = path.join(fileLevels[0], 'block', '_modName', 'block_modName_modVal');
 
                     file.fullname.must.be(filename);
                 })
@@ -157,9 +157,9 @@ describe('techs', function () {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
-                    var files = result['bundle.files'];
-                    var file = files.getByName('block__elem')[0];
-                    var filename = path.join(fileLevels[0], 'block', '__elem', 'block__elem');
+                    var files = result['bundle.files'],
+                        file = files.getByName('block__elem')[0],
+                        filename = path.join(fileLevels[0], 'block', '__elem', 'block__elem');
 
                     file.fullname.must.be(filename);
                 })
@@ -176,9 +176,9 @@ describe('techs', function () {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
-                    var files = result['bundle.files'];
-                    var file = files.getByName('block__elem_mod')[0];
-                    var filename = path.join(fileLevels[0], 'block', '__elem', '_mod', 'block__elem_mod');
+                    var files = result['bundle.files'],
+                        file = files.getByName('block__elem_mod')[0],
+                        filename = path.join(fileLevels[0], 'block', '__elem', '_mod', 'block__elem_mod');
 
                     file.fullname.must.be(filename);
                 })
@@ -195,9 +195,9 @@ describe('techs', function () {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
-                    var files = result['bundle.files'];
-                    var file = files.getByName('block__elem_modName_modVal')[0];
-                    var filename = path.join(fileLevels[0], 'block', '__elem',
+                    var files = result['bundle.files'],
+                        file = files.getByName('block__elem_modName_modVal')[0],
+                        filename = path.join(fileLevels[0], 'block', '__elem',
                         '_modName', 'block__elem_modName_modVal');
 
                     file.fullname.must.be(filename);
@@ -214,9 +214,9 @@ describe('techs', function () {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
-                    var dirs = result['bundle.dirs'];
-                    var dir = dirs.getByName('block.dir')[0];
-                    var dirname = path.join(dirLevels[0], 'block', 'block.dir');
+                    var dirs = result['bundle.dirs'],
+                        dir = dirs.getByName('block.dir')[0],
+                        dirname = path.join(dirLevels[0], 'block', 'block.dir');
 
                     dir.fullname.must.be(dirname);
                 })
@@ -232,9 +232,9 @@ describe('techs', function () {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
-                    var dirs = result['bundle.dirs'];
-                    var dir = dirs.getByName('block_mod.dir')[0];
-                    var dirname = path.join(dirLevels[0], 'block', '_mod', 'block_mod.dir');
+                    var dirs = result['bundle.dirs'],
+                        dir = dirs.getByName('block_mod.dir')[0],
+                        dirname = path.join(dirLevels[0], 'block', '_mod', 'block_mod.dir');
 
                     dir.fullname.must.be(dirname);
                 })
@@ -250,9 +250,9 @@ describe('techs', function () {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
-                    var dirs = result['bundle.dirs'];
-                    var dir = dirs.getByName('block_modName_modVal.dir')[0];
-                    var dirname = path.join(dirLevels[0], 'block', '_modName', 'block_modName_modVal.dir');
+                    var dirs = result['bundle.dirs'],
+                        dir = dirs.getByName('block_modName_modVal.dir')[0],
+                        dirname = path.join(dirLevels[0], 'block', '_modName', 'block_modName_modVal.dir');
 
                     dir.fullname.must.be(dirname);
                 })
@@ -268,9 +268,9 @@ describe('techs', function () {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
-                    var dirs = result['bundle.dirs'];
-                    var dir = dirs.getByName('block__elem.dir')[0];
-                    var dirname = path.join(dirLevels[0], 'block', '__elem', 'block__elem.dir');
+                    var dirs = result['bundle.dirs'],
+                        dir = dirs.getByName('block__elem.dir')[0],
+                        dirname = path.join(dirLevels[0], 'block', '__elem', 'block__elem.dir');
 
                     dir.fullname.must.be(dirname);
                 })
@@ -287,9 +287,9 @@ describe('techs', function () {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
-                    var dirs = result['bundle.dirs'];
-                    var dir = dirs.getByName('block__elem_mod.dir')[0];
-                    var dirname = path.join(dirLevels[0], 'block', '__elem', '_mod', 'block__elem_mod.dir');
+                    var dirs = result['bundle.dirs'],
+                        dir = dirs.getByName('block__elem_mod.dir')[0],
+                        dirname = path.join(dirLevels[0], 'block', '__elem', '_mod', 'block__elem_mod.dir');
 
                     dir.fullname.must.be(dirname);
                 })
@@ -306,9 +306,9 @@ describe('techs', function () {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
-                    var dirs = result['bundle.dirs'];
-                    var dir = dirs.getByName('block__elem_modName_modVal.dir')[0];
-                    var dirname = path.join(dirLevels[0], 'block', '__elem',
+                    var dirs = result['bundle.dirs'],
+                        dir = dirs.getByName('block__elem_modName_modVal.dir')[0],
+                        dirname = path.join(dirLevels[0], 'block', '__elem',
                         '_modName', 'block__elem_modName_modVal.dir');
 
                     dir.fullname.must.be(dirname);
@@ -325,13 +325,13 @@ describe('techs', function () {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
-                    var files = result['bundle.files'];
-                    var aFiles = files.getBySuffix('a');
-                    var bFiles = files.getBySuffix('b');
-                    var filenameAa = path.join(suffixLevels[0], 'A', 'A.a');
-                    var filenameBa = path.join(suffixLevels[0], 'B', 'B.a');
-                    var filenameAb = path.join(suffixLevels[0], 'A', 'A.b');
-                    var filenameBb = path.join(suffixLevels[0], 'B', 'B.b');
+                    var files = result['bundle.files'],
+                        aFiles = files.getBySuffix('a'),
+                        bFiles = files.getBySuffix('b'),
+                        filenameAa = path.join(suffixLevels[0], 'A', 'A.a'),
+                        filenameBa = path.join(suffixLevels[0], 'B', 'B.a'),
+                        filenameAb = path.join(suffixLevels[0], 'A', 'A.b'),
+                        filenameBb = path.join(suffixLevels[0], 'B', 'B.b');
 
                     aFiles[0].fullname.must.be(filenameAa);
                     aFiles[1].fullname.must.be(filenameBa);
@@ -351,13 +351,13 @@ describe('techs', function () {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
-                    var dirs = result['bundle.dirs'];
-                    var aFiles = dirs.getBySuffix('a-dir');
-                    var bFiles = dirs.getBySuffix('b-dir');
-                    var filenameAa = path.join(suffixLevels[0], 'A', 'A.a-dir');
-                    var filenameBa = path.join(suffixLevels[0], 'B', 'B.a-dir');
-                    var filenameAb = path.join(suffixLevels[0], 'A', 'A.b-dir');
-                    var filenameBb = path.join(suffixLevels[0], 'B', 'B.b-dir');
+                    var dirs = result['bundle.dirs'],
+                        aFiles = dirs.getBySuffix('a-dir'),
+                        bFiles = dirs.getBySuffix('b-dir'),
+                        filenameAa = path.join(suffixLevels[0], 'A', 'A.a-dir'),
+                        filenameBa = path.join(suffixLevels[0], 'B', 'B.a-dir'),
+                        filenameAb = path.join(suffixLevels[0], 'A', 'A.b-dir'),
+                        filenameBb = path.join(suffixLevels[0], 'B', 'B.b-dir');
 
                     aFiles[0].fullname.must.be(filenameAa);
                     aFiles[1].fullname.must.be(filenameBa);

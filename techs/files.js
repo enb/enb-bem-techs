@@ -18,8 +18,8 @@
  * nodeConfig.addTech(require('enb-bem/techs/files'));
  * ```
  */
-var inherit = require('inherit');
-var FileList = require('enb/lib/file-list');
+var inherit = require('inherit'),
+    FileList = require('enb/lib/file-list');
 
 module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
     getName: function () {
@@ -51,20 +51,20 @@ module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
     },
 
     build: function () {
-        var _this = this;
-        var filesTarget = this._filesTarget;
-        var dirsTarget = this._dirsTarget;
+        var _this = this,
+            filesTarget = this._filesTarget,
+            dirsTarget = this._dirsTarget;
 
         return this.node.requireSources([this._depsTarget, this._levelsTarget])
             .spread(function (deps, levels) {
-                var fileList = new FileList();
-                var dirList = new FileList();
-                var files = {};
-                var dirs = {};
+                var fileList = new FileList(),
+                    dirList = new FileList(),
+                    files = {},
+                    dirs = {};
 
                 for (var i = 0, l = deps.length; i < l; i++) {
-                    var dep = deps[i];
-                    var entities;
+                    var dep = deps[i],
+                        entities;
                     if (dep.elem) {
                         entities = levels.getElemEntities(dep.block, dep.elem, dep.mod, dep.val);
                     } else {

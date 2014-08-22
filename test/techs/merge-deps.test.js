@@ -1,12 +1,12 @@
-var FileSystem = require('enb/lib/test/mocks/test-file-system');
-var TestNode = require('enb/lib/test/mocks/test-node');
-var mergeTech = require('../../techs/merge-deps');
+var FileSystem = require('enb/lib/test/mocks/test-file-system'),
+    TestNode = require('enb/lib/test/mocks/test-node'),
+    mergeTech = require('../../techs/merge-deps');
 
 describe('techs', function () {
     describe('deps-merge', function () {
-        var fileSystem;
-        var bundle;
-        var dataBundle;
+        var fileSystem,
+            bundle,
+            dataBundle;
 
         beforeEach(function () {
             fileSystem = new FileSystem([{
@@ -38,7 +38,7 @@ describe('techs', function () {
         });
 
         it('must require result target from data', function (done) {
-            dataBundle.runTechAndRequire(mergeTech, { sources: ['data.deps.js']})
+            dataBundle.runTechAndRequire(mergeTech, { sources: ['data.deps.js'] })
                 .spread(function (result) {
                     result.deps.must.eql([{ block: 'block' }]);
                 })
@@ -46,7 +46,7 @@ describe('techs', function () {
         });
 
         it('must provide result from data', function (done) {
-            dataBundle.runTech(mergeTech, { sources: ['data.deps.js']})
+            dataBundle.runTech(mergeTech, { sources: ['data.deps.js'] })
                 .then(function (deps) {
                     deps.must.eql([{ block: 'block' }]);
                 })
@@ -54,7 +54,7 @@ describe('techs', function () {
         });
 
         it('must require result target from file', function (done) {
-            bundle.runTechAndRequire(mergeTech, { sources: ['block.deps.js']})
+            bundle.runTechAndRequire(mergeTech, { sources: ['block.deps.js'] })
                 .spread(function (result) {
                     result.deps.must.eql([{ block: 'block' }]);
                 })
@@ -86,7 +86,7 @@ describe('techs', function () {
         it('must merge elem with mod of elem', function (done) {
             bundle.runTech(mergeTech, { sources: [
                     'elem.deps.js', 'elem-mod.deps.js'
-                ]})
+                ] })
                 .then(function (bemdecl) {
                     bemdecl.must.eql([
                         { block: 'block', elem: 'elem' },

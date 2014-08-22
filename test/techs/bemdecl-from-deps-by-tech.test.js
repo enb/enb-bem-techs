@@ -1,17 +1,17 @@
-var path = require('path');
-var FileSystem = require('enb/lib/test/mocks/test-file-system');
-var TestNode = require('enb/lib/test/mocks/test-node');
-var levelsTech = require('../../techs/levels');
-var filesTech = require('../../techs/files');
-var depsTech = require('../../techs/deps');
-var bemdeclFromDepsByTechTech = require('../../techs/bemdecl-from-deps-by-tech');
+var path = require('path'),
+    FileSystem = require('enb/lib/test/mocks/test-file-system'),
+    TestNode = require('enb/lib/test/mocks/test-node'),
+    levelsTech = require('../../techs/levels'),
+    filesTech = require('../../techs/files'),
+    depsTech = require('../../techs/deps'),
+    bemdeclFromDepsByTechTech = require('../../techs/bemdecl-from-deps-by-tech');
 
 describe('techs', function () {
     describe('bemdecl-from-deps-by-tech', function () {
-        var fileSystem;
-        var bundle;
-        var shouldLevels;
-        var mustLevels;
+        var fileSystem,
+            bundle,
+            shouldLevels,
+            mustLevels;
 
         beforeEach(function () {
             fileSystem = new FileSystem([{
@@ -21,56 +21,57 @@ describe('techs', function () {
                             tech: 'sourceTech',
                             shouldDeps: [{ tech: 'destTech', block: 'other-block' }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'block-bool-mod', items: [
                         { file: 'block-bool-mod.deps.js', content: stringifyDepsJs({
                             tech: 'sourceTech',
                             shouldDeps: [{ tech: 'destTech', block: 'other-block', mods: { mod: true } }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'block-mod', items: [
                         { file: 'block-mod.deps.js', content: stringifyDepsJs({
                             tech: 'sourceTech',
                             shouldDeps: [{ tech: 'destTech', block: 'other-block', mods: { modName: 'modVal' } }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elem', items: [
                         { file: 'elem.deps.js', content: stringifyDepsJs({
                             tech: 'sourceTech',
                             shouldDeps: [{ tech: 'destTech', block: 'other-block', elem: 'elem' }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elems', items: [
                         { file: 'elems.deps.js', content: stringifyDepsJs({
                             tech: 'sourceTech',
                             shouldDeps: [{ tech: 'destTech', block: 'other-block', elems: ['elem-1', 'elem-2'] }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elem-bool-mod', items: [
                         { file: 'elem-bool-mod.deps.js', content: stringifyDepsJs({
                             tech: 'sourceTech',
                             shouldDeps: [{ tech: 'destTech', block: 'other-block', elem: 'elem', mods: { mod: true } }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elem-mod', items: [
                         { file: 'elem-mod.deps.js', content: stringifyDepsJs({
                             tech: 'sourceTech',
-                            shouldDeps: [{ tech: 'destTech', block: 'other-block', elem: 'elem', mods: { modName: 'modVal' } }]
+                            shouldDeps: [{ tech: 'destTech', block: 'other-block',
+                                elem: 'elem', mods: { modName: 'modVal' } }]
                         }) }
-                    ]},
+                    ] },
 
                     { directory: 'A', items: [
                         { file: 'A.deps.js', content: stringifyDepsJs({
                             tech: 'sourceTech',
                             shouldDeps: [{ tech: 'destTech', block: 'B' }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'B', items: [
                         { file: 'B.deps.js', content: stringifyDepsJs({
                             tech: 'sourceTech',
                             shouldDeps: [{ tech: 'destTech', block: 'A' }]
                         }) }
-                    ]}
+                    ] }
                 ]
             }, {
                 directory: 'must-deps-js.blocks', items: [
@@ -79,56 +80,57 @@ describe('techs', function () {
                             tech: 'sourceTech',
                             mustDeps: [{ tech: 'destTech', block: 'other-block' }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'block-bool-mod', items: [
                         { file: 'block-bool-mod.deps.js', content: stringifyDepsJs({
                             tech: 'sourceTech',
                             mustDeps: [{ tech: 'destTech', block: 'other-block', mods: { mod: true } }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'block-mod', items: [
                         { file: 'block-mod.deps.js', content: stringifyDepsJs({
                             tech: 'sourceTech',
                             mustDeps: [{ tech: 'destTech', block: 'other-block', mods: { modName: 'modVal' } }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elem', items: [
                         { file: 'elem.deps.js', content: stringifyDepsJs({
                             tech: 'sourceTech',
                             mustDeps: [{ tech: 'destTech', block: 'other-block', elem: 'elem' }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elems', items: [
                         { file: 'elems.deps.js', content: stringifyDepsJs({
                             tech: 'sourceTech',
                             mustDeps: [{ tech: 'destTech', block: 'other-block', elems: ['elem-1', 'elem-2'] }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elem-bool-mod', items: [
                         { file: 'elem-bool-mod.deps.js', content: stringifyDepsJs({
                             tech: 'sourceTech',
                             mustDeps: [{ tech: 'destTech', block: 'other-block', elem: 'elem', mods: { mod: true } }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elem-mod', items: [
                         { file: 'elem-mod.deps.js', content: stringifyDepsJs({
                             tech: 'sourceTech',
-                            mustDeps: [{ tech: 'destTech', block: 'other-block', elem: 'elem', mods: { modName: 'modVal' } }]
+                            mustDeps: [{ tech: 'destTech', block: 'other-block',
+                                elem: 'elem', mods: { modName: 'modVal' } }]
                         }) }
-                    ]},
+                    ] },
 
                     { directory: 'A', items: [
                         { file: 'A.deps.js', content: stringifyDepsJs({
                             tech: 'sourceTech',
                             mustDeps: [{ tech: 'destTech', block: 'B' }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'B', items: [
                         { file: 'B.deps.js', content: stringifyDepsJs({
                             tech: 'sourceTech',
                             mustDeps: [{ tech: 'destTech', block: 'A' }]
                         }) }
-                    ]}
+                    ] }
                 ]
             }, {
                 directory: 'bundle', items: [
@@ -268,7 +270,7 @@ describe('techs', function () {
                 })
                 .spread(function (target) {
                     target.blocks.must.eql([
-                        { name: 'other-block', elems: [{ name: 'elem'}] }
+                        { name: 'other-block', elems: [{ name: 'elem' }] }
                     ]);
                 })
                 .then(done, done);
@@ -299,8 +301,8 @@ describe('techs', function () {
                 .spread(function (target) {
                     target.blocks.must.eql([
                         { name: 'other-block' },
-                        { name: 'other-block', elems: [{ name: 'elem-1'}] },
-                        { name: 'other-block', elems: [{ name: 'elem-2'}] }
+                        { name: 'other-block', elems: [{ name: 'elem-1' }] },
+                        { name: 'other-block', elems: [{ name: 'elem-2' }] }
                     ]);
                 })
                 .then(done, done);
@@ -397,7 +399,7 @@ describe('techs', function () {
                 .spread(function (target) {
                     target.blocks.must.eql([
 //                        { block: 'A' },
-                        { name: 'B'}
+                        { name: 'B' }
                     ]);
                 })
                 .then(done, done);
@@ -517,7 +519,7 @@ describe('techs', function () {
                 })
                 .spread(function (target) {
                     target.blocks.must.eql([
-                        { name: 'other-block', elems: [{ name: 'elem'}] }
+                        { name: 'other-block', elems: [{ name: 'elem' }] }
                     ]);
                 })
                 .then(done, done);
@@ -548,8 +550,8 @@ describe('techs', function () {
                 .spread(function (target) {
                     target.blocks.must.eql([
                         { name: 'other-block' },
-                        { name: 'other-block', elems: [{ name: 'elem-1'}] },
-                        { name: 'other-block', elems: [{ name: 'elem-2'}] }
+                        { name: 'other-block', elems: [{ name: 'elem-1' }] },
+                        { name: 'other-block', elems: [{ name: 'elem-2' }] }
                     ]);
                 })
                 .then(done, done);
@@ -581,7 +583,7 @@ describe('techs', function () {
                     target.blocks.must.eql([
                         {
                             name: 'other-block',
-                            elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }]}]
+                            elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }]
                         }
                     ]);
                 })
@@ -614,7 +616,7 @@ describe('techs', function () {
                     target.blocks.must.eql([
                         {
                             name: 'other-block',
-                            elems: [{ name: 'elem', mods: [{ name: 'modName', vals: [{ name: 'modVal' }] }]}]
+                            elems: [{ name: 'elem', mods: [{ name: 'modName', vals: [{ name: 'modVal' }] }] }]
                         }
                     ]);
                 })

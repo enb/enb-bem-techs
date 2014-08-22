@@ -1,20 +1,20 @@
-var path = require('path');
-var FileSystem = require('enb/lib/test/mocks/test-file-system');
-var TestNode = require('enb/lib/test/mocks/test-node');
-var levelsTech = require('../../techs/levels');
-var depsTech = require('../../techs/deps');
+var path = require('path'),
+    FileSystem = require('enb/lib/test/mocks/test-file-system'),
+    TestNode = require('enb/lib/test/mocks/test-node'),
+    levelsTech = require('../../techs/levels'),
+    depsTech = require('../../techs/deps');
 
 describe('techs', function () {
     describe('deps', function () {
-        var fileSystem;
-        var bundle;
-        var dataBundle;
-        var shouldJsLevels;
-        var mustJsLevels;
-        var noShouldJsLevels;
-        var noMustJsLevels;
-        var shouldYamlLevels;
-        var mustYamlLevels;
+        var fileSystem,
+            bundle,
+            dataBundle,
+            shouldJsLevels,
+            mustJsLevels,
+            noShouldJsLevels,
+            noMustJsLevels,
+            shouldYamlLevels,
+            mustYamlLevels;
 
         beforeEach(function () {
             fileSystem = new FileSystem([{
@@ -23,48 +23,48 @@ describe('techs', function () {
                         { file: 'block.deps.js', content: stringifyDepsJs({
                             shouldDeps: [{ block: 'other-block' }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'block-bool-mod', items: [
                         { file: 'block-bool-mod.deps.js', content: stringifyDepsJs({
                             shouldDeps: [{ block: 'other-block', mods: { mod: true } }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'block-mod', items: [
                         { file: 'block-mod.deps.js', content: stringifyDepsJs({
                             shouldDeps: [{ block: 'other-block', mods: { modName: 'modVal' } }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elem', items: [
                         { file: 'elem.deps.js', content: stringifyDepsJs({
                             shouldDeps: [{ block: 'other-block', elem: 'elem' }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elems', items: [
                         { file: 'elems.deps.js', content: stringifyDepsJs({
                             shouldDeps: [{ block: 'other-block', elems: ['elem-1', 'elem-2'] }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elem-bool-mod', items: [
                         { file: 'elem-bool-mod.deps.js', content: stringifyDepsJs({
                             shouldDeps: [{ block: 'other-block', elem: 'elem', mods: { mod: true } }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elem-mod', items: [
                         { file: 'elem-mod.deps.js', content: stringifyDepsJs({
                             shouldDeps: [{ block: 'other-block', elem: 'elem', mods: { modName: 'modVal' } }]
                         }) }
-                    ]},
+                    ] },
 
                     { directory: 'A', items: [
                         { file: 'A.deps.js', content: stringifyDepsJs({
                             shouldDeps: [{ block: 'B' }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'B', items: [
                         { file: 'B.deps.js', content: stringifyDepsJs({
                             shouldDeps: [{ block: 'A' }]
                         }) }
-                    ]}
+                    ] }
                 ]
             }, {
                 directory: 'must-deps-js.blocks', items: [
@@ -72,48 +72,48 @@ describe('techs', function () {
                         { file: 'block.deps.js', content: stringifyDepsJs({
                             mustDeps: [{ block: 'other-block' }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'block-bool-mod', items: [
                         { file: 'block-bool-mod.deps.js', content: stringifyDepsJs({
                             mustDeps: [{ block: 'other-block', mods: { mod: true } }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'block-mod', items: [
                         { file: 'block-mod.deps.js', content: stringifyDepsJs({
                             mustDeps: [{ block: 'other-block', mods: { modName: 'modVal' } }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elem', items: [
                         { file: 'elem.deps.js', content: stringifyDepsJs({
                             mustDeps: [{ block: 'other-block', elem: 'elem' }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elems', items: [
                         { file: 'elems.deps.js', content: stringifyDepsJs({
                             mustDeps: [{ block: 'other-block', elems: ['elem-1', 'elem-2'] }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elem-bool-mod', items: [
                         { file: 'elem-bool-mod.deps.js', content: stringifyDepsJs({
                             mustDeps: [{ block: 'other-block', elem: 'elem', mods: { mod: true } }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elem-mod', items: [
                         { file: 'elem-mod.deps.js', content: stringifyDepsJs({
                             mustDeps: [{ block: 'other-block', elem: 'elem', mods: { modName: 'modVal' } }]
                         }) }
-                    ]},
+                    ] },
 
                     { directory: 'A', items: [
                         { file: 'A.deps.js', content: stringifyDepsJs({
                             mustDeps: [{ block: 'B' }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'B', items: [
                         { file: 'B.deps.js', content: stringifyDepsJs({
                             mustDeps: [{ block: 'A' }]
                         }) }
-                    ]}
+                    ] }
                 ]
             }, {
                 directory: 'no-deps-js.blocks', items: [
@@ -121,113 +121,113 @@ describe('techs', function () {
                         { file: 'block.deps.js', content: stringifyDepsJs({
                             noDeps: [{ block: 'other-block' }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'block-bool-mod', items: [
                         { file: 'block-bool-mod.deps.js', content: stringifyDepsJs({
                             noDeps: [{ block: 'other-block', mods: { mod: true } }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'block-mod', items: [
                         { file: 'block-mod.deps.js', content: stringifyDepsJs({
                             noDeps: [{ block: 'other-block', mods: { modName: 'modVal' } }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elem', items: [
                         { file: 'elem.deps.js', content: stringifyDepsJs({
                             noDeps: [{ block: 'other-block', elem: 'elem' }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elems', items: [
                         { file: 'elems.deps.js', content: stringifyDepsJs({
                             noDeps: [{ block: 'other-block', elems: ['elem-1', 'elem-2'] }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elem-bool-mod', items: [
                         { file: 'elem-bool-mod.deps.js', content: stringifyDepsJs({
                             noDeps: [{ block: 'other-block', elem: 'elem', mods: { mod: true } }]
                         }) }
-                    ]},
+                    ] },
                     { directory: 'elem-mod', items: [
                         { file: 'elem-mod.deps.js', content: stringifyDepsJs({
                             noDeps: [{ block: 'other-block', elem: 'elem', mods: { modName: 'modVal' } }]
                         }) }
-                    ]},
+                    ] },
 
                     { directory: 'B', items: [
                         { file: 'B.deps.js', content: stringifyDepsJs({
                             noDeps: [{ block: 'A' }]
                         }) }
-                    ]}
+                    ] }
                 ]
             }, {
                 directory: 'should-deps-yaml.blocks', items: [
                     { directory: 'block', items: [
                         { file: 'block.deps.yaml', content: '- block: other-block' }
-                    ]},
+                    ] },
                     { directory: 'block-bool-mod', items: [
                         { file: 'block-bool-mod.deps.yaml', content: '- block: other-block\n  mods: { mod: true }' }
-                    ]},
+                    ] },
                     { directory: 'block-mod', items: [
                         { file: 'block-mod.deps.yaml', content: '- block: other-block\n  mods: { modName: modVal }' }
-                    ]},
+                    ] },
                     { directory: 'elem', items: [
                         { file: 'elem.deps.yaml', content: '- block: other-block\n  elem: elem' }
-                    ]},
+                    ] },
                     { directory: 'elems', items: [
                         { file: 'elems.deps.yaml', content: '- block: other-block\n  elems: [elem-1, elem-2]' }
-                    ]},
+                    ] },
                     { directory: 'elem-bool-mod', items: [
                         { file: 'elem-bool-mod.deps.yaml',
                           content: '- block: other-block\n  elem: elem\n  mods: { mod: true }' }
-                    ]},
+                    ] },
                     { directory: 'elem-mod', items: [
                         { file: 'elem-mod.deps.yaml',
                           content: '- block: other-block\n  elem: elem\n  mods: { modName: modVal }' }
-                    ]},
+                    ] },
 
                     { directory: 'A', items: [
                         { file: 'A.deps.yaml', content: '- A' }
-                    ]},
+                    ] },
                     { directory: 'B', items: [
                         { file: 'B.deps.yaml', content: '- B' }
-                    ]}
+                    ] }
                 ]
             }, {
                 directory: 'must-deps-yaml.blocks', items: [
                     { directory: 'block', items: [
                         { file: 'block.deps.yaml', content: '- block: other-block\n  required: true' }
-                    ]},
+                    ] },
                     { directory: 'block-bool-mod', items: [
                         { file: 'block-bool-mod.deps.yaml',
                           content: '- block: other-block\n  required: true\n  mods: { mod: true }' }
-                    ]},
+                    ] },
                     { directory: 'block-mod', items: [
                         { file: 'block-mod.deps.yaml',
                           content: '- block: other-block\n  required: true\n  mods: { modName: modVal }' }
-                    ]},
+                    ] },
                     { directory: 'elem', items: [
                         { file: 'elem.deps.yaml',
                           content: '- block: other-block\n  required: true\n  elem: elem' }
-                    ]},
+                    ] },
                     { directory: 'elems', items: [
                         { file: 'elems.deps.yaml',
                           content: '- block: other-block\n  required: true\n  elems: [elem-1, elem-2]' }
-                    ]},
+                    ] },
                     { directory: 'elem-bool-mod', items: [
                         { file: 'elem-bool-mod.deps.yaml',
                           content: '- block: other-block\n  required: true\n  elem: elem\n  mods: { mod: true }' }
-                    ]},
+                    ] },
                     { directory: 'elem-mod', items: [
                         { file: 'elem-mod.deps.yaml',
                           content: '- block: other-block\n  required: true\n  elem: elem\n  mods: { modName: modVal }' }
-                    ]},
+                    ] },
 
                     { directory: 'A', items: [
                         { file: 'A.deps.yaml', content: '- block: A\n  required: true' }
-                    ]},
+                    ] },
                     { directory: 'B', items: [
                         { file: 'B.deps.yaml', content: '- block: B\n  required: true' }
-                    ]}
+                    ] }
                 ]
             }, {
                 directory: 'bundle', items: [
@@ -459,7 +459,7 @@ describe('techs', function () {
                     .spread(function (target) {
                         target.deps.must.eql([
                             { block: 'A' },
-                            { block: 'B'}
+                            { block: 'B' }
                         ]);
                     })
                     .then(done, done);
@@ -701,7 +701,7 @@ describe('techs', function () {
                     .spread(function (target) {
                         target.deps.must.eql([
                             { block: 'A' },
-                            { block: 'B'}
+                            { block: 'B' }
                         ]);
                     })
                     .then(done, done);
@@ -807,7 +807,7 @@ describe('techs', function () {
                     })
                     .spread(function (target) {
                         target.deps.must.eql([
-                            { block: 'B'},
+                            { block: 'B' },
                             { block: 'A' }
                         ]);
                     })
@@ -948,7 +948,7 @@ describe('techs', function () {
                     .spread(function (target) {
                         target.deps.must.eql([
                             { block: 'A' },
-                            { block: 'B'}
+                            { block: 'B' }
                         ]);
                     })
                     .then(done, done);

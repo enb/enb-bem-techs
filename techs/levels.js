@@ -10,7 +10,7 @@
  * * *String* **target** — Результирующий таргет. По умолчанию — `?.levels`.
  * * *(String|Object)[]* **levels** — Уровни переопределения. Полные пути к папкам с уровнями переопределения.
  *   Вместо строки с путем к уровню может использоваться объект вида
- *   `{path: '/home/user/www/proj/lego/blocks-desktop', check: false}` для того,
+ *   `{ path: '/home/user/www/proj/lego/blocks-desktop', check: false }` для того,
  *   чтобы закэшировать содержимое тех уровней переопределения, которые не модифицируются в рамках проекта.
  *
  * **Пример**
@@ -18,7 +18,7 @@
  * ```javascript
  * nodeConfig.addTech([require('enb/techs/levels'), {
  *     levels: [
- *         {path: 'lego/blocks-desktop', check: false},
+ *         { path: 'lego/blocks-desktop', check: false },
  *         'desktop.blocks'
  *     ].map(function (level) {
  *         return config.resolvePath(level);
@@ -26,12 +26,12 @@
  * }]);
  * ```
  */
-var path = require('path');
-var inherit = require('inherit');
-var vow = require('vow');
-var vfs = require('enb/lib/fs/async-fs');
-var Level = require('../lib/levels/level');
-var Levels = require('../lib/levels/levels');
+var path = require('path'),
+    inherit = require('inherit'),
+    vow = require('vow'),
+    vfs = require('enb/lib/fs/async-fs'),
+    Level = require('../lib/levels/level'),
+    Levels = require('../lib/levels/levels');
 
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
@@ -50,18 +50,18 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
     },
 
     build: function () {
-        var _this = this;
-        var target = this._target;
-        var levelList = [];
-        var levelsToCache = [];
-        var levelsIndex = {};
-        var cache = this.node.getNodeCache(target);
+        var _this = this,
+            target = this._target,
+            levelList = [],
+            levelsToCache = [],
+            levelsIndex = {},
+            cache = this.node.getNodeCache(target);
 
         for (var i = 0, l = this._levelConfig.length; i < l; i++) {
             var levelInfo = this._levelConfig[i];
-            levelInfo = typeof levelInfo === 'object' ? levelInfo : {path: levelInfo};
-            var levelPath = levelInfo.path;
-            var levelKey = 'level:' + levelPath;
+            levelInfo = typeof levelInfo === 'object' ? levelInfo : { path: levelInfo };
+            var levelPath = levelInfo.path,
+                levelKey = 'level:' + levelPath;
             if (levelsIndex[levelPath]) {
                 continue;
             }

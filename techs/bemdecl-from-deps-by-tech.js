@@ -22,10 +22,10 @@
  * });
  * ```
  */
-var vm = require('vm');
-var vow = require('vow');
-var vfs = require('enb/lib/fs/async-fs');
-var deps = require('../lib/deps/deps');
+var vm = require('vm'),
+    vow = require('vow'),
+    vfs = require('enb/lib/fs/async-fs'),
+    deps = require('../lib/deps/deps');
 
 /**
  * @type {Tech}
@@ -40,15 +40,15 @@ module.exports = require('enb/lib/build-flow').create()
         return 'exports.blocks = ' + JSON.stringify(bemdecl, null, 4) + ';\n';
     })
     .builder(function (depsFiles) {
-        var sourceTech = this._sourceTech;
-        var destTech = this._destTech;
+        var sourceTech = this._sourceTech,
+            destTech = this._destTech;
         return vow.all(depsFiles.map(function (file) {
             return vfs.read(file.fullname, 'utf8').then(function (text) {
-                return {file: file, text: text };
+                return { file: file, text: text };
             });
         })).then(function (depResults) {
-            var result = [];
-            var depIndex = {};
+            var result = [],
+                depIndex = {};
             depResults.forEach(function (depResult) {
                 var fileDeps = vm.runInThisContext(depResult.text);
                 if (!fileDeps) {

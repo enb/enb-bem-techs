@@ -26,13 +26,13 @@
  * }]);
  * ```
  */
-var inherit = require('inherit');
-var vow = require('vow');
-var vfs = require('enb/lib/fs/async-fs');
-var asyncRequire = require('enb/lib/fs/async-require');
-var dropRequireCache = require('enb/lib/fs/drop-require-cache');
-var OldDeps = require('../exlib/deps-old').OldDeps;
-var deps = require('../lib/deps/deps');
+var inherit = require('inherit'),
+    vow = require('vow'),
+    vfs = require('enb/lib/fs/async-fs'),
+    asyncRequire = require('enb/lib/fs/async-require'),
+    dropRequireCache = require('enb/lib/fs/drop-require-cache'),
+    OldDeps = require('../exlib/deps-old').OldDeps,
+    deps = require('../lib/deps/deps');
 
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
@@ -71,12 +71,12 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
     },
 
     build: function () {
-        var node = this.node;
-        var target = this._target;
-        var targetFilename = node.resolvePath(target);
-        var cache = node.getNodeCache(target);
-        var format = this._format;
-        var sourceDepsFilename = this.node.resolvePath(this._sourceDepsFile);
+        var node = this.node,
+            target = this._target,
+            targetFilename = node.resolvePath(target),
+            cache = node.getNodeCache(target),
+            format = this._format,
+            sourceDepsFilename = this.node.resolvePath(this._sourceDepsFile);
 
         return this.node.requireSources([this._levelsTarget, this._sourceDepsFile])
             .spread(function (levels, sourceDeps) {
@@ -90,8 +90,8 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                         .then(function (sourceDeps) {
                             return (new OldDeps(sourceDeps).expandByFS({ levels: levels }))
                                 .then(function (resolvedDeps) {
-                                    var resultDeps = resolvedDeps.getDeps();
-                                    var str = 'exports.deps = ' + JSON.stringify(resultDeps, null, 4) + ';\n';
+                                    var resultDeps = resolvedDeps.getDeps(),
+                                        str = 'exports.deps = ' + JSON.stringify(resultDeps, null, 4) + ';\n';
 
                                     return vfs.write(targetFilename, str, 'utf8')
                                         .then(function () {
@@ -131,7 +131,7 @@ function requireSourceDeps(data, filename, format) {
                 })
         ))
         .then(function (sourceDeps) {
-            if ('deps' === format) {
+            if (format === 'deps') {
                 sourceDeps = deps.toBemdecl(sourceDeps);
             }
 

@@ -28,12 +28,12 @@
  * ]);
  * ```
  */
-var inherit = require('inherit');
-var vow = require('vow');
-var vfs = require('enb/lib/fs/async-fs');
-var asyncRequire = require('enb/lib/fs/async-require');
-var dropRequireCache = require('enb/lib/fs/drop-require-cache');
-var deps = require('../lib/deps/deps');
+var inherit = require('inherit'),
+    vow = require('vow'),
+    vfs = require('enb/lib/fs/async-fs'),
+    asyncRequire = require('enb/lib/fs/async-require'),
+    dropRequireCache = require('enb/lib/fs/drop-require-cache'),
+    deps = require('../lib/deps/deps');
 
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
@@ -72,12 +72,12 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
     },
 
     build: function () {
-        var node = this.node;
-        var target = this._target;
-        var cache = node.getNodeCache(target);
-        var targetFilename = node.resolvePath(target);
-        var fromFilename = node.resolvePath(this._fromTarget);
-        var whatFilename = node.resolvePath(this._whatTarget);
+        var node = this.node,
+            target = this._target,
+            cache = node.getNodeCache(target),
+            targetFilename = node.resolvePath(target),
+            fromFilename = node.resolvePath(this._fromTarget),
+            whatFilename = node.resolvePath(this._whatTarget);
 
         return this.node.requireSources([this._fromTarget, this._whatTarget])
             .spread(function (fromDeps, whatDeps) {
@@ -90,8 +90,8 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                             requireDeps(whatDeps, whatFilename)
                         ])
                         .spread(function (fromDeps, whatDeps) {
-                            var subtractedDeps = deps.subtract(fromDeps, whatDeps);
-                            var str = 'exports.deps = ' + JSON.stringify(subtractedDeps, null, 4) + ';';
+                            var subtractedDeps = deps.subtract(fromDeps, whatDeps),
+                                str = 'exports.deps = ' + JSON.stringify(subtractedDeps, null, 4) + ';';
 
                             return vfs.write(targetFilename, str, 'utf-8')
                                 .then(function () {

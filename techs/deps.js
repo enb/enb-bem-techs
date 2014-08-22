@@ -26,13 +26,13 @@
  * }]);
  * ```
  */
-var inherit = require('inherit');
-var vow = require('vow');
-var vfs = require('enb/lib/fs/async-fs');
-var asyncRequire = require('enb/lib/fs/async-require');
-var dropRequireCache = require('enb/lib/fs/drop-require-cache');
-var DepsResolver = require('../lib/deps/deps-resolver');
-var deps = require('../lib/deps/deps');
+var inherit = require('inherit'),
+    vow = require('vow'),
+    vfs = require('enb/lib/fs/async-fs'),
+    asyncRequire = require('enb/lib/fs/async-require'),
+    dropRequireCache = require('enb/lib/fs/drop-require-cache'),
+    DepsResolver = require('../lib/deps/deps-resolver'),
+    deps = require('../lib/deps/deps');
 
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
@@ -70,12 +70,12 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
     },
 
     build: function () {
-        var node = this.node;
-        var target = this._target;
-        var targetFilename = node.resolvePath(target);
-        var cache = node.getNodeCache(target);
-        var format = this._format;
-        var sourceDepsFilename = this.node.resolvePath(this._sourceDepsFile);
+        var node = this.node,
+            target = this._target,
+            targetFilename = node.resolvePath(target),
+            cache = node.getNodeCache(target),
+            format = this._format,
+            sourceDepsFilename = this.node.resolvePath(this._sourceDepsFile);
 
         return this.node.requireSources([this._levelsTarget, this._sourceDepsFile])
             .spread(function (levels, sourceDeps) {
@@ -87,13 +87,13 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                 ) {
                     return requireSourceDeps(sourceDeps, sourceDepsFilename, format)
                         .then(function (sourceDeps) {
-                            var resolver = new DepsResolver(levels);
-                            var decls = resolver.normalizeDeps(sourceDeps);
+                            var resolver = new DepsResolver(levels),
+                                decls = resolver.normalizeDeps(sourceDeps);
 
                             return resolver.addDecls(decls)
                                 .then(function () {
-                                    var resolvedDeps = resolver.resolve();
-                                    var str = 'exports.deps = ' + JSON.stringify(resolvedDeps, null, 4) + ';\n';
+                                    var resolvedDeps = resolver.resolve(),
+                                        str = 'exports.deps = ' + JSON.stringify(resolvedDeps, null, 4) + ';\n';
 
                                     return vfs.write(targetFilename, str, 'utf8')
                                         .then(function () {
@@ -123,17 +123,17 @@ function requireSourceDeps(data, filename, format) {
         dropRequireCache(require, filename),
         asyncRequire(filename)
             .then(function (result) {
-                if ('bemdecl' === format) {
+                if (format === 'bemdecl') {
                     return result.blocks;
                 }
 
-                if ('deps' === format) {
+                if (format === 'deps') {
                     return result.deps;
                 }
             })
         ))
         .then(function (sourceDeps) {
-            if ('bemdecl' === format) {
+            if (format === 'bemdecl') {
                 sourceDeps = deps.fromBemdecl(sourceDeps);
             }
 

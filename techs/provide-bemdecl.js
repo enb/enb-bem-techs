@@ -23,11 +23,11 @@
  * }]);
  * ```
  */
-var inherit = require('inherit');
-var vow = require('vow');
-var vfs = require('enb/lib/fs/async-fs');
-var asyncRequire = require('enb/lib/fs/async-require');
-var dropRequireCache = require('enb/lib/fs/drop-require-cache');
+var inherit = require('inherit'),
+    vow = require('vow'),
+    vfs = require('enb/lib/fs/async-fs'),
+    asyncRequire = require('enb/lib/fs/async-require'),
+    dropRequireCache = require('enb/lib/fs/drop-require-cache');
 
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
@@ -67,17 +67,17 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
     },
 
     build: function () {
-        var node = this.node;
-        var target = this._target;
-        var fromNode = this._fromNode;
-        var sourceTarget = this._sourceTarget;
-        var targetFilename = node.resolvePath(target);
-        var sourceFilename = node.resolveNodePath(fromNode, sourceTarget);
-        var cache = node.getNodeCache(target);
-        var requirements = {};
+        var node = this.node,
+            target = this._target,
+            fromNode = this._fromNode,
+            sourceTarget = this._sourceTarget,
+            targetFilename = node.resolvePath(target),
+            sourceFilename = node.resolveNodePath(fromNode, sourceTarget),
+            cache = node.getNodeCache(target),
+            requirements = {};
 
         requirements[fromNode] = [sourceTarget];
-        
+
         return node.requireNodeSources(requirements)
             .then(function (results) {
                 var preBemdecl = results[fromNode][0];

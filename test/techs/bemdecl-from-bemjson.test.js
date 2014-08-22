@@ -1,11 +1,11 @@
-var FileSystem = require('enb/lib/test/mocks/test-file-system');
-var TestNode = require('enb/lib/test/mocks/test-node');
-var bemdeclTech = require('../../techs/bemdecl-from-bemjson');
+var FileSystem = require('enb/lib/test/mocks/test-file-system'),
+    TestNode = require('enb/lib/test/mocks/test-node'),
+    bemdeclTech = require('../../techs/bemdecl-from-bemjson');
 
 describe('techs', function () {
     describe('bemdecl-from-bemjson', function () {
-        var fileSystem;
-        var bundle;
+        var fileSystem,
+            bundle;
 
         beforeEach(function () {
             fileSystem = new FileSystem([{

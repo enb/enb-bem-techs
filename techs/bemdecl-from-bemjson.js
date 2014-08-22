@@ -16,12 +16,12 @@
  * ```
  *
  */
-var inherit = require('inherit');
-var vfs = require('enb/lib/fs/async-fs');
-var requireOrEval = require('enb/lib/fs/require-or-eval');
-var asyncRequire = require('enb/lib/fs/async-require');
-var dropRequireCache = require('enb/lib/fs/drop-require-cache');
-var deps = require('../lib/deps/deps');
+var inherit = require('inherit'),
+    vfs = require('enb/lib/fs/async-fs'),
+    requireOrEval = require('enb/lib/fs/require-or-eval'),
+    asyncRequire = require('enb/lib/fs/async-require'),
+    dropRequireCache = require('enb/lib/fs/drop-require-cache'),
+    deps = require('../lib/deps/deps');
 
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
@@ -54,11 +54,11 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
     },
 
     build: function () {
-        var node = this.node;
-        var target = this._target;
-        var cache = node.getNodeCache(target);
-        var bemdeclFilename = node.resolvePath(target);
-        var bemjsonFilename = node.resolvePath(this._sourceTarget);
+        var node = this.node,
+            target = this._target,
+            cache = node.getNodeCache(target),
+            bemdeclFilename = node.resolvePath(target),
+            bemjsonFilename = node.resolvePath(this._sourceTarget);
 
         return this.node.requireSources([this._sourceTarget])
             .then(function () {
@@ -67,9 +67,9 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                 ) {
                     return requireOrEval(bemjsonFilename)
                         .then(function (bemjson) {
-                            var bemjsonDeps = getDepsFromBemjson(bemjson);
-                            var bemdecl = deps.toBemdecl(bemjsonDeps);
-                            var str = 'exports.blocks = ' + JSON.stringify(bemdecl, null, 4) + ';\n';
+                            var bemjsonDeps = getDepsFromBemjson(bemjson),
+                                bemdecl = deps.toBemdecl(bemjsonDeps),
+                                str = 'exports.blocks = ' + JSON.stringify(bemdecl, null, 4) + ';\n';
 
                             return vfs.write(bemdeclFilename, str, 'utf-8')
                                 .then(function () {
@@ -111,7 +111,7 @@ function addDepsFromBemjson(bemjson, deps, depsIndex, parentBlockName) {
             if (bemjson.elem && !bemjson.block) {
                 bemjson.block = parentBlockName;
             }
-            var dep = {block: bemjson.block};
+            var dep = { block: bemjson.block };
             if (bemjson.elem) {
                 dep.elem = bemjson.elem;
             }
@@ -126,7 +126,7 @@ function addDepsFromBemjson(bemjson, deps, depsIndex, parentBlockName) {
             if (bemjson.mods) {
                 for (var j in bemjson.mods) {
                     if (bemjson.mods.hasOwnProperty(j)) {
-                        var subDep = {block: bemjson.block};
+                        var subDep = { block: bemjson.block };
                         if (bemjson.elem) {
                             subDep.elem = bemjson.elem;
                         }

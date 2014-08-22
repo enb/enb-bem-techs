@@ -1,10 +1,10 @@
-var path = require('path');
-var Level = require('../lib/levels/level');
-var LevelPlain = require('../lib/levels/level-plain');
+var path = require('path'),
+    Level = require('../lib/levels/level'),
+    LevelPlain = require('../lib/levels/level-plain'),
 
-var fixturesDirname = path.resolve(__dirname, 'fixtures');
-var nestedLevelDirname = path.join(fixturesDirname, 'nested-level');
-var simpleLevelDirname = path.join(fixturesDirname, 'simple-level');
+    fixturesDirname = path.resolve(__dirname, 'fixtures'),
+    nestedLevelDirname = path.join(fixturesDirname, 'nested-level'),
+    simpleLevelDirname = path.join(fixturesDirname, 'simple-level');
 
 suite('scan level', function () {
     set('iterations', 10000);
