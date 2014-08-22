@@ -60,32 +60,35 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         var bemdeclFilename = node.resolvePath(target);
         var bemjsonFilename = node.resolvePath(this._sourceTarget);
 
-        if (cache.needRebuildFile('bemdecl-file', bemdeclFilename) ||
-            cache.needRebuildFile('bemjson-file', bemjsonFilename)
-        ) {
-            return requireOrEval(bemjsonFilename)
-                .then(function (bemjson) {
-                    var bemjsonDeps = getDepsFromBemjson(bemjson);
-                    var bemdecl = deps.toBemdecl(bemjsonDeps);
-                    var str = 'exports.blocks = ' + JSON.stringify(bemdecl, null, 4) + ';\n';
+        return this.node.requireSources([this._sourceTarget])
+            .then(function () {
+                if (cache.needRebuildFile('bemdecl-file', bemdeclFilename) ||
+                    cache.needRebuildFile('bemjson-file', bemjsonFilename)
+                ) {
+                    return requireOrEval(bemjsonFilename)
+                        .then(function (bemjson) {
+                            var bemjsonDeps = getDepsFromBemjson(bemjson);
+                            var bemdecl = deps.toBemdecl(bemjsonDeps);
+                            var str = 'exports.blocks = ' + JSON.stringify(bemdecl, null, 4) + ';\n';
 
-                    return vfs.write(bemdeclFilename, str, 'utf-8')
-                        .then(function () {
-                            cache.cacheFileInfo('bemdecl-file', bemdeclFilename);
-                            cache.cacheFileInfo('bemjson-file', bemjsonFilename);
-                            node.resolveTarget(target, bemdecl);
+                            return vfs.write(bemdeclFilename, str, 'utf-8')
+                                .then(function () {
+                                    cache.cacheFileInfo('bemdecl-file', bemdeclFilename);
+                                    cache.cacheFileInfo('bemjson-file', bemjsonFilename);
+                                    node.resolveTarget(target, bemdecl);
+                                });
                         });
-                });
-        } else {
-            node.isValidTarget(target);
-            dropRequireCache(require, bemdeclFilename);
+                } else {
+                    node.isValidTarget(target);
+                    dropRequireCache(require, bemdeclFilename);
 
-            return asyncRequire(bemdeclFilename)
-                .then(function (result) {
-                    node.resolveTarget(target, result.blocks);
-                    return null;
-                });
-        }
+                    return asyncRequire(bemdeclFilename)
+                        .then(function (result) {
+                            node.resolveTarget(target, result.blocks);
+                            return null;
+                        });
+                }
+            });
     }
 });
 
