@@ -9,10 +9,13 @@ describe('techs', function () {
             bundle,
             desktopBundle,
             blocksDirname,
-            fullyBlockDirname,
             commonLevel,
             desktopLevel,
-            desktopLevels;
+            desktopLevels,
+            fullyBlockDirname,
+            fullyCommonLevel,
+            fullyDesktopLevel,
+            fullyDesktopLevels;
 
         beforeEach(function () {
             fileSystem = new FileSystem([
@@ -90,11 +93,16 @@ describe('techs', function () {
             bundle = new TestNode('bundle');
             desktopBundle = new TestNode('desktop.bundle');
 
-            blocksDirname = path.join(fileSystem._root, 'blocks');
-            fullyBlockDirname = path.join(blocksDirname, 'fully-block');
-            commonLevel = path.join(fileSystem._root, 'common.blocks');
-            desktopLevel = path.join(fileSystem._root, 'desktop.blocks');
+            blocksDirname = 'blocks';
+            commonLevel = 'common.blocks';
+            desktopLevel = 'desktop.blocks';
             desktopLevels = [commonLevel, desktopLevel];
+
+            fullyBlockDirname = path.join(fileSystem._root, 'blocks', 'fully-block');
+
+            fullyCommonLevel = path.join(fileSystem._root, commonLevel);
+            fullyDesktopLevel = path.join(fileSystem._root, desktopLevel);
+            fullyDesktopLevels = [fullyCommonLevel, fullyDesktopLevel];
         });
 
         afterEach(function () {
@@ -249,8 +257,8 @@ describe('techs', function () {
             desktopBundle.runTech(LevelsTech, { levels: desktopLevels })
                 .then(function (levels) {
                     var files = levels.getBlockFiles('block-1'),
-                        filename1 = path.join(commonLevel, 'block-1', 'block-1'),
-                        filename2 = path.join(desktopLevel, 'block-1', 'block-1');
+                        filename1 = path.join(fullyCommonLevel, 'block-1', 'block-1'),
+                        filename2 = path.join(fullyDesktopLevel, 'block-1', 'block-1');
 
                     files[0].fullname.must.be(filename1);
                     files[1].fullname.must.be(filename2);
@@ -262,8 +270,21 @@ describe('techs', function () {
             desktopBundle.runTech(LevelsTech, { levels: desktopLevels })
                 .then(function (levels) {
                     var dirs = levels.getBlockEntities('block-1').dirs,
-                        commonDirname = path.join(commonLevel, 'block-1', 'block-1.dir'),
-                        desktopDirname = path.join(desktopLevel, 'block-1', 'block-1.dir');
+                        commonDirname = path.join(fullyCommonLevel, 'block-1', 'block-1.dir'),
+                        desktopDirname = path.join(fullyDesktopLevel, 'block-1', 'block-1.dir');
+
+                    dirs[0].fullname.must.be(commonDirname);
+                    dirs[1].fullname.must.be(desktopDirname);
+                })
+                .then(done, done);
+        });
+
+        it('must handle full paths', function (done) {
+            desktopBundle.runTech(LevelsTech, { levels: fullyDesktopLevels })
+                .then(function (levels) {
+                    var dirs = levels.getBlockEntities('block-1').dirs,
+                        commonDirname = path.join(fullyCommonLevel, 'block-1', 'block-1.dir'),
+                        desktopDirname = path.join(fullyDesktopLevel, 'block-1', 'block-1.dir');
 
                     dirs[0].fullname.must.be(commonDirname);
                     dirs[1].fullname.must.be(desktopDirname);
