@@ -3,13 +3,83 @@ enb-bem-techs
 
 [![NPM version](http://img.shields.io/npm/v/enb-bem-techs.svg?style=flat)](http://www.npmjs.org/package/enb-bem-techs) [![Build Status](http://img.shields.io/travis/enb-bem/enb-bem-techs/master.svg?style=flat)](https://travis-ci.org/enb-bem/enb-bem-techs) [![Coverage Status](https://img.shields.io/coveralls/enb-bem/enb-bem-techs.svg?style=flat)](https://coveralls.io/r/enb-bem/enb-bem-techs?branch=master) [![Dependency Status](http://img.shields.io/david/enb-bem/enb-bem-techs.svg?style=flat)](https://david-dm.org/enb-bem/enb-bem-techs)
 
+Пакет для сборки проектов, в основе которых лежит [БЭМ методология](http://ru.bem.info/method/).
+
 Установка:
 ----------
 
 ```sh
-$ npm install --save-dev enb-bem
+$ npm install --save-dev enb-bem-techs
 ```
+
 Для работы модуля требуется зависимость от пакета enb версии `0.13.0` или выше.
+
+Как устроены БЭМ проекты?
+-------------------------
+
+БЭМ методология предпологает разделение интерфейса на независимые блоки.
+
+```sh
+blocks/
+├── head/
+├── footer/
+├── logo/
+├── button/
+└── link/
+```
+
+Каждый блок может быть реализован в одной или нескольких технологиях.
+
+```sh
+button/
+├── button.css
+└── button.js
+```
+
+Если в блоках есть элементы или модификаторы, которые используются не всегда — их реализация выносится в отдельные файлы.
+
+```sh
+button/
+├── __text/
+│   ├── button__text.css
+│   └── button__text.js
+├── _focused/
+│   ├── button_focused.css
+│   └── button_focused.js
+├── _type/
+│   ├── button_type_link.css
+│   └── button_type_link.js
+├── button.css
+└── button.js
+```
+
+В проекте может быть несколько уровней с блоками, например для разделения кода по платформам.
+
+```sh
+src/
+├── common.blocks/
+│   ├── button/
+│   └── link/
+├── desktop.blocks/
+│   └── button/
+└── touch.blocks/
+    └── link/
+```
+
+Примеры из жизни:
+
+* [bem-core](https://github.com/bem/bem-core)
+* [bem-components](https://github.com/bem/bem-components)
+
+Подробнее об организации БЭМ проектов на файловой системе читайте в разделе «[методология](http://ru.bem.info/method/filesystem/)» на сайте [bem.info](http://ru.bem.info/).
+
+С чего начать?
+--------------
+
+Воспользуйтесь [инструкцией по установке `project-stub`](http://ru.bem.info/tutorials/project-stub/),
+чтобы создать БЭМ проект, настроенный для сборки с помощью ENB.
+
+Для создания проекта, подходящего под ваши задачи — ответьте на&nbsp;вопросы [генератора БЭМ-проектов](https://github.com/bem/generator-bem-stub), основанного&nbsp;на [Yeoman](http://yeoman.io/).
 
 Технологии
 ----------
