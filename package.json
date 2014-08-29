@@ -43,11 +43,12 @@
   },
   "main": "lib/index.js",
   "scripts": {
-    "test": "npm run lint && npm run techs-test && npm run cover",
+    "test": "npm run lint && npm run techs-test && npm run unit-test && npm run cover",
     "lint": "jshint . && jscs -c .jscs.js .",
     "techs-test": "mocha test/techs",
+    "unit-test":  "mocha test/unit",
     "bench": "npm run bench-deps && matcha benchmark/*.js",
     "bench-deps": "cd benchmark/fixtures && bower i",
-    "cover": "istanbul cover _mocha -- test/techs"
+    "cover": "istanbul cover _mocha -- test/techs test/unit"
   }
 }
