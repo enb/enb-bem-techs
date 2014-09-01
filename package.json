@@ -29,13 +29,13 @@
   "dependencies": {
     "vow": "0.4.5",
     "inherit": "2.2.2",
-    "js-yaml": "3.1.0"
+    "js-yaml": "3.2.1"
   },
   "devDependencies": {
     "enb": ">= 0.13.0 < 1.0.0",
     "enb-validate-code": "0.0.1",
-    "jshint": "2.5.4",
-    "jscs": "1.5.9",
+    "jshint": "2.5.5",
+    "jscs": "1.6.0",
     "mocha": "1.21.4",
     "must": "0.12.0",
     "matcha": "0.5.0",
