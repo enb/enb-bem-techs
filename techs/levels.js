@@ -51,6 +51,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
     build: function () {
         var _this = this,
+            root = this.node.getRootDir(),
             target = this._target,
             levelList = [],
             levelsToCache = [],
@@ -63,7 +64,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
             levelInfo = typeof levelInfo === 'object' ? levelInfo : { path: levelInfo };
 
-            var levelPath = path.resolve(levelInfo.path),
+            var levelPath = path.resolve(root, levelInfo.path),
                 levelKey = 'level:' + levelPath;
             if (levelsIndex[levelPath]) {
                 continue;
