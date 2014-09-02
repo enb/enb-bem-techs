@@ -19,6 +19,10 @@
  * ```
  */
 var inherit = require('inherit'),
+    vow = require('vow'),
+    deps = require('../lib/deps/deps'),
+    asyncRequire = require('enb/lib/fs/async-require'),
+    dropRequireCache = require('enb/lib/fs/drop-require-cache'),
     FileList = require('enb/lib/file-list');
 
 module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
@@ -33,14 +37,16 @@ module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
         this._dirsTarget = this.node.unmaskTargetName(this.getOption('dirsTarget', '?.dirs'));
         this._levelsTarget = this.node.unmaskTargetName(this.getOption('levelsTarget', '?.levels'));
 
-        this._depsTarget = this.getOption('depsTarget');
-        if (this._depsTarget) {
+        this._depsFile = this.getOption('depsTarget');
+        if (this._depsFile) {
             logger.logOptionIsDeprecated(this._filesTarget, 'enb-bem', this.getName(), 'depsTarget', 'depsFile');
             logger.logOptionIsDeprecated(this._dirsTarget, 'enb-bem', this.getName(), 'depsTarget', 'depsFile');
         } else {
-            this._depsTarget = this.getOption('depsFile', '?.deps.js');
+            this._depsFile = this.getOption('depsFile', '?.deps.js');
         }
-        this._depsTarget = this.node.unmaskTargetName(this._depsTarget);
+        this._depsFile = this.node.unmaskTargetName(this._depsFile);
+
+        this._depsFormat = this.getOption('depsFormat', 'deps.js');
     },
 
     getTargets: function () {
@@ -52,50 +58,78 @@ module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
 
     build: function () {
         var _this = this,
+            depsFilename = this.node.resolvePath(this._depsFile),
+            depsFormat = this._depsFormat,
             filesTarget = this._filesTarget,
             dirsTarget = this._dirsTarget;
 
-        return this.node.requireSources([this._depsTarget, this._levelsTarget])
-            .spread(function (deps, levels) {
-                var fileList = new FileList(),
-                    dirList = new FileList(),
-                    files = {},
-                    dirs = {};
+        return this.node.requireSources([this._depsFile, this._levelsTarget])
+            .spread(function (data, levels) {
+                return requireSourceDeps(data, depsFilename, depsFormat)
+                    .then(function (sourceDeps) {
+                        var fileList = new FileList(),
+                            dirList = new FileList(),
+                            files = {},
+                            dirs = {};
 
-                for (var i = 0, l = deps.length; i < l; i++) {
-                    var dep = deps[i],
-                        entities;
-                    if (dep.elem) {
-                        entities = levels.getElemEntities(dep.block, dep.elem, dep.mod, dep.val);
-                    } else {
-                        entities = levels.getBlockEntities(dep.block, dep.mod, dep.val);
-                    }
+                        for (var i = 0, l = sourceDeps.length; i < l; i++) {
+                            var dep = sourceDeps[i],
+                                entities;
+                            if (dep.elem) {
+                                entities = levels.getElemEntities(dep.block, dep.elem, dep.mod, dep.val);
+                            } else {
+                                entities = levels.getBlockEntities(dep.block, dep.mod, dep.val);
+                            }
 
-                    addEntityFiles(entities);
-                }
+                            addEntityFiles(entities);
+                        }
 
-                fileList.addFiles(Object.keys(files).map(function (filename) {
-                    return files[filename];
-                }));
+                        fileList.addFiles(Object.keys(files).map(function (filename) {
+                            return files[filename];
+                        }));
 
-                dirList.addFiles(Object.keys(dirs).map(function (dirname) {
-                    return dirs[dirname];
-                }));
+                        dirList.addFiles(Object.keys(dirs).map(function (dirname) {
+                            return dirs[dirname];
+                        }));
 
-                function addEntityFiles(entities) {
-                    entities.files.forEach(function (file) {
-                        files[file.fullname] = file;
+                        function addEntityFiles(entities) {
+                            entities.files.forEach(function (file) {
+                                files[file.fullname] = file;
+                            });
+
+                            entities.dirs.forEach(function (dir) {
+                                dirs[dir.fullname] = dir;
+                            });
+                        }
+
+                        _this.node.resolveTarget(filesTarget, fileList);
+                        _this.node.resolveTarget(dirsTarget, dirList);
                     });
-
-                    entities.dirs.forEach(function (dir) {
-                        dirs[dir.fullname] = dir;
-                    });
-                }
-
-                _this.node.resolveTarget(filesTarget, fileList);
-                _this.node.resolveTarget(dirsTarget, dirList);
             });
     },
 
     clean: function () {}
 });
+
+function requireSourceDeps(data, filename, format) {
+    return (data ? vow.resolve(data) : (
+        dropRequireCache(require, filename),
+            asyncRequire(filename)
+                .then(function (result) {
+                    if (format === 'bemdecl.js') {
+                        return result.blocks;
+                    }
+
+                    if (format === 'deps.js') {
+                        return result.deps;
+                    }
+                })
+        ))
+        .then(function (sourceDeps) {
+            if (format === 'bemdecl.js') {
+                sourceDeps = deps.fromBemdecl(sourceDeps);
+            }
+
+            return sourceDeps;
+        });
+}
