@@ -7,7 +7,7 @@
  * **Опции**
  *
  * * *String* **sourceDepsFile** — Файл с исходными зависимостями. По умолчанию — `?.bemdecl.js`.
- * * *String* **format** — Формат исходных зависимостей. По умолчанию — `bemdecl`.
+ * * *String* **sourceDepsFormat** — Формат исходных зависимостей. По умолчанию — `bemdecl.js`.
  * * *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
  * * *String* **target** — Результирующий deps. По умолчанию — `?.deps.js`.
  *
@@ -59,7 +59,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             this._sourceDepsFile = this.getOption('sourceDepsFile', this.node.getTargetName('bemdecl.js'));
         }
         this._sourceDepsFile = this.node.unmaskTargetName(this._sourceDepsFile);
-        this._format = this.getOption('format', 'bemdecl.js');
+        this._sourceDepsFormat = this.getOption('sourceDepsFormat', 'bemdecl.js');
 
         this._levelsTarget = this.node.unmaskTargetName(
             this.getOption('levelsTarget', this.node.getTargetName('levels')));
@@ -74,7 +74,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             target = this._target,
             targetFilename = node.resolvePath(target),
             cache = node.getNodeCache(target),
-            format = this._format,
+            sourceDepsFormat = this._sourceDepsFormat,
             sourceDepsFilename = this.node.resolvePath(this._sourceDepsFile);
 
         return this.node.requireSources([this._levelsTarget, this._sourceDepsFile])
@@ -85,7 +85,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                     cache.needRebuildFile('source-deps-file', sourceDepsFilename) ||
                     cache.needRebuildFileList('deps-file-list', depFiles)
                 ) {
-                    return requireSourceDeps(sourceDeps, sourceDepsFilename, format)
+                    return requireSourceDeps(sourceDeps, sourceDepsFilename, sourceDepsFormat)
                         .then(function (sourceDeps) {
                             var resolver = new DepsResolver(levels),
                                 decls = resolver.normalizeDeps(sourceDeps);

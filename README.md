@@ -143,7 +143,7 @@ nodeConfig.addTech([require('enb-bem/techs/merge-bemdecl'), {
 **Опции**
 
 * *String* **sourceDepsFile** — Файл с исходными зависимостями. По умолчанию — `?.bemdecl.js`.
-* *String* **format** — Формат исходных зависимостей. По умолчанию — `bemdecl`.
+* *String* **sourceDepsFormat** — Формат исходных зависимостей. По умолчанию — `bemdecl.js`.
 * *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
 * *String* **target** — Результирующий deps. По умолчанию — `?.deps.js`.
 
@@ -171,7 +171,7 @@ nodeConfig.addTech([require('enb-bem/techs/deps'), {
 **Опции**
 
 * *String* **sourceDepsFile** — Файл с исходными зависимостями. По умолчанию — `?.bemdecl.js`.
-* *String* **format** — Формат исходных зависимостей. По умолчанию — `bemdecl`.
+* *String* **sourceDepsFormat** — Формат исходных зависимостей. По умолчанию — `bemdecl.js`.
 * *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
 * *String* **target** — Результирующий deps. По умолчанию — `?.deps.js`.
 

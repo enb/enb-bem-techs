@@ -298,7 +298,7 @@ describe('techs', function () {
 
                     return dataBundle.runTechAndRequire(depsTech, {
                         sourceDepsFile: 'data.deps.js',
-                        format: 'data.deps.js'
+                        sourceDepsFormat: 'data.deps.js'
                     });
                 })
                 .spread(function (target) {
@@ -331,7 +331,7 @@ describe('techs', function () {
 
                         return bundle.runTechAndRequire(depsTech, {
                             sourceDepsFile: 'block.deps.js',
-                            format: 'deps.js'
+                            sourceDepsFormat: 'deps.js'
                         });
                     })
                     .spread(function (target) {
