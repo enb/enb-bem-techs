@@ -331,7 +331,7 @@ describe('techs', function () {
 
                         return bundle.runTechAndRequire(depsTech, {
                             sourceDepsFile: 'block.deps.js',
-                            format: 'deps'
+                            format: 'deps.js'
                         });
                     })
                     .spread(function (target) {

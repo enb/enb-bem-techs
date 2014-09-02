@@ -60,7 +60,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             this._sourceDepsFile = this.getOption('sourceDepsFile', this.node.getTargetName('bemdecl.js'));
         }
         this._sourceDepsFile = this.node.unmaskTargetName(this._sourceDepsFile);
-        this._format = this.getOption('format', 'bemdecl');
+        this._format = this.getOption('format', 'bemdecl.js');
 
         this._levelsTarget = this.node.unmaskTargetName(
             this.getOption('levelsTarget', this.node.getTargetName('levels')));
@@ -121,17 +121,17 @@ function requireSourceDeps(data, filename, format) {
         dropRequireCache(require, filename),
             asyncRequire(filename)
                 .then(function (result) {
-                    if ('bemdecl' === format) {
+                    if ('bemdecl.js' === format) {
                         return result.blocks;
                     }
 
-                    if ('deps' === format) {
+                    if ('deps.js' === format) {
                         return result.deps;
                     }
                 })
         ))
         .then(function (sourceDeps) {
-            if (format === 'deps') {
+            if (format === 'deps.js') {
                 sourceDeps = deps.toBemdecl(sourceDeps);
             }
 
