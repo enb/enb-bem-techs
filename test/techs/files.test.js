@@ -98,6 +98,27 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
+                    bundle.provideTechData('?.bemdecl.js', [{ name: 'block' }]);
+
+                    return bundle.runTechAndGetResults(filesTech, {
+                        depsFile: '?.bemdecl.js',
+                        depsFormat: 'bemdecl.js'
+                    });
+                })
+                .then(function (result) {
+                    var files = result['bundle.files'],
+                        file = files.getByName('block')[0],
+                        filename = path.join(fileLevels[0], 'block', 'block');
+
+                    file.fullname.must.be(filename);
+                })
+                .then(done, done);
+        });
+
+        it('must get block file by deps', function (done) {
+            bundle.runTech(levelsTech, { levels: fileLevels })
+                .then(function (levels) {
+                    bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', [{ block: 'block' }]);
 
                     return bundle.runTechAndGetResults(filesTech);
@@ -112,7 +133,7 @@ describe('techs', function () {
                 .then(done, done);
         });
 
-        it('must get boolean mod of block file by bemdecl', function (done) {
+        it('must get boolean mod of block file by deps', function (done) {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
@@ -130,7 +151,7 @@ describe('techs', function () {
                 .then(done, done);
         });
 
-        it('must get block mod file by bemdecl', function (done) {
+        it('must get block mod file by deps', function (done) {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
@@ -148,7 +169,7 @@ describe('techs', function () {
                 .then(done, done);
         });
 
-        it('must get elem file by bemdecl', function (done) {
+        it('must get elem file by deps', function (done) {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
@@ -166,7 +187,7 @@ describe('techs', function () {
                 .then(done, done);
         });
 
-        it('must get boolean mod of elem file by bemdecl', function (done) {
+        it('must get boolean mod of elem file by deps', function (done) {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
@@ -185,7 +206,7 @@ describe('techs', function () {
                 .then(done, done);
         });
 
-        it('must get elem mod file by bemdecl', function (done) {
+        it('must get elem mod file by deps', function (done) {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
@@ -205,7 +226,7 @@ describe('techs', function () {
                 .then(done, done);
         });
 
-        it('must get block dir by bemdecl', function (done) {
+        it('must get block dir by deps', function (done) {
             bundle.runTech(levelsTech, { levels: dirLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
@@ -223,7 +244,7 @@ describe('techs', function () {
                 .then(done, done);
         });
 
-        it('must get boolean mod of block dir by bemdecl', function (done) {
+        it('must get boolean mod of block dir by deps', function (done) {
             bundle.runTech(levelsTech, { levels: dirLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
@@ -241,7 +262,7 @@ describe('techs', function () {
                 .then(done, done);
         });
 
-        it('must get block mod dir by bemdecl', function (done) {
+        it('must get block mod dir by deps', function (done) {
             bundle.runTech(levelsTech, { levels: dirLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
@@ -259,7 +280,7 @@ describe('techs', function () {
                 .then(done, done);
         });
 
-        it('must get elem dir by bemdecl', function (done) {
+        it('must get elem dir by deps', function (done) {
             bundle.runTech(levelsTech, { levels: dirLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
@@ -277,7 +298,7 @@ describe('techs', function () {
                 .then(done, done);
         });
 
-        it('must get boolean mod of elem dir by bemdecl', function (done) {
+        it('must get boolean mod of elem dir by deps', function (done) {
             bundle.runTech(levelsTech, { levels: dirLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
@@ -296,7 +317,7 @@ describe('techs', function () {
                 .then(done, done);
         });
 
-        it('must get elem mod dir by bemdecl', function (done) {
+        it('must get elem mod dir by deps', function (done) {
             bundle.runTech(levelsTech, { levels: dirLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
@@ -316,7 +337,7 @@ describe('techs', function () {
                 .then(done, done);
         });
 
-        it('must get block file with suffix by bemdecl', function (done) {
+        it('must get block file with suffix by deps', function (done) {
             bundle.runTech(levelsTech, { levels: suffixLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
@@ -342,7 +363,7 @@ describe('techs', function () {
                 .then(done, done);
         });
 
-        it('must get block dir with suffix by bemdecl', function (done) {
+        it('must get block dir with suffix by deps', function (done) {
             bundle.runTech(levelsTech, { levels: suffixLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
