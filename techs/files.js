@@ -8,6 +8,7 @@
  * **Опции**
  *
  * * *String* **depsFile** — Исходный deps-таргет. По умолчанию — `?.deps.js`.
+ * * *String* **depsFormat** — Формат зависимостей. По умолчанию — `deps.js`.
  * * *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
  * * *String* **filesTarget** — Результирующий files-таргет. По умолчанию — `?.files`.
  * * *String* **dirsTarget** — Результирующий dirs-таргет. По умолчанию — `?.dirs`.
