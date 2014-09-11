@@ -86,14 +86,14 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                     cache.needRebuildFile('source-deps-file', sourceFilename)
                 ) {
                     return requireDeps(preDeps, sourceFilename)
-                        .then(function (resDeps) {
-                            var str = 'exports.deps = ' + JSON.stringify(resDeps, null, 4) + ';\n';
+                        .then(function (res) {
+                            var str = 'exports.deps = ' + JSON.stringify(res.deps, null, 4) + ';\n';
 
                             return vfs.write(targetFilename, str, 'utf-8')
                                 .then(function () {
                                     cache.cacheFileInfo('deps-file', targetFilename);
                                     cache.cacheFileInfo('deps-source-file', sourceFilename);
-                                    node.resolveTarget(target, resDeps);
+                                    node.resolveTarget(target, { deps: res.deps });
                                 });
                         });
                 } else {
@@ -113,8 +113,5 @@ function requireDeps(data, filename) {
     if (data) { return vow.resolve(data); }
 
     dropRequireCache(require, filename);
-    return asyncRequire(filename)
-        .then(function (result) {
-            return result.deps;
-        });
+    return asyncRequire(filename);
 }

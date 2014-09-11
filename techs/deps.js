@@ -7,7 +7,6 @@
  * **Опции**
  *
  * * *String* **sourceDepsFile** — Файл с исходными зависимостями. По умолчанию — `?.bemdecl.js`.
- * * *String* **sourceDepsFormat** — Формат исходных зависимостей. По умолчанию — `bemdecl.js`.
  * * *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
  * * *String* **target** — Результирующий deps. По умолчанию — `?.deps.js`.
  *
@@ -59,7 +58,6 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             this._sourceDepsFile = this.getOption('sourceDepsFile', this.node.getTargetName('bemdecl.js'));
         }
         this._sourceDepsFile = this.node.unmaskTargetName(this._sourceDepsFile);
-        this._sourceDepsFormat = this.getOption('sourceDepsFormat', 'bemdecl.js');
 
         this._levelsTarget = this.node.unmaskTargetName(
             this.getOption('levelsTarget', this.node.getTargetName('levels')));
@@ -74,7 +72,6 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             target = this._target,
             targetFilename = node.resolvePath(target),
             cache = node.getNodeCache(target),
-            sourceDepsFormat = this._sourceDepsFormat,
             sourceDepsFilename = this.node.resolvePath(this._sourceDepsFile);
 
         return this.node.requireSources([this._levelsTarget, this._sourceDepsFile])
@@ -85,7 +82,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                     cache.needRebuildFile('source-deps-file', sourceDepsFilename) ||
                     cache.needRebuildFileList('deps-file-list', depFiles)
                 ) {
-                    return requireSourceDeps(sourceDeps, sourceDepsFilename, sourceDepsFormat)
+                    return requireSourceDeps(sourceDeps, sourceDepsFilename)
                         .then(function (sourceDeps) {
                             var resolver = new DepsResolver(levels),
                                 decls = resolver.normalizeDeps(sourceDeps);
@@ -100,7 +97,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                                             cache.cacheFileInfo('deps-file', targetFilename);
                                             cache.cacheFileInfo('source-deps-file', sourceDepsFilename);
                                             cache.cacheFileList('deps-file-list', depFiles);
-                                            node.resolveTarget(target, resolvedDeps);
+                                            node.resolveTarget(target, { deps: resolvedDeps });
                                         });
                                 });
                         });
@@ -110,7 +107,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
                     return asyncRequire(targetFilename)
                         .then(function (result) {
-                            node.resolveTarget(target, result.deps);
+                            node.resolveTarget(target, result);
                             return null;
                         });
                 }
@@ -118,25 +115,16 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
     }
 });
 
-function requireSourceDeps(data, filename, format) {
+function requireSourceDeps(data, filename) {
     return (data ? vow.resolve(data) : (
-        dropRequireCache(require, filename),
-        asyncRequire(filename)
-            .then(function (result) {
-                if (format === 'bemdecl.js') {
-                    return result.blocks;
-                }
-
-                if (format === 'deps.js') {
-                    return result.deps;
-                }
-            })
+            dropRequireCache(require, filename),
+            asyncRequire(filename)
         ))
         .then(function (sourceDeps) {
-            if (format === 'bemdecl.js') {
-                sourceDeps = deps.fromBemdecl(sourceDeps);
+            if (sourceDeps.blocks) {
+                return deps.fromBemdecl(sourceDeps.blocks);
             }
 
-            return sourceDeps;
+            return sourceDeps.deps;
         });
 }

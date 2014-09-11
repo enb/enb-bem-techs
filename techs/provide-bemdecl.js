@@ -87,13 +87,14 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                 ) {
                     return requireBemdecl(preBemdecl, sourceFilename)
                         .then(function (resBemdecl) {
-                            var str = 'exports.blocks = ' + JSON.stringify(resBemdecl, null, 4) + ';\n';
+                            var blocks = resBemdecl.blocks,
+                                str = 'exports.blocks = ' + JSON.stringify(blocks, null, 4) + ';\n';
 
                             return vfs.write(targetFilename, str, 'utf-8')
                                 .then(function () {
                                     cache.cacheFileInfo('bemdecl-file', targetFilename);
                                     cache.cacheFileInfo('bemdecl-source-file', sourceFilename);
-                                    node.resolveTarget(target, resBemdecl);
+                                    node.resolveTarget(target, { blocks: blocks });
                                 });
                         });
                 } else {
@@ -113,8 +114,5 @@ function requireBemdecl(data, filename) {
     if (data) { return vow.resolve(data); }
 
     dropRequireCache(require, filename);
-    return asyncRequire(filename)
-        .then(function (result) {
-            return result.blocks;
-        });
+    return asyncRequire(filename);
 }

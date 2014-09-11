@@ -8,7 +8,6 @@
  * **Опции**
  *
  * * *String* **depsFile** — Исходный deps-таргет. По умолчанию — `?.deps.js`.
- * * *String* **depsFormat** — Формат зависимостей. По умолчанию — `deps.js`.
  * * *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
  * * *String* **filesTarget** — Результирующий files-таргет. По умолчанию — `?.files`.
  * * *String* **dirsTarget** — Результирующий dirs-таргет. По умолчанию — `?.dirs`.
@@ -46,8 +45,6 @@ module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
             this._depsFile = this.getOption('depsFile', '?.deps.js');
         }
         this._depsFile = this.node.unmaskTargetName(this._depsFile);
-
-        this._depsFormat = this.getOption('depsFormat', 'deps.js');
     },
 
     getTargets: function () {
@@ -60,13 +57,12 @@ module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
     build: function () {
         var _this = this,
             depsFilename = this.node.resolvePath(this._depsFile),
-            depsFormat = this._depsFormat,
             filesTarget = this._filesTarget,
             dirsTarget = this._dirsTarget;
 
         return this.node.requireSources([this._depsFile, this._levelsTarget])
             .spread(function (data, levels) {
-                return requireSourceDeps(data, depsFilename, depsFormat)
+                return requireSourceDeps(data, depsFilename)
                     .then(function (sourceDeps) {
                         var fileList = new FileList(),
                             dirList = new FileList(),
@@ -112,25 +108,16 @@ module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
     clean: function () {}
 });
 
-function requireSourceDeps(data, filename, format) {
+function requireSourceDeps(data, filename) {
     return (data ? vow.resolve(data) : (
-        dropRequireCache(require, filename),
+            dropRequireCache(require, filename),
             asyncRequire(filename)
-                .then(function (result) {
-                    if (format === 'bemdecl.js') {
-                        return result.blocks;
-                    }
-
-                    if (format === 'deps.js') {
-                        return result.deps;
-                    }
-                })
         ))
         .then(function (sourceDeps) {
-            if (format === 'bemdecl.js') {
-                sourceDeps = deps.fromBemdecl(sourceDeps);
+            if (sourceDeps.blocks) {
+                return deps.fromBemdecl(sourceDeps.blocks);
             }
 
-            return sourceDeps;
+            return sourceDeps.deps;
         });
 }

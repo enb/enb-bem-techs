@@ -89,8 +89,8 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                             requireDeps(fromDeps, fromFilename),
                             requireDeps(whatDeps, whatFilename)
                         ])
-                        .spread(function (fromDeps, whatDeps) {
-                            var subtractedDeps = deps.subtract(fromDeps, whatDeps),
+                        .spread(function (from, what) {
+                            var subtractedDeps = deps.subtract(from.deps, what.deps),
                                 str = 'exports.deps = ' + JSON.stringify(subtractedDeps, null, 4) + ';';
 
                             return vfs.write(targetFilename, str, 'utf-8')
@@ -98,7 +98,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                                     cache.cacheFileInfo('deps-file', targetFilename);
                                     cache.cacheFileInfo('deps-from-file', fromFilename);
                                     cache.cacheFileInfo('deps-what-file', whatFilename);
-                                    node.resolveTarget(target, subtractedDeps);
+                                    node.resolveTarget(target, { deps: subtractedDeps });
                                 });
                         });
                 } else {
@@ -107,7 +107,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
                     return asyncRequire(targetFilename)
                         .then(function (result) {
-                            node.resolveTarget(target, result.deps);
+                            node.resolveTarget(target, result);
                             return null;
                         });
                 }
@@ -119,8 +119,5 @@ function requireDeps(deps, filename) {
     if (deps) { return deps; }
 
     dropRequireCache(require, filename);
-    return asyncRequire(filename)
-        .then(function (result) {
-            return result.deps;
-        });
+    return asyncRequire(filename);
 }
