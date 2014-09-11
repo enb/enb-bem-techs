@@ -98,11 +98,10 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.bemdecl.js', [{ name: 'block' }]);
+                    bundle.provideTechData('?.bemdecl.js', { blocks: [{ name: 'block' }] });
 
                     return bundle.runTechAndGetResults(filesTech, {
-                        depsFile: '?.bemdecl.js',
-                        depsFormat: 'bemdecl.js'
+                        depsFile: '?.bemdecl.js'
                     });
                 })
                 .then(function (result) {
@@ -119,7 +118,7 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', [{ block: 'block' }]);
+                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'block' }] });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -137,7 +136,7 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', [{ block: 'block', mod: 'mod', val: true }]);
+                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'block', mod: 'mod', val: true }] });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -155,7 +154,7 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', [{ block: 'block', mod: 'modName', val: 'modVal' }]);
+                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'block', mod: 'modName', val: 'modVal' }] });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -173,7 +172,7 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', [{ block: 'block', elem: 'elem' }]);
+                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'block', elem: 'elem' }] });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -191,8 +190,9 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', [{ block: 'block', elem: 'elem',
-                        mod: 'mod', val: true }]);
+                    bundle.provideTechData('?.deps.js', {
+                        deps: [{ block: 'block', elem: 'elem', mod: 'mod', val: true }]
+                    });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -210,8 +210,9 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', [{ block: 'block', elem: 'elem',
-                        mod: 'modName', val: 'modVal' }]);
+                    bundle.provideTechData('?.deps.js', {
+                        deps: [{ block: 'block', elem: 'elem', mod: 'modName', val: 'modVal' }]
+                    });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -230,7 +231,7 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: dirLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', [{ block: 'block' }]);
+                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'block' }] });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -248,7 +249,7 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: dirLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', [{ block: 'block', mod: 'mod', val: true }]);
+                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'block', mod: 'mod', val: true }] });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -266,7 +267,9 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: dirLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', [{ block: 'block', mod: 'modName', val: 'modVal' }]);
+                    bundle.provideTechData('?.deps.js', {
+                        deps: [{ block: 'block', mod: 'modName', val: 'modVal' }]
+                    });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -284,7 +287,9 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: dirLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', [{ block: 'block', elem: 'elem' }]);
+                    bundle.provideTechData('?.deps.js', {
+                        deps: [{ block: 'block', elem: 'elem' }]
+                    });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -302,8 +307,9 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: dirLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', [{ block: 'block', elem: 'elem',
-                        mod: 'mod', val: true }]);
+                    bundle.provideTechData('?.deps.js', {
+                        deps: [{ block: 'block', elem: 'elem', mod: 'mod', val: true }]
+                    });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -321,8 +327,9 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: dirLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', [{ block: 'block', elem: 'elem',
-                        mod: 'modName', val: 'modVal' }]);
+                    bundle.provideTechData('?.deps.js', {
+                        deps: [{ block: 'block', elem: 'elem', mod: 'modName', val: 'modVal' }]
+                    });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -341,7 +348,7 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: suffixLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', [{ block: 'A' }, { block: 'B' }]);
+                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'A' }, { block: 'B' }] });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -367,7 +374,7 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: suffixLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', [{ block: 'A' }, { block: 'B' }]);
+                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'A' }, { block: 'B' }] });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -393,10 +400,12 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', [
-                        { block: 'block', mod: 'mod' },
-                        { block: 'block', mod: 'mod', val: true }
-                    ]);
+                    bundle.provideTechData('?.deps.js', {
+                        deps: [
+                            { block: 'block', mod: 'mod' },
+                            { block: 'block', mod: 'mod', val: true }
+                        ]
+                    });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
