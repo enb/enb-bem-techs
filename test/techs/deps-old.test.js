@@ -257,8 +257,8 @@ describe('techs', function () {
             mustYamlLevels = [mustJsLevels[0], path.join(fileSystem._root, 'must-deps-yaml.blocks')];
 
             dataBundle = new TestNode('data-bundle');
-            dataBundle.provideTechData('data.bemdecl.js', [{ name: 'block' }]);
-            dataBundle.provideTechData('data.deps.js', [{ block: 'block' }]);
+            dataBundle.provideTechData('data.bemdecl.js', { blocks: [{ name: 'block' }] });
+            dataBundle.provideTechData('data.deps.js', { deps: [{ block: 'block' }] });
         });
 
         afterEach(function () {
@@ -273,7 +273,7 @@ describe('techs', function () {
                     return dataBundle.runTechAndGetResults(depsTech, { sourceDepsFile: 'data.bemdecl.js' });
                 })
                 .then(function (results) {
-                    results['data-bundle.deps.js'].must.eql([{ block: 'block' }]);
+                    results['data-bundle.deps.js'].must.eql({ deps: [{ block: 'block' }] });
                 })
                 .then(done, done);
         });
@@ -297,8 +297,7 @@ describe('techs', function () {
                     dataBundle.provideTechData('?.levels', levels);
 
                     return dataBundle.runTechAndRequire(depsTech, {
-                        sourceDepsFile: 'data.deps.js',
-                        format: 'data.deps.js'
+                        sourceDepsFile: 'data.deps.js'
                     });
                 })
                 .spread(function (target) {
@@ -330,8 +329,7 @@ describe('techs', function () {
                         bundle.provideTechData('?.levels', levels);
 
                         return bundle.runTechAndRequire(depsTech, {
-                            sourceDepsFile: 'block.deps.js',
-                            sourceDepsFormat: 'deps.js'
+                            sourceDepsFile: 'block.deps.js'
                         });
                     })
                     .spread(function (target) {

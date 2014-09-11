@@ -76,7 +76,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                     cache.needRebuildFileList('source-file-list', sourceFilenames)
                 ) {
                     return vow.all(sourceBemdecls.map(function (bemdecl, i) {
-                            if (bemdecl) { return deps.fromBemdecl(bemdecl); }
+                            if (bemdecl) { return deps.fromBemdecl(bemdecl.blocks); }
 
                             var filename = sourceFilenames[i];
 
@@ -95,7 +95,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                                 .then(function () {
                                     cache.cacheFileInfo('bemdecl-file', targetFilename);
                                     cache.cacheFileList('source-file-list', sourceFilenames);
-                                    _this.node.resolveTarget(target, mergedBemdecl);
+                                    _this.node.resolveTarget(target, { blocks: mergedBemdecl });
                                 });
                         });
                 } else {
@@ -104,7 +104,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
                     return asyncRequire(targetFilename)
                         .then(function (result) {
-                            node.resolveTarget(target, result.blocks);
+                            node.resolveTarget(target, result);
                             return null;
                         });
                 }

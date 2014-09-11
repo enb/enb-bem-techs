@@ -164,7 +164,7 @@ describe('techs', function () {
                     return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block.bemdecl.js' });
                 })
                 .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res.deps);
+                    bundle.provideTechData('?.deps.js', res);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -194,7 +194,7 @@ describe('techs', function () {
                     return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-bool-mod.bemdecl.js' });
                 })
                 .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res.deps);
+                    bundle.provideTechData('?.deps.js', res);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -224,7 +224,7 @@ describe('techs', function () {
                     return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-mod.bemdecl.js' });
                 })
                 .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res.deps);
+                    bundle.provideTechData('?.deps.js', res);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -254,7 +254,7 @@ describe('techs', function () {
                     return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem.bemdecl.js' });
                 })
                 .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res.deps);
+                    bundle.provideTechData('?.deps.js', res);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -284,7 +284,7 @@ describe('techs', function () {
                     return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elems.bemdecl.js' });
                 })
                 .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res.deps);
+                    bundle.provideTechData('?.deps.js', res);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -316,7 +316,7 @@ describe('techs', function () {
                     return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-bool-mod.bemdecl.js' });
                 })
                 .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res.deps);
+                    bundle.provideTechData('?.deps.js', res);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -349,7 +349,7 @@ describe('techs', function () {
                     return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-mod.bemdecl.js' });
                 })
                 .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res.deps);
+                    bundle.provideTechData('?.deps.js', res);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -382,7 +382,7 @@ describe('techs', function () {
                     return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'loop.bemdecl.js' });
                 })
                 .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res.deps);
+                    bundle.provideTechData('?.deps.js', res);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -413,7 +413,7 @@ describe('techs', function () {
                     return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block.bemdecl.js' });
                 })
                 .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res.deps);
+                    bundle.provideTechData('?.deps.js', res);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -443,7 +443,7 @@ describe('techs', function () {
                     return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-bool-mod.bemdecl.js' });
                 })
                 .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res.deps);
+                    bundle.provideTechData('?.deps.js', res);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -473,7 +473,7 @@ describe('techs', function () {
                     return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-mod.bemdecl.js' });
                 })
                 .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res.deps);
+                    bundle.provideTechData('?.deps.js', res);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -503,7 +503,7 @@ describe('techs', function () {
                     return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem.bemdecl.js' });
                 })
                 .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res.deps);
+                    bundle.provideTechData('?.deps.js', res);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -533,7 +533,7 @@ describe('techs', function () {
                     return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elems.bemdecl.js' });
                 })
                 .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res.deps);
+                    bundle.provideTechData('?.deps.js', res);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -565,7 +565,7 @@ describe('techs', function () {
                     return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-bool-mod.bemdecl.js' });
                 })
                 .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res.deps);
+                    bundle.provideTechData('?.deps.js', res);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
@@ -598,7 +598,7 @@ describe('techs', function () {
                     return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-mod.bemdecl.js' });
                 })
                 .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res.deps);
+                    bundle.provideTechData('?.deps.js', res);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })

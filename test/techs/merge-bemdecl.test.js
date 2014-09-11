@@ -36,7 +36,7 @@ describe('techs', function () {
             bundle = new TestNode('bundle');
             dataBundle = new TestNode('bundle');
 
-            dataBundle.provideTechData('data.bemdecl.js', [{ name: 'block' }]);
+            dataBundle.provideTechData('data.bemdecl.js', { blocks: [{ name: 'block' }] });
         });
 
         afterEach(function () {
@@ -54,7 +54,7 @@ describe('techs', function () {
         it('must provide result from data', function (done) {
             dataBundle.runTech(mergeTech, { sources: ['data.bemdecl.js'] })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([{ name: 'block' }]);
+                    bemdecl.blocks.must.eql([{ name: 'block' }]);
                 })
                 .then(done, done);
         });
@@ -72,7 +72,7 @@ describe('techs', function () {
                     'block.bemdecl.js', 'block-mod.bemdecl.js'
                 ] })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([
+                    bemdecl.blocks.must.eql([
                         { name: 'block' },
                         { name: 'block', mods: [{ name: 'modName', vals: [{ name: 'modVal' }] }] }
                     ]);
@@ -85,7 +85,7 @@ describe('techs', function () {
                     'block.bemdecl.js', 'elem.bemdecl.js'
                 ] })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([
+                    bemdecl.blocks.must.eql([
                         { name: 'block' },
                         { name: 'block', elems: [{ name: 'elem' }] }
                     ]);
@@ -98,7 +98,7 @@ describe('techs', function () {
                     'elem.bemdecl.js', 'elem-mod.bemdecl.js'
                 ] })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([
+                    bemdecl.blocks.must.eql([
                         { name: 'block' },
                         { name: 'block', elems: [{ name: 'elem' }] },
                         { name: 'block', elems: [{ name: 'elem', mods: [
@@ -114,7 +114,7 @@ describe('techs', function () {
                     'empty.bemdecl.js', 'set.bemdecl.js'
                 ] })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([{ name: '1' }, { name: '2' }, { name: '3' }]);
+                    bemdecl.blocks.must.eql([{ name: '1' }, { name: '2' }, { name: '3' }]);
                 })
                 .then(done, done);
         });
@@ -124,7 +124,7 @@ describe('techs', function () {
                     'set.bemdecl.js', 'part.bemdecl.js'
                 ] })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([{ name: '1' }, { name: '2' }, { name: '3' }]);
+                    bemdecl.blocks.must.eql([{ name: '1' }, { name: '2' }, { name: '3' }]);
                 })
                 .then(done, done);
         });
@@ -134,7 +134,7 @@ describe('techs', function () {
                     'set.bemdecl.js', 'nonexistent.bemdecl.js'
                 ] })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([{ name: '1' }, { name: '2' }, { name: '3' }, { name: 'O_o' }]);
+                    bemdecl.blocks.must.eql([{ name: '1' }, { name: '2' }, { name: '3' }, { name: 'O_o' }]);
                 })
                 .then(done, done);
         });

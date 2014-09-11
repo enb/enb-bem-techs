@@ -3,7 +3,7 @@ var FileSystem = require('enb/lib/test/mocks/test-file-system'),
     provideTech = require('../../techs/provide-bemdecl');
 
 describe('techs', function () {
-    describe('bemdecl-provider', function () {
+    describe('provide-bemdecl', function () {
         var fileSystem,
             fromFileBundle,
             fromDataBundle,
@@ -27,7 +27,9 @@ describe('techs', function () {
             fromDataBundle = new TestNode('from-data-bundle');
 
             toBundle = new TestNode('to-bundle');
-            toBundle.provideNodeTechData('from-data-bundle', 'from-data-bundle.bemdecl.js', [{ name: 'block' }]);
+            toBundle.provideNodeTechData('from-data-bundle', 'from-data-bundle.bemdecl.js', {
+                blocks: [{ name: 'block' }]
+            });
         });
 
         afterEach(function () {
@@ -39,7 +41,7 @@ describe('techs', function () {
                     node: 'from-file-bundle',
                     source: 'from-file-bundle.bemdecl.js' })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([{ name: 'block' }]);
+                    bemdecl.blocks.must.eql([{ name: 'block' }]);
                 })
                 .then(done, done);
         });
@@ -49,7 +51,7 @@ describe('techs', function () {
                     node: 'from-data-bundle',
                     source: 'from-data-bundle.bemdecl.js' })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([{ name: 'block' }]);
+                    bemdecl.blocks.must.eql([{ name: 'block' }]);
                 })
                 .then(done, done);
         });

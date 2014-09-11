@@ -3,7 +3,7 @@ var FileSystem = require('enb/lib/test/mocks/test-file-system'),
     provideTech = require('../../techs/provide-deps');
 
 describe('techs', function () {
-    describe('deps-provider', function () {
+    describe('provide-deps', function () {
         var fileSystem,
             fromFileBundle,
             fromDataBundle,
@@ -27,7 +27,9 @@ describe('techs', function () {
             fromDataBundle = new TestNode('from-data-bundle');
 
             toBundle = new TestNode('to-bundle');
-            toBundle.provideNodeTechData('from-data-bundle', 'from-data-bundle.deps.js', [{ block: 'block' }]);
+            toBundle.provideNodeTechData('from-data-bundle', 'from-data-bundle.deps.js', {
+                deps: [{ block: 'block' }]
+            });
         });
 
         afterEach(function () {
@@ -38,8 +40,8 @@ describe('techs', function () {
             toBundle.runTech(provideTech, {
                     node: 'from-file-bundle',
                     source: 'from-file-bundle.deps.js' })
-                .then(function (bemdecl) {
-                    bemdecl.must.eql([{ block: 'block' }]);
+                .then(function (res) {
+                    res.deps.must.eql([{ block: 'block' }]);
                 })
                 .then(done, done);
         });
@@ -48,8 +50,8 @@ describe('techs', function () {
             toBundle.runTech(provideTech, {
                     node: 'from-data-bundle',
                     source: 'from-data-bundle.deps.js' })
-                .then(function (bemdecl) {
-                    bemdecl.must.eql([{ block: 'block' }]);
+                .then(function (res) {
+                    res.deps.must.eql([{ block: 'block' }]);
                 })
                 .then(done, done);
         });
@@ -58,8 +60,8 @@ describe('techs', function () {
             toBundle.runTechAndRequire(provideTech, {
                     node: 'from-file-bundle',
                     source: 'from-file-bundle.deps.js' })
-                .spread(function (bemdecl) {
-                    bemdecl.deps.must.eql([{ block: 'block' }]);
+                .spread(function (res) {
+                    res.deps.must.eql([{ block: 'block' }]);
                 })
                 .then(done, done);
         });
@@ -68,8 +70,8 @@ describe('techs', function () {
             toBundle.runTechAndRequire(provideTech, {
                     node: 'from-data-bundle',
                     source: 'from-data-bundle.deps.js' })
-                .spread(function (bemdecl) {
-                    bemdecl.deps.must.eql([{ block: 'block' }]);
+                .spread(function (res) {
+                    res.deps.must.eql([{ block: 'block' }]);
                 })
                 .then(done, done);
         });

@@ -75,7 +75,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                                 .then(function () {
                                     cache.cacheFileInfo('bemdecl-file', bemdeclFilename);
                                     cache.cacheFileInfo('bemjson-file', bemjsonFilename);
-                                    node.resolveTarget(target, bemdecl);
+                                    node.resolveTarget(target, { blocks: bemdecl });
                                 });
                         });
                 } else {
@@ -84,7 +84,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
                     return asyncRequire(bemdeclFilename)
                         .then(function (result) {
-                            node.resolveTarget(target, result.blocks);
+                            node.resolveTarget(target, result);
                             return null;
                         });
                 }

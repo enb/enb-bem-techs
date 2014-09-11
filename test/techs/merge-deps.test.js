@@ -3,7 +3,7 @@ var FileSystem = require('enb/lib/test/mocks/test-file-system'),
     mergeTech = require('../../techs/merge-deps');
 
 describe('techs', function () {
-    describe('deps-merge', function () {
+    describe('merge-deps', function () {
         var fileSystem,
             bundle,
             dataBundle;
@@ -30,7 +30,7 @@ describe('techs', function () {
             bundle = new TestNode('bundle');
             dataBundle = new TestNode('bundle');
 
-            dataBundle.provideTechData('data.deps.js', [{ block: 'block' }]);
+            dataBundle.provideTechData('data.deps.js', { deps: [{ block: 'block' }] });
         });
 
         afterEach(function () {
@@ -47,8 +47,8 @@ describe('techs', function () {
 
         it('must provide result from data', function (done) {
             dataBundle.runTech(mergeTech, { sources: ['data.deps.js'] })
-                .then(function (deps) {
-                    deps.must.eql([{ block: 'block' }]);
+                .then(function (res) {
+                    res.deps.must.eql([{ block: 'block' }]);
                 })
                 .then(done, done);
         });
@@ -63,8 +63,8 @@ describe('techs', function () {
 
         it('must merge block with mod of block', function (done) {
             bundle.runTech(mergeTech, { sources: ['block.deps.js', 'block-mod.deps.js'] })
-                .then(function (bemdecl) {
-                    bemdecl.must.eql([
+                .then(function (res) {
+                    res.deps.must.eql([
                         { block: 'block' },
                         { block: 'block', mod: 'modName', val: 'modVal' }
                     ]);
@@ -74,8 +74,8 @@ describe('techs', function () {
 
         it('must merge block with elem', function (done) {
             bundle.runTech(mergeTech, { sources: ['block.deps.js', 'elem.deps.js'] })
-                .then(function (bemdecl) {
-                    bemdecl.must.eql([
+                .then(function (res) {
+                    res.deps.must.eql([
                         { block: 'block' },
                         { block: 'block', elem: 'elem' }
                     ]);
@@ -87,8 +87,8 @@ describe('techs', function () {
             bundle.runTech(mergeTech, { sources: [
                     'elem.deps.js', 'elem-mod.deps.js'
                 ] })
-                .then(function (bemdecl) {
-                    bemdecl.must.eql([
+                .then(function (res) {
+                    res.deps.must.eql([
                         { block: 'block', elem: 'elem' },
                         { block: 'block', elem: 'elem', mod: 'modName', val: 'modVal' }
                     ]);
@@ -98,24 +98,24 @@ describe('techs', function () {
 
         it('must merge set with empty set', function (done) {
             bundle.runTech(mergeTech, { sources: ['empty.deps.js', 'set.deps.js'] })
-                .then(function (bemdecl) {
-                    bemdecl.must.eql([{ block: '1' }, { block: '2' }, { block: '3' }]);
+                .then(function (res) {
+                    res.deps.must.eql([{ block: '1' }, { block: '2' }, { block: '3' }]);
                 })
                 .then(done, done);
         });
 
         it('must merge intersecting sets', function (done) {
             bundle.runTech(mergeTech, { sources: ['set.deps.js', 'part.deps.js'] })
-                .then(function (bemdecl) {
-                    bemdecl.must.eql([{ block: '1' }, { block: '2' }, { block: '3' }]);
+                .then(function (res) {
+                    res.deps.must.eql([{ block: '1' }, { block: '2' }, { block: '3' }]);
                 })
                 .then(done, done);
         });
 
         it('must merge disjoint sets', function (done) {
             bundle.runTech(mergeTech, { sources: ['set.deps.js', 'nonexistent.deps.js'] })
-                .then(function (bemdecl) {
-                    bemdecl.must.eql([{ block: '1' }, { block: '2' }, { block: '3' }, { block: 'O_o' }]);
+                .then(function (res) {
+                    res.deps.must.eql([{ block: '1' }, { block: '2' }, { block: '3' }, { block: 'O_o' }]);
                 })
                 .then(done, done);
         });

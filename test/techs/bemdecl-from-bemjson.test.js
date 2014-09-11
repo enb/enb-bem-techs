@@ -84,7 +84,7 @@ describe('techs', function () {
         it('must detect block', function (done) {
             bundle.runTech(bemdeclTech, { source: 'block.bemjson.js' })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([{ name: 'block' }]);
+                    bemdecl.blocks.must.eql([{ name: 'block' }]);
                 })
                 .then(done, done);
         });
@@ -92,7 +92,7 @@ describe('techs', function () {
         it('must detect boolean mod of block', function (done) {
             bundle.runTech(bemdeclTech, { source: 'block-bool-mod.bemjson.js' })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([
+                    bemdecl.blocks.must.eql([
                         { name: 'block' },
                         { name: 'block', mods: [{ name: 'mod', vals: [{ name: true }] }] }
                     ]);
@@ -103,7 +103,7 @@ describe('techs', function () {
         it('must detect mod of block', function (done) {
             bundle.runTech(bemdeclTech, { source: 'block-mod.bemjson.js' })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([
+                    bemdecl.blocks.must.eql([
                         { name: 'block' },
                         { name: 'block', mods: [{ name: 'modName', vals: [{ name: 'modVal' }] }] }
                     ]);
@@ -114,7 +114,7 @@ describe('techs', function () {
         it('must detect elem of block', function (done) {
             bundle.runTech(bemdeclTech, { source: 'elem.bemjson.js' })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([{ name: 'block', elems: [{ name: 'elem' }] }]);
+                    bemdecl.blocks.must.eql([{ name: 'block', elems: [{ name: 'elem' }] }]);
                 })
                 .then(done, done);
         });
@@ -122,7 +122,7 @@ describe('techs', function () {
         it('must detect bool mod of elem', function (done) {
             bundle.runTech(bemdeclTech, { source: 'elem-bool-mod.bemjson.js' })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([
+                    bemdecl.blocks.must.eql([
                         { name: 'block', elems: [{ name: 'elem' }] },
                         { name: 'block', elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }] }
                     ]);
@@ -133,7 +133,7 @@ describe('techs', function () {
         it('must detect mod of elem', function (done) {
             bundle.runTech(bemdeclTech, { source: 'elem-mod.bemjson.js' })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([
+                    bemdecl.blocks.must.eql([
                         { name: 'block', elems: [{ name: 'elem' }] },
                         { name: 'block', elems: [{ name: 'elem', mods: [
                             { name: 'modName', vals: [{ name: 'modVal' }] }
@@ -146,7 +146,7 @@ describe('techs', function () {
         it('must detect block in custom field', function (done) {
             bundle.runTech(bemdeclTech, { source: 'custom.bemjson.js' })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([{ name: 'block' }]);
+                    bemdecl.blocks.must.eql([{ name: 'block' }]);
                 })
                 .then(done, done);
         });
@@ -154,7 +154,7 @@ describe('techs', function () {
         it('must detect blocks in deep custom field', function (done) {
             bundle.runTech(bemdeclTech, { source: 'deep-custom.bemjson.js' })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([
+                    bemdecl.blocks.must.eql([
                         { name: 'block-1' },
                         { name: 'block-2' }
                     ]);
@@ -165,7 +165,7 @@ describe('techs', function () {
         it('must not fail when entity equals undefined', function (done) {
             bundle.runTech(bemdeclTech, { source: 'undefined.bemjson.js' })
                 .then(function (bemdecl) {
-                    bemdecl.must.eql([]);
+                    bemdecl.blocks.must.eql([]);
                 })
                 .then(done, done);
         });

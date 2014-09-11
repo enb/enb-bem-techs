@@ -74,15 +74,15 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                 if (cache.needRebuildFile('deps-file', targetFilename) ||
                     cache.needRebuildFileList('source-file-list', sourceFilenames)
                 ) {
-                    return vow.all(sourceDeps.map(function (deps, i) {
-                            if (deps) { return deps; }
+                    return vow.all(sourceDeps.map(function (source, i) {
+                            if (source) { return source.deps; }
 
                             var filename = sourceFilenames[i];
 
                             dropRequireCache(require, filename);
                             return asyncRequire(filename)
-                                .then(function (result) {
-                                    return result.deps;
+                                .then(function (res) {
+                                    return res.deps;
                                 });
                         }))
                         .then(function (sourceDeps) {
@@ -93,7 +93,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                                 .then(function () {
                                     cache.cacheFileInfo('deps-file', targetFilename);
                                     cache.cacheFileList('source-file-list', sourceFilenames);
-                                    _this.node.resolveTarget(target, mergedDeps);
+                                    _this.node.resolveTarget(target, { deps: mergedDeps });
                                 });
                         });
                 } else {
@@ -102,7 +102,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
                     return asyncRequire(targetFilename)
                         .then(function (result) {
-                            node.resolveTarget(target, result.deps);
+                            node.resolveTarget(target, result);
                             return null;
                         });
                 }

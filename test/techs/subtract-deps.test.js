@@ -3,7 +3,7 @@ var FileSystem = require('enb/lib/test/mocks/test-file-system'),
     subtractTech = require('../../techs/subtract-deps');
 
 describe('techs', function () {
-    describe('deps-subtract', function () {
+    describe('subtract-deps', function () {
         var fileSystem,
             bundle,
             dataBundle;
@@ -29,7 +29,7 @@ describe('techs', function () {
             bundle = new TestNode('bundle');
             dataBundle = new TestNode('bundle');
 
-            dataBundle.provideTechData('data.deps.js', [{ block: 'block' }]);
+            dataBundle.provideTechData('data.deps.js', { deps: [{ block: 'block' }] });
         });
 
         afterEach(function () {
@@ -52,8 +52,8 @@ describe('techs', function () {
                     from: 'block.deps.js',
                     what: 'block.deps.js'
                 })
-                .then(function (deps) {
-                    deps.must.eql([]);
+                .then(function (res) {
+                    res.deps.must.eql([]);
                 })
                 .then(done, done);
         });
@@ -74,8 +74,8 @@ describe('techs', function () {
                     from: 'block.deps.js',
                     what: 'elem.deps.js'
                 })
-                .then(function (deps) {
-                    deps.must.eql([{ block: 'block' }]);
+                .then(function (res) {
+                    res.deps.must.eql([{ block: 'block' }]);
                 })
                 .then(done, done);
         });
@@ -85,8 +85,8 @@ describe('techs', function () {
                     from: 'block.deps.js',
                     what: 'block-mod.deps.js'
                 })
-                .then(function (deps) {
-                    deps.must.eql([{ block: 'block' }]);
+                .then(function (res) {
+                    res.deps.must.eql([{ block: 'block' }]);
                 })
                 .then(done, done);
         });
@@ -96,8 +96,8 @@ describe('techs', function () {
                     from: 'elem.deps.js',
                     what: 'elem-mod.deps.js'
                 })
-                .then(function (deps) {
-                    deps.must.eql([{ block: 'block', elem: 'elem' }]);
+                .then(function (res) {
+                    res.deps.must.eql([{ block: 'block', elem: 'elem' }]);
                 })
                 .then(done, done);
         });
@@ -107,8 +107,8 @@ describe('techs', function () {
                     from: 'set.deps.js',
                     what: 'set.deps.js'
                 })
-                .then(function (deps) {
-                    deps.must.eql([]);
+                .then(function (res) {
+                    res.deps.must.eql([]);
                 })
                 .then(done, done);
         });
@@ -118,8 +118,8 @@ describe('techs', function () {
                     from: 'set.deps.js',
                     what: 'nonexistent.deps.js'
                 })
-                .then(function (deps) {
-                    deps.must.eql([{ block: '1' }, { block: '2' }, { block: '3' }]);
+                .then(function (res) {
+                    res.deps.must.eql([{ block: '1' }, { block: '2' }, { block: '3' }]);
                 })
                 .then(done, done);
         });
@@ -129,8 +129,8 @@ describe('techs', function () {
                     from: 'set.deps.js',
                     what: 'empty.deps.js'
                 })
-                .then(function (deps) {
-                    deps.must.eql([{ block: '1' }, { block: '2' }, { block: '3' }]);
+                .then(function (res) {
+                    res.deps.must.eql([{ block: '1' }, { block: '2' }, { block: '3' }]);
                 })
                 .then(done, done);
         });
@@ -140,8 +140,8 @@ describe('techs', function () {
                     from: 'empty.deps.js',
                     what: 'set.deps.js'
                 })
-                .then(function (deps) {
-                    deps.must.eql([]);
+                .then(function (res) {
+                    res.deps.must.eql([]);
                 })
                 .then(done, done);
         });
@@ -151,8 +151,8 @@ describe('techs', function () {
                     from: 'set.deps.js',
                     what: 'part.deps.js'
                 })
-                .then(function (deps) {
-                    deps.must.eql([{ block: '1' }, { block: '3' }]);
+                .then(function (res) {
+                    res.deps.must.eql([{ block: '1' }, { block: '3' }]);
                 })
                 .then(done, done);
         });

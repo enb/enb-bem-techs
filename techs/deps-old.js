@@ -7,7 +7,6 @@
  * **Опции**
  *
  * * *String* **sourceDepsFile** — Файл с исходными зависимостями. По умолчанию — `?.bemdecl.js`.
- * * *String* **sourceDepsFormat** — Формат исходных зависимостей. По умолчанию — `bemdecl.js`.
  * * *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
  * * *String* **target** — Результирующий deps. По умолчанию — `?.deps.js`.
  *
@@ -60,7 +59,6 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             this._sourceDepsFile = this.getOption('sourceDepsFile', this.node.getTargetName('bemdecl.js'));
         }
         this._sourceDepsFile = this.node.unmaskTargetName(this._sourceDepsFile);
-        this._sourceDepsFormat = this.getOption('sourceDepsFormat', 'bemdecl.js');
 
         this._levelsTarget = this.node.unmaskTargetName(
             this.getOption('levelsTarget', this.node.getTargetName('levels')));
@@ -75,7 +73,6 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             target = this._target,
             targetFilename = node.resolvePath(target),
             cache = node.getNodeCache(target),
-            sourceDepsFormat = this._sourceDepsFormat,
             sourceDepsFilename = this.node.resolvePath(this._sourceDepsFile);
 
         return this.node.requireSources([this._levelsTarget, this._sourceDepsFile])
@@ -86,7 +83,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                     cache.needRebuildFile('source-deps-file', sourceDepsFilename) ||
                     cache.needRebuildFileList('deps-file-list', depFiles)
                 ) {
-                    return requireSourceDeps(sourceDeps, sourceDepsFilename, sourceDepsFormat)
+                    return requireSourceDeps(sourceDeps, sourceDepsFilename)
                         .then(function (sourceDeps) {
                             return (new OldDeps(sourceDeps).expandByFS({ levels: levels }))
                                 .then(function (resolvedDeps) {
@@ -98,7 +95,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                                             cache.cacheFileInfo('deps-file', targetFilename);
                                             cache.cacheFileInfo('source-deps-file', sourceDepsFilename);
                                             cache.cacheFileList('deps-file-list', depFiles);
-                                            node.resolveTarget(target, resultDeps);
+                                            node.resolveTarget(target, { deps: resultDeps });
                                         });
                                 });
                         });
@@ -108,7 +105,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
                     return asyncRequire(targetFilename)
                         .then(function (result) {
-                            node.resolveTarget(target, result.deps);
+                            node.resolveTarget(target, result);
                             return null;
                         });
                 }
@@ -116,25 +113,16 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
     }
 });
 
-function requireSourceDeps(data, filename, format) {
+function requireSourceDeps(data, filename) {
     return (data ? vow.resolve(data) : (
-        dropRequireCache(require, filename),
+            dropRequireCache(require, filename),
             asyncRequire(filename)
-                .then(function (result) {
-                    if ('bemdecl.js' === format) {
-                        return result.blocks;
-                    }
-
-                    if ('deps.js' === format) {
-                        return result.deps;
-                    }
-                })
         ))
         .then(function (sourceDeps) {
-            if (format === 'deps.js') {
-                sourceDeps = deps.toBemdecl(sourceDeps);
+            if (sourceDeps.blocks) {
+                return deps.fromBemdecl(sourceDeps.blocks);
             }
 
-            return sourceDeps;
+            return sourceDeps.deps;
         });
 }
