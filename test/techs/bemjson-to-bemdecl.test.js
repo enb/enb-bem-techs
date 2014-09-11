@@ -1,6 +1,6 @@
 var FileSystem = require('enb/lib/test/mocks/test-file-system'),
     TestNode = require('enb/lib/test/mocks/test-node'),
-    bemdeclTech = require('../../techs/bemdecl-from-bemjson');
+    bemdeclTech = require('../../techs/bemjson-to-bemdecl');
 
 describe('techs', function () {
     describe('bemdecl-from-bemjson', function () {
