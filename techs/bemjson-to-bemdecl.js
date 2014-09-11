@@ -1,6 +1,6 @@
 /**
- * bemdecl-from-bemjson
- * ====================
+ * bemjson-to-bemdecl
+ * ==================
  *
  * Формирует *bemdecl* на основе `?.bemjson.js`.
  *
@@ -12,7 +12,7 @@
  * **Пример**
  *
  * ```javascript
- * nodeConfig.addTech(require('enb-bem/techs/bemdecl-from-bemjson'));
+ * nodeConfig.addTech(require('enb-bem/techs/bemjson-to-bemdecl'));
  * ```
  *
  */
@@ -25,7 +25,7 @@ var inherit = require('inherit'),
 
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
-        return 'bemdecl-from-bemjson';
+        return 'bemjson-to-bemdecl';
     },
 
     configure: function () {

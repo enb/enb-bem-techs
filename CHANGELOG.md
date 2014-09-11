@@ -9,11 +9,12 @@
 ### Изменения, ломающие обратную совместимость
 
 * Удалена вся логика, связанная с `BEViS` методологией.
-* Технологии `bemdecl-from-bemjson`, `bemdecl-from-deps-by-tech` и `bemdecl-merge` теперь предоставляют результат в `bemdecl` формате, вместо `deps` формата.
+* Технологии `bemjson-to-bemdecl`, `bemdecl-from-deps-by-tech` и `bemdecl-merge` теперь предоставляют результат в `bemdecl` формате, вместо `deps` формата.
 
 ### Крупные изменения
 
 * Опция `levels` из `levels` технологии теперь может принимать пути относительно корня, вместо абсолютных.
+* Технология `bemdecl-from-bemjson` переименована в `bemjson-to-bemdecl`.
 * Технология `bemdecl-merge` переименована в `merge-bemdecl`.
 * Технология `deps-merge` переименована в `merge-deps`.
 * Технология `deps-subtract` переименована в `subtract-deps`.

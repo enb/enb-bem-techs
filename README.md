@@ -16,8 +16,8 @@ $ npm install --save-dev enb-bem
 
 * [`levels`](#levels)
 * [`provide-bemdecl`](#provide-bemdecl)
-* [`bemdecl-from-bemjson`](#bemdecl-from-bemjson)
 * [`bemdecl-from-deps-by-tech`](#bemdecl-from-deps-by-tech)
+* [`bemjson-to-bemdecl`](#bemjson-to-bemdecl)
 * [`merge-bemdecl`](#merge-bemdecl)
 * [`deps`](#deps)
 * [`deps-old`](#deps-old)
@@ -76,23 +76,6 @@ nodeConfig.addTech([require('enb-bem/techs/provide-bemdecl'), {
 
 -------------------------------------------------------------------------------
 
-### bemdecl-from-bemjson
-
-Формирует `bemdecl` на основе `?.bemjson.js`.
-
-**Опции**
-
-* *String* **source** — Исходный bemjson-таргет. По умолчанию — `?.bemjson.js`.
-* *String* **target** — Результирующий bemdecl-таргет. По умолчанию — `?.bemdecl.js`.
-
-**Пример**
-
-```javascript
-nodeConfig.addTech(require('enb-bem/techs/bemdecl-from-bemjson'));
-```
-
--------------------------------------------------------------------------------
-
 ### bemdecl-from-deps-by-tech
 
 Формирует `bemdecl` на основе depsByTech-информации из `?.deps.js`.
@@ -114,6 +97,22 @@ nodeConfig.addTech(require('enb-bem/techs/bemdecl-from-deps-by-tech'), {
 });
 ```
 
+-------------------------------------------------------------------------------
+
+### bemjson-to-bemdecl
+
+Формирует `bemdecl` на основе `?.bemjson.js`.
+
+**Опции**
+
+* *String* **source** — Исходный bemjson-таргет. По умолчанию — `?.bemjson.js`.
+* *String* **target** — Результирующий bemdecl-таргет. По умолчанию — `?.bemdecl.js`.
+
+**Пример**
+
+```javascript
+nodeConfig.addTech(require('enb-bem/techs/bemdecl-from-bemjson'));
+```
 -------------------------------------------------------------------------------
 
 ### merge-bemdecl
