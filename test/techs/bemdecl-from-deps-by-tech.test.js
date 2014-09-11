@@ -161,7 +161,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
 
-                    return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block.bemdecl.js' });
+                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block.bemdecl.js' });
                 })
                 .spread(function (res) {
                     bundle.provideTechData('?.deps.js', res);
@@ -191,7 +191,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
 
-                    return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-bool-mod.bemdecl.js' });
+                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-bool-mod.bemdecl.js' });
                 })
                 .spread(function (res) {
                     bundle.provideTechData('?.deps.js', res);
@@ -221,7 +221,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
 
-                    return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-mod.bemdecl.js' });
+                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-mod.bemdecl.js' });
                 })
                 .spread(function (res) {
                     bundle.provideTechData('?.deps.js', res);
@@ -251,7 +251,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
 
-                    return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem.bemdecl.js' });
+                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem.bemdecl.js' });
                 })
                 .spread(function (res) {
                     bundle.provideTechData('?.deps.js', res);
@@ -281,7 +281,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
 
-                    return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elems.bemdecl.js' });
+                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elems.bemdecl.js' });
                 })
                 .spread(function (res) {
                     bundle.provideTechData('?.deps.js', res);
@@ -313,7 +313,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
 
-                    return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-bool-mod.bemdecl.js' });
+                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-bool-mod.bemdecl.js' });
                 })
                 .spread(function (res) {
                     bundle.provideTechData('?.deps.js', res);
@@ -346,7 +346,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
 
-                    return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-mod.bemdecl.js' });
+                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-mod.bemdecl.js' });
                 })
                 .spread(function (res) {
                     bundle.provideTechData('?.deps.js', res);
@@ -379,7 +379,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
 
-                    return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'loop.bemdecl.js' });
+                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'loop.bemdecl.js' });
                 })
                 .spread(function (res) {
                     bundle.provideTechData('?.deps.js', res);
@@ -410,7 +410,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
 
-                    return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block.bemdecl.js' });
+                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block.bemdecl.js' });
                 })
                 .spread(function (res) {
                     bundle.provideTechData('?.deps.js', res);
@@ -440,7 +440,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
 
-                    return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-bool-mod.bemdecl.js' });
+                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-bool-mod.bemdecl.js' });
                 })
                 .spread(function (res) {
                     bundle.provideTechData('?.deps.js', res);
@@ -470,7 +470,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
 
-                    return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'block-mod.bemdecl.js' });
+                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-mod.bemdecl.js' });
                 })
                 .spread(function (res) {
                     bundle.provideTechData('?.deps.js', res);
@@ -500,7 +500,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
 
-                    return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem.bemdecl.js' });
+                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem.bemdecl.js' });
                 })
                 .spread(function (res) {
                     bundle.provideTechData('?.deps.js', res);
@@ -530,7 +530,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
 
-                    return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elems.bemdecl.js' });
+                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elems.bemdecl.js' });
                 })
                 .spread(function (res) {
                     bundle.provideTechData('?.deps.js', res);
@@ -562,7 +562,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
 
-                    return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-bool-mod.bemdecl.js' });
+                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-bool-mod.bemdecl.js' });
                 })
                 .spread(function (res) {
                     bundle.provideTechData('?.deps.js', res);
@@ -595,7 +595,7 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
 
-                    return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'elem-mod.bemdecl.js' });
+                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-mod.bemdecl.js' });
                 })
                 .spread(function (res) {
                     bundle.provideTechData('?.deps.js', res);
@@ -626,7 +626,7 @@ describe('techs', function () {
 //        it('must throw if loop mustDeps', function (done) {
 //            bundle.runTech(levelsTech, { levels: mustLevels })
 //                .then(function () {
-//                    return bundle.runTechAndRequire(depsTech, { sourceDepsFile: 'loop.bemdecl.js' });
+//                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'loop.bemdecl.js' });
 //                })
 //                .then(function () {
 //                    return bundle.runTechAndGetResults(filesTech);

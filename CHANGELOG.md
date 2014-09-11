@@ -23,9 +23,9 @@
 * Опции `sourceTarget` и `destTarget` из `bemdecl-from-bemjson` технологии объявлены **deprecated**, вместо них следует использовать `source` и `target` соответственно.
 * Опции `bemdeclSources` и `bemdeclTarget` из `merge-bemdecl` технологии объявлены **deprecated**, вместо них следует использовать `sources` и `target` соответственно.
 * Опции `sourceNodePath`, `sourceTarget` и `bemdeclTarget` из `provide-bemdecl` технологии объявлены **deprecated**, вместо них следует использовать `node`, `source` и `target` соответственно.
-* Опции `bemdeclTarget` и `depsTarget` из `deps` технологии объявлены **deprecated**, вместо них следует использовать `sourceDepsFile` и `target` соответственно.
+* Опции `bemdeclTarget` и `depsTarget` из `deps` технологии объявлены **deprecated**, вместо них следует использовать `bemdeclFile` и `target` соответственно.
 * Опции `depsSources` и `depsTarget` из `merge-deps` технологии объявлены **deprecated**, вместо них следует использовать `sources` и `target` соответственно.
-* Опции `bemdeclTarget` и `depsTarget` из `deps-old` технологии объявлены **deprecated**, вместо них следует использовать `sourceDepsFile` и `target` соответственно.
+* Опции `bemdeclTarget` и `depsTarget` из `deps-old` технологии объявлены **deprecated**, вместо них следует использовать `bemdeclFile` и `target` соответственно.
 * Опции `sourceNodePath`, `sourceTarget` и `depsTarget` из `provide-deps` технологии объявлены **deprecated**, вместо них следует использовать `node`, `source` и `target` соответственно.
 * Опции `subtractFromTarget`, `subtractWhatTarget` и `depsTarget` из `subtract-deps` технологии объявлены **deprecated**, вместо них следует использовать `from`, `what` и `target` соответственно.
 * Опция `depsTarget` из `files` технологии объявлена **deprecated**, вместо неё следует использовать `depsFile`.
