@@ -16,7 +16,7 @@
  * **Пример**
  *
  * ```javascript
- * nodeConfig.addTech([require('enb/techs/levels'), {
+ * nodeConfig.addTech([require('enb-bem-techs/techs/levels'), {
  *     levels: [
  *         { path: 'lego/blocks-desktop', check: false },
  *         'desktop.blocks'

@@ -1,5 +1,5 @@
 {
-    "name": "enb-bem-bench-fixtures",
+    "name": "enb-bem-techs-bench-fixtures",
     "private": true,
     "dependencies": {
         "bem-bl": "2.0.4",

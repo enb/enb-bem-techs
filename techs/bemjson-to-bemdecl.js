@@ -12,7 +12,7 @@
  * **Пример**
  *
  * ```javascript
- * nodeConfig.addTech(require('enb-bem/techs/bemjson-to-bemdecl'));
+ * nodeConfig.addTech(require('enb-bem-techs/techs/bemjson-to-bemdecl'));
  * ```
  *
  */
@@ -33,7 +33,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
         this._target = this.getOption('destTarget');
         if (this._target) {
-            logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem', this.getName(),
+            logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem-techs', this.getName(),
                 'destTarget', 'target');
         } else {
             this._target = this.getOption('target', '?.bemdecl.js');
@@ -42,7 +42,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
         this._sourceTarget = this.getOption('sourceTarget');
         if (this._sourceTarget) {
-            logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(), 'sourceTarget', 'source');
+            logger.logOptionIsDeprecated(this._target, 'enb-bem-techs', this.getName(), 'sourceTarget', 'source');
         } else {
             this._sourceTarget = this.getOption('source', '?.bemjson.js');
         }

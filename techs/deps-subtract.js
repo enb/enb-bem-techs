@@ -14,7 +14,7 @@ module.exports = inherit(require('./subtract-deps'), {
     build: function () {
         var logger = this.node.getLogger();
 
-        logger.logTechIsDeprecated(this._target, this.getName(), 'enb-bem', 'subtract-deps', 'enb-bem');
+        logger.logTechIsDeprecated(this._target, this.getName(), 'enb-bem-techs', 'subtract-deps', 'enb-bem-techs');
         this.__base();
     }
 });

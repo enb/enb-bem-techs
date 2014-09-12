@@ -12,7 +12,7 @@
  ***Пример**
  *
  *```javascript
- *nodeConfig.addTech([require('enb-bem/techs/merge-bemdecl'), {
+ *nodeConfig.addTech([require('enb-bem-techs/techs/merge-bemdecl'), {
  *    sources: ['search.bemdecl.js', 'router.bemdecl.js'],
  *    target: 'all.bemdecl.js'
  *}]);

@@ -16,7 +16,7 @@
  * **Пример**
  *
  * ```javascript
- * nodeConfig.addTech([require('enb-bem/techs/provide-bemdecl'), {
+ * nodeConfig.addTech([require('enb-bem-techs/techs/provide-bemdecl'), {
  *     node: 'bundles/router',
  *     source: 'router.bemdecl.js',
  *     target: 'router.bemdecl.js'

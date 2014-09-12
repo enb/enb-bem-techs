@@ -16,7 +16,7 @@
  * **Пример**
  *
  * ```javascript
- * nodeConfig.addTech([require('enb/techs/provide-deps'), {
+ * nodeConfig.addTech([require('enb-bem-techs/techs/provide-deps'), {
  *     node: 'bundles/router',
  *     source: 'router.deps.js',
  *     target: 'router.deps.js'
@@ -39,7 +39,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
         this._target = this.getOption('depsTarget');
         if (this._target) {
-            logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem', this.getName(),
+            logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem-techs', this.getName(),
                 'depsTarget', 'target');
         } else {
             this._target = this.getOption('target', '?.deps.js');

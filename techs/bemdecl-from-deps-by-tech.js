@@ -16,7 +16,7 @@
  * **Пример**
  *
  * ```javascript
- * nodeConfig.addTech(require('enb-bem/techs/bemdecl-from-deps-by-tech'), {
+ * nodeConfig.addTech(require('enb-bem-techs/techs/bemdecl-from-deps-by-tech'), {
  *     sourceTech: 'js',
  *     destTech: 'bemhtml'
  * });

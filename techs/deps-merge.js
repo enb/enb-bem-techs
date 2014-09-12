@@ -14,7 +14,7 @@ module.exports = inherit(require('./merge-deps'), {
     build: function () {
         var logger = this.node.getLogger();
 
-        logger.logTechIsDeprecated(this._target, this.getName(), 'enb-bem', 'merge-deps', 'enb-bem');
+        logger.logTechIsDeprecated(this._target, this.getName(), 'enb-bem-techs', 'merge-deps', 'enb-bem-techs');
         this.__base();
     }
 });

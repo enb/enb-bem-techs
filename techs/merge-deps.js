@@ -12,7 +12,7 @@
  * **Пример**
  *
  * ```javascript
- * nodeConfig.addTech([require('enb-bem/techs/merge-deps'), {
+ * nodeConfig.addTech([require('enb-bem-techs/techs/merge-deps'), {
  *     sources: ['search.deps.js', 'router.deps.js'],
  *     target: 'all.deps.js'
  * }]);
