@@ -4,10 +4,10 @@ var path = require('path'),
     levelsTech = require('../../techs/levels'),
     filesTech = require('../../techs/files'),
     depsTech = require('../../techs/deps'),
-    bemdeclFromDepsByTechTech = require('../../techs/bemdecl-from-deps-by-tech');
+    bemdeclFromDepsByTechTech = require('../../techs/deps-by-tech-to-bemdecl');
 
 describe('techs', function () {
-    describe('bemdecl-from-deps-by-tech', function () {
+    describe('deps-by-tech-to-bemdecl', function () {
         var fileSystem,
             bundle,
             shouldLevels,
