@@ -17,7 +17,7 @@ $ npm install --save-dev enb-bem
 * [`levels`](#levels)
 * [`levels-to-bemdecl`](#levels-to-bemdecl)
 * [`provide-bemdecl`](#provide-bemdecl)
-* [`bemdecl-from-deps-by-tech`](#bemdecl-from-deps-by-tech)
+* [`deps-by-tech-to-bemdecl`](#deps-by-tech-to-bemdecl)
 * [`bemjson-to-bemdecl`](#bemjson-to-bemdecl)
 * [`merge-bemdecl`](#merge-bemdecl)
 * [`deps`](#deps)
@@ -94,7 +94,7 @@ nodeConfig.addTech([require('enb-bem-techs/techs/provide-bemdecl'), {
 
 -------------------------------------------------------------------------------
 
-### bemdecl-from-deps-by-tech
+### deps-by-tech-to-bemdecl
 
 Формирует `bemdecl` на основе depsByTech-информации из `?.deps.js`.
 
@@ -109,7 +109,7 @@ nodeConfig.addTech([require('enb-bem-techs/techs/provide-bemdecl'), {
 **Пример**
 
 ```javascript
-nodeConfig.addTech(require('enb-bem-techs/techs/bemdecl-from-deps-by-tech'), {
+nodeConfig.addTech(require('enb-bem-techs/techs/deps-by-tech-to-bemdecl'), {
   sourceTech: 'js',
   destTech: 'bemhtml'
 });

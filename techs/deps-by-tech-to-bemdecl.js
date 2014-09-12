@@ -1,6 +1,6 @@
 /**
- * bemdecl-from-deps-by-tech
- * =========================
+ * deps-by-tech-to-bemdecl
+ * =======================
  *
  * Формирует *bemdecl* на основе depsByTech-информации из `?.deps.js`.
  *
@@ -16,7 +16,7 @@
  * **Пример**
  *
  * ```javascript
- * nodeConfig.addTech(require('enb-bem-techs/techs/bemdecl-from-deps-by-tech'), {
+ * nodeConfig.addTech(require('enb-bem-techs/techs/deps-by-tech-to-bemdecl'), {
  *     sourceTech: 'js',
  *     destTech: 'bemhtml'
  * });
@@ -32,7 +32,7 @@ var inherit = require('inherit'),
 
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
-        return 'bemdecl-from-deps-by-tech';
+        return 'deps-by-tech-to-bemdecl';
     },
 
     configure: function () {
