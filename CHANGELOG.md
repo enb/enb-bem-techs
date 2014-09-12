@@ -9,7 +9,8 @@
 ### Изменения, ломающие обратную совместимость
 
 * Удалена вся логика, связанная с `BEViS` методологией.
-* Технологии `bemjson-to-bemdecl`, `bemdecl-from-deps-by-tech` и `bemdecl-merge` теперь предоставляют результат в `bemdecl` формате, вместо `deps` формата.
+* Технологии `bemjson-to-bemdecl`, `deps-by-tech-to-bemdecl`, `merge-bemdecl` и `provide-bemdecl` теперь предоставляют результат в `bemdecl` формате, вместо `deps` формата.
+* Технологии `merge-bemdecl` и `provide-bemdecl` теперь ожидает исходные таргеты в `bemdecl` формате, вместо `deps` формата.
 
 ### Крупные изменения
 
