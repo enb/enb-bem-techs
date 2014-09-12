@@ -14,12 +14,12 @@
  *
  * Обычное использование:
  * ```javascript
- * nodeConfig.addTech(require('enb-bem/techs/deps-old'));
+ * nodeConfig.addTech(require('enb-bem-techs/techs/deps-old'));
  * ```
  *
  * Сборка специфического deps:
  * ```javascript
- * nodeConfig.addTech([require('enb-bem/techs/deps-old'), {
+ * nodeConfig.addTech([require('enb-bem-techs/techs/deps-old'), {
  *     sourceDepsFile: 'search.bemdecl.js',
  *     target: 'search.deps.js'
  * }]);
@@ -44,7 +44,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
         this._target = this.getOption('depsTarget');
         if (this._target) {
-            logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem', this.getName(),
+            logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem-techs', this.getName(),
                 'depsTarget', 'target');
         } else {
             this._target = this.getOption('target', this.node.getTargetName('deps.js'));
@@ -53,7 +53,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
         this._declFile = this.getOption('bemdeclTarget');
         if (this._declFile) {
-            logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(),
+            logger.logOptionIsDeprecated(this._target, 'enb-bem-techs', this.getName(),
                 'bemdeclTarget', 'bemdeclFile');
         } else {
             this._declFile = this.getOption('bemdeclFile', this.node.getTargetName('bemdecl.js'));

@@ -15,7 +15,7 @@
  * **Пример**
  *
  * ```javascript
- * nodeConfig.addTech(require('enb-bem/techs/files'));
+ * nodeConfig.addTech(require('enb-bem-techs/techs/files'));
  * ```
  */
 var inherit = require('inherit'),

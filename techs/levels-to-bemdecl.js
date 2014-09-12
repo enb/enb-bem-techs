@@ -12,7 +12,7 @@
  * * **Пример**
  *
  * ```javascript
- * nodeConfig.addTech(require('enb-bem/techs/levels-to-bemdecl'));
+ * nodeConfig.addTech(require('enb-bem-techs/techs/levels-to-bemdecl'));
  * ```
  */
 var inherit = require('inherit'),

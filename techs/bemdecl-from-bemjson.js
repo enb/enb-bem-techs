@@ -14,7 +14,8 @@ module.exports = inherit(require('./bemjson-to-bemdecl'), {
     build: function () {
         var logger = this.node.getLogger();
 
-        logger.logTechIsDeprecated(this._target, this.getName(), 'enb-bem', 'bemjson-to-bemdecl', 'enb-bem');
+        logger.logTechIsDeprecated(this._target, this.getName(),
+            'enb-bem-techs', 'bemjson-to-bemdecl', 'enb-bem-techs');
         this.__base();
     }
 });

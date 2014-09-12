@@ -15,12 +15,12 @@
  *
  * ```javascript
  * nodeConfig.addTechs([
- *     [require('enb-bem/techs/deps'), { target: 'router.tmp.deps.js' }],
- *     [require('enb-bem/techs/provide-deps'), {
+ *     [require('enb-bem-techs/techs/deps'), { target: 'router.tmp.deps.js' }],
+ *     [require('enb-bem-techs/techs/provide-deps'), {
  *         node: 'pages/index',
  *         depsTarget: 'index.deps.js'
  *     }],
- *     [require('enb-bem/techs/subtract-deps'), {
+ *     [require('enb-bem-techs/techs/subtract-deps'), {
  *         what: 'index.deps.js',
  *         from: 'router.tmp.deps.js',
  *         target: 'router.deps.js'
@@ -54,14 +54,14 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
         this._fromTarget = this.getOption('subtractFromTarget');
         if (this._fromTarget) {
-            logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(), 'subtractFromTarget', 'from');
+            logger.logOptionIsDeprecated(this._target, 'enb-bem-techs', this.getName(), 'subtractFromTarget', 'from');
         } else {
             this._fromTarget = this.getRequiredOption('from');
         }
 
         this._whatTarget = this.getOption('subtractWhatTarget');
         if (this._whatTarget) {
-            logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(), 'subtractWhatTarget', 'what');
+            logger.logOptionIsDeprecated(this._target, 'enb-bem-techs', this.getName(), 'subtractWhatTarget', 'what');
         } else {
             this._whatTarget = this.getRequiredOption('what');
         }

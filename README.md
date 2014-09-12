@@ -1,7 +1,7 @@
 enb-bem
 =======
 
-[![NPM version](http://img.shields.io/npm/v/enb-bem.svg?style=flat)](http://www.npmjs.org/package/enb-bem) [![Build Status](http://img.shields.io/travis/enb-bem/enb-bem/master.svg?style=flat)](https://travis-ci.org/enb-bem/enb-bem) [![Coverage Status](https://img.shields.io/coveralls/enb-bem/enb-bem.svg?style=flat)](https://coveralls.io/r/enb-bem/enb-bem?branch=master) [![Dependency Status](http://img.shields.io/david/enb-bem/enb-bem.svg?style=flat)](https://david-dm.org/enb-bem/enb-bem)
+[![NPM version](http://img.shields.io/npm/v/enb-bem-techs.svg?style=flat)](http://www.npmjs.org/package/enb-bem-techs) [![Build Status](http://img.shields.io/travis/enb-bem/enb-bem-techs/master.svg?style=flat)](https://travis-ci.org/enb-bem/enb-bem-techs) [![Coverage Status](https://img.shields.io/coveralls/enb-bem/enb-bem-techs.svg?style=flat)](https://coveralls.io/r/enb-bem/enb-bem-techs?branch=master) [![Dependency Status](http://img.shields.io/david/enb-bem/enb-bem-techs.svg?style=flat)](https://david-dm.org/enb-bem/enb-bem-techs)
 
 Установка:
 ----------
@@ -30,7 +30,7 @@ $ npm install --save-dev enb-bem
 ### levels
 
 Собирает информацию об уровнях переопределения проекта, предоставляет `?.levels`. Результат выполнения этой
-технологии необходим технологиям `enb/techs/deps`, `enb/techs/deps-old` и `enb/techs/files`.
+технологии необходим технологиям `enb-bem-techs/techs/deps`, `enb-bem-techs/techs/deps-old` и `enb-bem-techs/techs/files`.
 
 **Опции**
 
@@ -43,7 +43,7 @@ $ npm install --save-dev enb-bem
 **Пример**
 
 ```javascript
-nodeConfig.addTech([require('enb/techs/levels'), {
+nodeConfig.addTech([require('enb-bem-techs/techs/levels'), {
     levels: [
         {path: 'lego/blocks-desktop', check: false},
         'desktop.blocks'
@@ -67,7 +67,7 @@ nodeConfig.addTech([require('enb/techs/levels'), {
 **Пример**
 
 ```javascript
-nodeConfig.addTech(require('enb-bem/techs/levels-to-bemdecl'));
+nodeConfig.addTech(require('enb-bem-techs/techs/levels-to-bemdecl'));
 ```
 
 -------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ nodeConfig.addTech(require('enb-bem/techs/levels-to-bemdecl'));
 **Пример**
 
 ```javascript
-nodeConfig.addTech([require('enb-bem/techs/provide-bemdecl'), {
+nodeConfig.addTech([require('enb-bem-techs/techs/provide-bemdecl'), {
     node: 'bundles/router',
     source: 'router.bemdecl.js',
     target: 'router.bemdecl.js'
@@ -109,7 +109,7 @@ nodeConfig.addTech([require('enb-bem/techs/provide-bemdecl'), {
 **Пример**
 
 ```javascript
-nodeConfig.addTech(require('enb-bem/techs/bemdecl-from-deps-by-tech'), {
+nodeConfig.addTech(require('enb-bem-techs/techs/bemdecl-from-deps-by-tech'), {
   sourceTech: 'js',
   destTech: 'bemhtml'
 });
@@ -129,7 +129,7 @@ nodeConfig.addTech(require('enb-bem/techs/bemdecl-from-deps-by-tech'), {
 **Пример**
 
 ```javascript
-nodeConfig.addTech(require('enb-bem/techs/bemdecl-from-bemjson'));
+nodeConfig.addTech(require('enb-bem-techs/techs/bemdecl-from-bemjson'));
 ```
 -------------------------------------------------------------------------------
 
@@ -145,7 +145,7 @@ nodeConfig.addTech(require('enb-bem/techs/bemdecl-from-bemjson'));
 **Пример**
 
 ```javascript
-nodeConfig.addTech([require('enb-bem/techs/merge-bemdecl'), {
+nodeConfig.addTech([require('enb-bem-techs/techs/merge-bemdecl'), {
   sources: ['search.bemdecl.js', 'router.bemdecl.js'],
   target: 'all.bemdecl.js'
 }]);
@@ -167,12 +167,12 @@ nodeConfig.addTech([require('enb-bem/techs/merge-bemdecl'), {
 
 Обычное использование:
 ```javascript
-nodeConfig.addTech(require('enb-bem/techs/deps'));
+nodeConfig.addTech(require('enb-bem-techs/techs/deps'));
 ```
 
 Сборка специфического deps:
 ```javascript
-nodeConfig.addTech([require('enb-bem/techs/deps'), {
+nodeConfig.addTech([require('enb-bem-techs/techs/deps'), {
     sourceDepsFile: 'search.bemdecl.js',
     target: 'search.deps.js'
 }]);
@@ -194,12 +194,12 @@ nodeConfig.addTech([require('enb-bem/techs/deps'), {
 
 Обычное использование:
 ```javascript
-nodeConfig.addTech(require('enb-bem/techs/deps-old'));
+nodeConfig.addTech(require('enb-bem-techs/techs/deps-old'));
 ```
 
 Сборка специфического deps:
 ```javascript
-nodeConfig.addTech([require('enb-bem/techs/deps-old'), {
+nodeConfig.addTech([require('enb-bem-techs/techs/deps-old'), {
     sourceDepsFile: 'search.bemdecl.js',
     target: 'search.deps.js'
 }]);
@@ -223,7 +223,7 @@ nodeConfig.addTech([require('enb-bem/techs/deps-old'), {
 **Пример**
 
 ```javascript
-nodeConfig.addTech([require('enb/techs/provide-deps'), {
+nodeConfig.addTech([require('enb-bem-techs/techs/provide-deps'), {
     node: 'bundles/router',
     source: 'router.deps.js',
     target: 'router.deps.js'
@@ -244,7 +244,7 @@ nodeConfig.addTech([require('enb/techs/provide-deps'), {
 **Пример**
 
 ```javascript
-nodeConfig.addTech([require('enb-bem/techs/merge-deps'), {
+nodeConfig.addTech([require('enb-bem-techs/techs/merge-deps'), {
     sources: ['search.deps.js', 'router.deps.js'],
     target: 'all.deps.js'
 }]);
@@ -267,12 +267,12 @@ nodeConfig.addTech([require('enb-bem/techs/merge-deps'), {
 
 ```javascript
 nodeConfig.addTechs([
-    [require('enb-bem/techs/deps'), { target: 'router.tmp.deps.js' }],
-    [require('enb-bem/techs/provide-deps'), {
+    [require('enb-bem-techs/techs/deps'), { target: 'router.tmp.deps.js' }],
+    [require('enb-bem-techs/techs/provide-deps'), {
         node: 'pages/index',
         target: 'index.deps.js'
     }],
-    [require('enb-bem/techs/subtract-deps'), {
+    [require('enb-bem-techs/techs/subtract-deps'), {
         what: 'index.deps.js',
         from: 'router.tmp.deps.js',
         target: 'router.deps.js'
@@ -297,5 +297,5 @@ nodeConfig.addTechs([
 **Пример**
 
 ```javascript
-nodeConfig.addTech(require('enb-bem/techs/files'));
+nodeConfig.addTech(require('enb-bem-techs/techs/files'));
 ```
