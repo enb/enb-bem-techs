@@ -1,6 +1,19 @@
 /**
  * levels-to-bemdecl
  * =================
+ *
+ * Формирует *bemdecl*, состоящий из всех сущностей, найденных на уровнях.
+ *
+ * **Опции**
+ *
+ * * *String* **target** — Результирующий bemdecl-таргет. По умолчанию — `?.bemdecl.js`.
+ * * *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
+ *
+ * * **Пример**
+ *
+ * ```javascript
+ * nodeConfig.addTech(require('enb-bem/techs/levels-to-bemdecl'));
+ * ```
  */
 var inherit = require('inherit'),
     vfs = require('enb/lib/fs/async-fs'),
