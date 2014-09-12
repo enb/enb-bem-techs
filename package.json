@@ -1,7 +1,7 @@
 {
   "author": "Andrew Abramov <andrewblond@yandex.com>",
   "name": "enb-bem-techs",
-  "version": "0.1.0-beta6",
+  "version": "0.1.0-beta7",
   "description": "BEM methodology for ENB",
   "repository": "git://github.com/enb-bem/enb-bem-techs",
   "homepage": "https://github.com/enb-bem/enb-bem-techs",
