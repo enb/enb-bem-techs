@@ -60,7 +60,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                 if (cache.needRebuildFile('bemdecl-file', bemdeclFilename) ||
                     cache.needRebuildFile('files-file', filesFilename)
                 ) {
-                    var depsFiles = files.bySuffix['deps.js'];
+                    var depsFiles = files.bySuffix['deps.js'] || [];
 
                     return vow.all(depsFiles.map(function (file) {
                         return vfs.read(file.fullname, 'utf8').then(function (text) {
