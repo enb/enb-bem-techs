@@ -27,6 +27,7 @@
     "enb": ">= 0.13.0 < 1.0.0"
   },
   "dependencies": {
+    "bem-naming": "0.3.0",
     "vow": "0.4.5",
     "inherit": "2.2.2",
     "js-yaml": "3.2.2"

@@ -71,6 +71,17 @@ describe('techs', function () {
                             tech: 'sourceTech',
                             shouldDeps: [{ tech: 'destTech', block: 'A' }]
                         }) }
+                    ] },
+
+                    { directory: 'some-block', items: [
+                        { file: 'some-block.deps.js', content: stringifyDepsJs({
+                            tech: 'sourceTech',
+                            shouldDeps: [
+                                { tech: 'destTech', mods: { some: true } },
+                                { tech: 'destTech', elem: 'some-elem-1' },
+                                { tech: 'destTech', elem: 'some-elem-2', mods: { some: true } }
+                            ]
+                        }) }
                     ] }
                 ]
             }, {
@@ -134,6 +145,7 @@ describe('techs', function () {
                 ]
             }, {
                 directory: 'bundle', items: [
+                    { file: 'some-block.bemdecl.js', content: stringifyBemdecl([{ name: 'some-block' }]) },
                     { file: 'block.bemdecl.js', content: stringifyBemdecl([{ name: 'block' }]) },
                     { file: 'block-bool-mod.bemdecl.js', content: stringifyBemdecl([{ name: 'block-bool-mod' }]) },
                     { file: 'block-mod.bemdecl.js', content: stringifyBemdecl([{ name: 'block-mod' }]) },
@@ -154,6 +166,40 @@ describe('techs', function () {
 
         afterEach(function () {
             fileSystem.teardown();
+        });
+
+        it('must add block field to dep by context', function (done) {
+            bundle.runTech(levelsTech, { levels: shouldLevels })
+                .then(function (levels) {
+                    bundle.provideTechData('?.levels', levels);
+
+                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'some-block.bemdecl.js' });
+                })
+                .spread(function (res) {
+                    bundle.provideTechData('?.deps.js', res);
+
+                    return bundle.runTechAndGetResults(filesTech);
+                })
+                .then(function (res) {
+                    var files = res['bundle.files'];
+
+                    bundle.provideTechData('?.files', files);
+
+                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
+                        sourceTech: 'sourceTech',
+                        destTech: 'destTech'
+                    });
+                })
+                .spread(function (target) {
+                    target.blocks.must.eql([
+                        { name: 'some-block', mods: [{ name: 'some', vals: [{ name: true }] }] },
+                        { name: 'some-block', elems: [{ name: 'some-elem-1' }] },
+                        { name: 'some-block', elems: [{ name: 'some-elem-2',
+                            mods: [{ name: 'some', vals: [{ name: true }] }]
+                        }] }
+                    ]);
+                })
+                .then(done, done);
         });
 
         it('must add should dep of block', function (done) {

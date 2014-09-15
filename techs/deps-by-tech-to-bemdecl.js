@@ -24,6 +24,7 @@
  */
 var inherit = require('inherit'),
     vm = require('vm'),
+    naming = require('bem-naming'),
     vow = require('vow'),
     vfs = require('enb/lib/fs/async-fs'),
     asyncRequire = require('enb/lib/fs/async-require'),
@@ -71,7 +72,10 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                             depIndex = {};
 
                         depResults.forEach(function (depResult) {
-                            var fileDeps = vm.runInThisContext(depResult.text);
+                            var fileDeps = vm.runInThisContext(depResult.text),
+                                bemname = depResult.file.name.split('.')[0],
+                                notation = naming.parse(bemname);
+
                             if (!fileDeps) {
                                 return;
                             }
@@ -81,6 +85,8 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                                     ['mustDeps', 'shouldDeps'].forEach(function (depType) {
                                         if (dep[depType]) {
                                             deps.flattenDeps(dep[depType]).forEach(function (singleDep) {
+                                                singleDep.block || (singleDep.block = notation.block);
+
                                                 if (singleDep.tech === destTech) {
                                                     var key = depKey(singleDep);
                                                     if (!depIndex[key]) {
