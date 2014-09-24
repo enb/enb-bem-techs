@@ -3,21 +3,21 @@ enb-bem-techs
 
 [![NPM version](http://img.shields.io/npm/v/enb-bem-techs.svg?style=flat)](http://www.npmjs.org/package/enb-bem-techs) [![Build Status](http://img.shields.io/travis/enb-bem/enb-bem-techs/master.svg?style=flat)](https://travis-ci.org/enb-bem/enb-bem-techs) [![Coverage Status](https://img.shields.io/coveralls/enb-bem/enb-bem-techs.svg?style=flat)](https://coveralls.io/r/enb-bem/enb-bem-techs?branch=master) [![Dependency Status](http://img.shields.io/david/enb-bem/enb-bem-techs.svg?style=flat)](https://david-dm.org/enb-bem/enb-bem-techs)
 
-Пакет для сборки проектов, в основе которых лежит [БЭМ методология](http://ru.bem.info/method/).
+Пакет для сборки проектов, в основе которых лежит [БЭМ-методология](http://ru.bem.info/method/).
 
-Установка:
+Установка
 ----------
 
 ```sh
 $ npm install --save-dev enb-bem-techs
 ```
 
-Для работы модуля требуется зависимость от пакета enb версии `0.13.0` или выше.
+Для работы модуля требуется зависимость от пакета `enb` версии `0.13.0` или выше.
 
-Как устроены БЭМ проекты?
+Как устроены БЭМ-проекты?
 -------------------------
 
-БЭМ методология предпологает разделение интерфейса на независимые блоки.
+БЭМ-методология предпологает разделение интерфейса на независимые блоки.
 
 ```sh
 blocks/
@@ -36,7 +36,7 @@ button/
 └── button.js
 ```
 
-Если в блоках есть элементы или модификаторы, которые используются не всегда — их реализация выносится в отдельные файлы.
+Если в блоках есть элементы или модификаторы, которые используются не всегда, их реализация выносится в отдельные файлы.
 
 ```sh
 button/
@@ -53,7 +53,7 @@ button/
 └── button.js
 ```
 
-В проекте может быть несколько уровней с блоками, например для разделения кода по платформам.
+В проекте может быть несколько уровней с блоками, например, для разделения кода по платформам.
 
 ```sh
 src/
@@ -68,44 +68,46 @@ src/
 
 Примеры из жизни:
 
-* [bem-core](https://github.com/bem/bem-core)
-* [bem-components](https://github.com/bem/bem-components)
+* [bem-core](http://ru.bem.info/libs/bem-core/current/)
+* [bem-components](http://ru.bem.info/libs/bem-components/current/)
 
-Подробнее об организации БЭМ проектов на файловой системе читайте в разделе «[методология](http://ru.bem.info/method/filesystem/)» на сайте [bem.info](http://ru.bem.info/).
+Подробнее об организации БЭМ-проектов в файловой системе читайте в разделе [методология](http://ru.bem.info/method/filesystem/) на сайте [bem.info](http://ru.bem.info/).
 
 С чего начать?
 --------------
 
-Воспользуйтесь [инструкцией по установке `project-stub`](http://ru.bem.info/tutorials/project-stub/),
-чтобы создать БЭМ проект, настроенный для сборки с помощью ENB.
+Воспользуйтесь [инструкцией по установке project-stub](http://ru.bem.info/tutorials/project-stub/), чтобы создать БЭМ-проект, настроенный для сборки с помощью ENB.
 
-Для создания проекта, подходящего под ваши задачи — ответьте на&nbsp;вопросы [генератора БЭМ-проектов](https://github.com/bem/generator-bem-stub), основанного&nbsp;на [Yeoman](http://yeoman.io/).
+Для создания проекта, подходящего под ваши задачи, ответьте на&nbsp;вопросы [генератора БЭМ-проектов](http://ru.bem.info/tools/bem/bem-stub/), основанного&nbsp;на [Yeoman](http://yeoman.io/).
 
 Технологии
 ----------
 
-* [`levels`](#levels)
-* [`levels-to-bemdecl`](#levels-to-bemdecl)
-* [`provide-bemdecl`](#provide-bemdecl)
-* [`deps-by-tech-to-bemdecl`](#deps-by-tech-to-bemdecl)
-* [`bemjson-to-bemdecl`](#bemjson-to-bemdecl)
-* [`merge-bemdecl`](#merge-bemdecl)
-* [`deps`](#deps)
-* [`deps-old`](#deps-old)
-* [`provide-deps`](#provide-deps)
-* [`merge-deps`](#merge-deps)
-* [`subtract-deps`](#subtract-deps)
-* [`files`](#files)
+* [levels](#levels)
+* [levels-to-bemdecl](#levels-to-bemdecl)
+* [provide-bemdecl](#provide-bemdecl)
+* [deps-by-tech-to-bemdecl](#deps-by-tech-to-bemdecl)
+* [bemjson-to-bemdecl](#bemjson-to-bemdecl)
+* [merge-bemdecl](#merge-bemdecl)
+* [deps](#deps)
+* [deps-old](#deps-old)
+* [provide-deps](#provide-deps)
+* [merge-deps](#merge-deps)
+* [subtract-deps](#subtract-deps)
+* [files](#files)
 
 ### levels
 
-Собирает информацию об уровнях переопределения проекта, предоставляет `?.levels`. Результат выполнения этой
-технологии необходим технологиям `enb-bem-techs/techs/deps`, `enb-bem-techs/techs/deps-old` и `enb-bem-techs/techs/files`.
+Собирает информацию об уровнях переопределения проекта и предоставляет `?.levels`. Результат выполнения этой технологии необходим следующим технологиям:
+
+* `enb-bem-techs/techs/deps`
+* `enb-bem-techs/techs/deps-old`
+* `enb-bem-techs/techs/files`
 
 **Опции**
 
-* *String* **target** — Результирующий таргет. По умолчанию — `?.levels`.
-* *(String|Object)[]* **levels** — Уровни переопределения. Полные пути к папкам с уровнями переопределения.
+* *String* **target** — результирующий таргет. По умолчанию — `?.levels`.
+* *(String|Object)[]* **levels** — уровни переопределения. Полные пути к папкам с уровнями переопределения.
 Вместо строки с путем к уровню может использоваться объект вида
 `{path: '/home/user/www/proj/lego/blocks-desktop', check: false}` для того,
 чтобы закэшировать содержимое тех уровней переопределения, которые не модифицируются в рамках проекта.
@@ -127,12 +129,12 @@ nodeConfig.addTech([require('enb-bem-techs/techs/levels'), {
 
 ### levels-to-bemdecl
 
-Формирует `bemdecl`, состоящий из всех сущностей, найденных на уровнях.
+Формирует BEMDECL, состоящий из всех сущностей, найденных на уровнях.
 
 **Опции**
 
-* *String* **target** — Результирующий bemdecl-таргет. По умолчанию — `?.bemdecl.js`.
-* *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
+* *String* **target** — результирующий BEMDECL-таргет. По умолчанию — `?.bemdecl.js`.
+* *String* **levelsTarget** — исходный `levels`. По умолчанию — `?.levels`.
 
 **Пример**
 
@@ -144,13 +146,13 @@ nodeConfig.addTech(require('enb-bem-techs/techs/levels-to-bemdecl'));
 
 ### provide-bemdecl
 
-Копирует `bemdecl` в текущую ноду под нужным именем из другой ноды. Может понадобиться, например, для объединения bemdecl'ов.
+Копирует BEMDECL в текущую ноду под нужным именем из другой ноды. Может понадобиться, например, для объединения BEMDECL'ов.
 
 **Опции**
 
-* *String* **node** — Путь исходной ноды с нужным bemdecl'ом. Обязательная опция.
-* *String* **source** — Исходный bemdecl, который будет копироваться. По умолчанию — `?.bemdecl.js` (демаскируется в рамках исходной ноды).
-* *String* **target** — Результирующий bemdecl-таргет. По умолчанию — `?.bemdecl.js` (демаскируется в рамках текущей ноды).
+* *String* **node** — путь исходной ноды с нужным BEMDECL'ом. Обязательная опция.
+* *String* **source** — исходный BEMDECL, который будет копироваться. По умолчанию — `?.bemdecl.js` (демаскируется в рамках исходной ноды).
+* *String* **target** — результирующий BEMDECL-таргет. По умолчанию — `?.bemdecl.js` (демаскируется в рамках текущей ноды).
 
 **Пример**
 
@@ -166,15 +168,15 @@ nodeConfig.addTech([require('enb-bem-techs/techs/provide-bemdecl'), {
 
 ### deps-by-tech-to-bemdecl
 
-Формирует `bemdecl` на основе depsByTech-информации из `?.deps.js`.
+Формирует BEMDECL на основе `depsByTech`-информации из `?.deps.js`.
 
 **Опции**
 
-* *String* **sourceTech** — Имя исходной технологии. Обязательная опция.
-* *String* **destTech** — Имя конечной технологии. Обязательная опция.
-* *String* **filesTarget** — files-таргет, на основе которого получается список исходных файлов (его предоставляет технология `files`). По умолчанию — `?.files`.
+* *String* **sourceTech** — имя исходной технологии. Обязательная опция.
+* *String* **destTech** — имя конечной технологии. Обязательная опция.
+* *String* **filesTarget** — `files`-таргет, на основе которого получается список исходных файлов (его предоставляет технология `files`). По умолчанию — `?.files`.
 * *String* **sourceSuffixes** — суффиксы файлов, по которым строится `files`-таргет. По умолчанию — `'deps.js'`.
-* *String* **target** — Результирующий bemdecl-таргет. По умолчанию — `?.bemdecl.js`.
+* *String* **target** — результирующий BEMDECL-таргет. По умолчанию — `?.bemdecl.js`.
 
 **Пример**
 
@@ -189,12 +191,12 @@ nodeConfig.addTech(require('enb-bem-techs/techs/deps-by-tech-to-bemdecl'), {
 
 ### bemjson-to-bemdecl
 
-Формирует `bemdecl` на основе `?.bemjson.js`.
+Формирует BEMDECL на основе `?.bemjson.js`.
 
 **Опции**
 
-* *String* **source** — Исходный bemjson-таргет. По умолчанию — `?.bemjson.js`.
-* *String* **target** — Результирующий bemdecl-таргет. По умолчанию — `?.bemdecl.js`.
+* *String* **source** — исходный BEMJSON-таргет. По умолчанию — `?.bemjson.js`.
+* *String* **target** — результирующий BEMDECL-таргет. По умолчанию — `?.bemdecl.js`.
 
 **Пример**
 
@@ -205,12 +207,12 @@ nodeConfig.addTech(require('enb-bem-techs/techs/bemdecl-from-bemjson'));
 
 ### merge-bemdecl
 
-Формирует `bemdecl` с помощью объединения других bemdecl-файлов.
+Формирует BEMDECL с помощью объединения других BEMDECL-файлов.
 
 **Опции**
 
-* *String[]* **sources** — Исходные bemdecl-таргеты. Обязательная опция.
-* *String* **target** — Результирующий bemdecl-таргет. По умолчанию — `?.bemdecl.js`.
+* *String[]* **sources** — исходные BEMDECL-таргеты. Обязательная опция.
+* *String* **target** — результирующий BEMDECL-таргет. По умолчанию — `?.bemdecl.js`.
 
 **Пример**
 
@@ -229,18 +231,20 @@ nodeConfig.addTech([require('enb-bem-techs/techs/merge-bemdecl'), {
 
 **Опции**
 
-* *String* **bemdeclFile** — Файл с исходными зависимостями. По умолчанию — `?.bemdecl.js`.
-* *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
-* *String* **target** — Результирующий deps. По умолчанию — `?.deps.js`.
+* *String* **bemdeclFile** — файл с исходными зависимостями. По умолчанию — `?.bemdecl.js`.
+* *String* **levelsTarget** — исходный `levels`. По умолчанию — `?.levels`.
+* *String* **target** — результирующий `deps`. По умолчанию — `?.deps.js`.
 
 **Пример**
 
 Обычное использование:
+
 ```javascript
 nodeConfig.addTech(require('enb-bem-techs/techs/deps'));
 ```
 
-Сборка специфического deps:
+Сборка специфического `deps`:
+
 ```javascript
 nodeConfig.addTech([require('enb-bem-techs/techs/deps'), {
     sourceDepsFile: 'search.bemdecl.js',
@@ -252,22 +256,24 @@ nodeConfig.addTech([require('enb-bem-techs/techs/deps'), {
 
 ### deps-old
 
-Раскрывает зависимости. Сохраняет в виде `?.deps.js`. Использует алгоритм, заимствованный из bem-tools.
+Раскрывает зависимости. Сохраняет в виде `?.deps.js`. Использует алгоритм, заимствованный из [bem-tools](http://ru.bem.info/tools/bem/bem-tools/).
 
 **Опции**
 
-* *String* **bemdeclFile** — Файл с исходными зависимостями. По умолчанию — `?.bemdecl.js`.
-* *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
-* *String* **target** — Результирующий deps. По умолчанию — `?.deps.js`.
+* *String* **bemdeclFile** — файл с исходными зависимостями. По умолчанию — `?.bemdecl.js`.
+* *String* **levelsTarget** — исходный `levels`. По умолчанию — `?.levels`.
+* *String* **target** — результирующий `deps`. По умолчанию — `?.deps.js`.
 
 **Пример**
 
 Обычное использование:
+
 ```javascript
 nodeConfig.addTech(require('enb-bem-techs/techs/deps-old'));
 ```
 
-Сборка специфического deps:
+Сборка специфического `deps`:
+
 ```javascript
 nodeConfig.addTech([require('enb-bem-techs/techs/deps-old'), {
     sourceDepsFile: 'search.bemdecl.js',
@@ -280,14 +286,14 @@ nodeConfig.addTech([require('enb-bem-techs/techs/deps-old'), {
 ### provide-deps
 
 Копирует `deps` в текущую ноду под нужным именем из другой ноды.
-Может понадобиться, например, для объединения deps'ов.
+Может понадобиться, например, для объединения `deps`'ов.
 
 **Опции**
 
-* *String* **node** — Путь исходной ноды с нужным deps'ом. Обязательная опция.
-* *String* **source** — Исходный deps, который будет копироваться.
+* *String* **node** — путь исходной ноды с нужным `deps`'ом. Обязательная опция.
+* *String* **source** — исходный `deps`, который будет копироваться.
 По умолчанию — `?.deps.js` (демаскируется в рамках исходной ноды).
-* *String* **target** — Результирующий deps-таргет.
+* *String* **target** — результирующий `deps`-таргет.
 По умолчанию — `?.deps.js` (демаскируется в рамках текущей ноды).
 
 **Пример**
@@ -304,12 +310,12 @@ nodeConfig.addTech([require('enb-bem-techs/techs/provide-deps'), {
 
 ### merge-deps
 
-Формирует `deps` с помощью объединения других deps-файлов.
+Формирует `deps` с помощью объединения других `deps`-файлов.
 
 **Опции**
 
-* *String[]* **sources** — Исходные deps-таргеты. Обязательная опция.
-* *String* **target** — Результирующий deps-таргет. По умолчанию — `?.deps.js`.
+* *String[]* **sources** — исходные `deps`-таргеты. Обязательная опция.
+* *String* **target** — результирующий `deps`-таргет. По умолчанию — `?.deps.js`.
 
 **Пример**
 
@@ -324,14 +330,14 @@ nodeConfig.addTech([require('enb-bem-techs/techs/merge-deps'), {
 
 ### subtract-deps
 
-Формирует `deps` с помощью вычитания одного deps-файла из другого.
-Может применяться в паре с `provide-deps` для получения deps для bembundle.
+Формирует `deps` с помощью вычитания одного `deps`-файла из другого.
+Может применяться в паре с `provide-deps` для получения `deps` для `bembundle`.
 
 **Опции**
 
-* *String* **from** — Таргет, из которого вычитать. Обязательная опция.
-* *String* **what** — Таргет, который вычитать. Обязательная опция.
-* *String* **target** — Результирующий deps-таргет. По умолчанию — `?.deps.js`.
+* *String* **from** — таргет, из которого вычитать. Обязательная опция.
+* *String* **what** — таргет, который вычитать. Обязательная опция.
+* *String* **target** — результирующий `deps`-таргет. По умолчанию — `?.deps.js`.
 
 **Пример**
 
@@ -354,15 +360,15 @@ nodeConfig.addTechs([
 
 ### files
 
-Собирает список исходных файлов для сборки на основе *deps* и *levels*, предоставляет `?.files` и `?.dirs`.
+Собирает список исходных файлов для сборки на основе `deps` и `levels`, предоставляет `?.files` и `?.dirs`.
 Используется многими технологиями, которые объединяют множество файлов из различных уровней переопределения в один.
 
 **Опции**
 
-* *String* **depsFile** — Исходный deps-таргет. По умолчанию — `?.deps.js`.
-* *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
-* *String* **filesTarget** — Результирующий files-таргет. По умолчанию — `?.files`.
-* *String* **dirsTarget** — Результирующий dirs-таргет. По умолчанию — `?.dirs`.
+* *String* **depsFile** — исходный `deps`-таргет. По умолчанию — `?.deps.js`.
+* *String* **levelsTarget** — исходный `levels`. По умолчанию — `?.levels`.
+* *String* **filesTarget** — результирующий `files`-таргет. По умолчанию — `?.files`.
+* *String* **dirsTarget** — результирующий `dirs`-таргет. По умолчанию — `?.dirs`.
 
 **Пример**
 
