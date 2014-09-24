@@ -15,7 +15,6 @@ describe('techs', function () {
                         mods: [
                             {
                                 name: 'bool-mod',
-                                vals: [{ name: 'true' }]
                             }
                         ]
                     },
@@ -38,8 +37,7 @@ describe('techs', function () {
                             name: 'elem',
                             mods: [
                                 {
-                                    name: 'bool-mod',
-                                    vals: [{ name: 'true' }]
+                                    name: 'bool-mod'
                                 }
                             ]
                         }]
