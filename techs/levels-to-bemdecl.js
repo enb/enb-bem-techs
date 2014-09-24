@@ -101,11 +101,12 @@ function processMods(deps, block, mods, elem) {
     if (mods) {
         Object.keys(mods).forEach(function (modName) {
             var dep = {
-                block: block,
-                mod: modName,
-                val: Object.keys(mods[modName])[0]
-            };
+                    block: block,
+                    mod: modName
+                },
+                val = Object.keys(mods[modName])[0];
 
+            val && val !== '*' && (dep.val = val);
             elem && (dep.elem = elem);
 
             deps.push(dep);
