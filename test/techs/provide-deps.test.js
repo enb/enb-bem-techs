@@ -1,27 +1,21 @@
-var FileSystem = require('enb/lib/test/mocks/test-file-system'),
+var mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     provideTech = require('../../techs/provide-deps');
 
 describe('techs', function () {
     describe('provide-deps', function () {
-        var fileSystem,
-            fromFileBundle,
+        var fromFileBundle,
             fromDataBundle,
             toBundle;
 
         beforeEach(function () {
-            fileSystem = new FileSystem([
-                {
-                    directory: 'from-file-bundle',
-                    items: [{
-                        file: 'from-file-bundle.deps.js',
-                        content: stringify([{ block: 'block' }])
-                    }]
+            mockFs({
+                'from-file-bundle': {
+                    'from-file-bundle.deps.js': stringify([{ block: 'block' }])
                 },
-                { directory: 'from-data-bundle', items: [] },
-                { directory: 'to-bundle', items: [] }
-            ]);
-            fileSystem.setup();
+                'from-data-bundle': {},
+                'to-bundle': {}
+            });
 
             fromFileBundle = new TestNode('from-file-bundle');
             fromDataBundle = new TestNode('from-data-bundle');
@@ -33,7 +27,7 @@ describe('techs', function () {
         });
 
         afterEach(function () {
-            fileSystem.teardown();
+            mockFs.restore();
         });
 
         it('must provide `?.deps.js` target from file', function (done) {

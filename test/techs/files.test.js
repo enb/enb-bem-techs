@@ -1,104 +1,92 @@
 var path = require('path'),
-    FileSystem = require('enb/lib/test/mocks/test-file-system'),
+    mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     levelsTech = require('../../techs/levels'),
-    filesTech = require('../../techs/files');
+    filesTech = require('../../techs/files'),
+    cwd = process.cwd();
 
 describe('techs', function () {
     describe('files', function () {
-        var fileSystem,
-            bundle,
+        var bundle,
             fileLevels,
             dirLevels,
             suffixLevels;
 
         beforeEach(function () {
-            fileSystem = new FileSystem([{
-                directory: 'files.blocks',
-                items: [
-                    {
-                        directory: 'block',
-                        items: [
-                            { file: 'block' },
-                            { directory: '_mod', items: [{ file: 'block_mod' }] },
-                            { directory: '_modName', items: [{ file: 'block_modName_modVal' }] },
-                            { directory: '__elem',
-                                items: [
-                                    { file: 'block__elem' },
-                                    { directory: '_mod', items: [ { file: 'block__elem_mod' }] },
-                                    { directory: '_modName', items: [{ file: 'block__elem_modName_modVal' }] }
-                                ]
+            mockFs({
+                'files.blocks': {
+                    'fully-block': {
+                        'fully-block': '',
+                        '_bool-mod': {
+                            'fully-block_bool-mod': ''
+                        },
+                        '_mod-name': {
+                            'fully-block_mod-name_mod-val': ''
+                        },
+                        __elem: {
+                            'fully-block__elem': '',
+                            '_bool-mod': {
+                                'fully-block__elem_bool-mod': ''
+                            },
+                            '_mod-name': {
+                                'fully-block__elem_mod-name_mod-val': ''
                             }
-                        ]
+                        }
                     }
-                ]
-            }, {
-                directory: 'dirs.blocks',
-                items: [
-                    {
-                        directory: 'block',
-                        items: [
-                            { directory: 'block.dir', items: [] },
-                            { directory: '_mod', items: [{ directory: 'block_mod.dir', items: [] }] },
-                            { directory: '_modName', items: [{ directory: 'block_modName_modVal.dir', items: [] }] },
-                            { directory: '__elem',
-                                items: [
-                                    { directory: 'block__elem.dir', items: [] },
-                                    { directory: '_mod', items: [
-                                        { directory: 'block__elem_mod.dir', items: [] }
-                                    ] },
-                                    { directory: '_modName', items: [
-                                        { directory: 'block__elem_modName_modVal.dir', items: [] }
-                                    ] }
-                                ]
+                },
+                'dirs.blocks': {
+                    'fully-block': {
+                        'fully-block.dir': {},
+                        '_bool-mod': {
+                            'fully-block_bool-mod.dir': {}
+                        },
+                        '_mod-name': {
+                            'fully-block_mod-name_mod-val.dir': {}
+                        },
+                        __elem: {
+                            'fully-block__elem.dir': {},
+                            '_bool-mod': {
+                                'fully-block__elem_bool-mod.dir': {}
+                            },
+                            '_mod-name': {
+                                'fully-block__elem_mod-name_mod-val.dir': {}
                             }
-                        ]
+                        }
                     }
-                ]
-            }, {
-                directory: 'suffix.blocks',
-                items: [
-                    {
-                        directory: 'A',
-                        items: [
-                            { file: 'A.a' },
-                            { file: 'A.b' },
-                            { directory: 'A.a-dir', items: [] },
-                            { directory: 'A.b-dir', items: [] }
-                        ]
+                },
+                'suffix.blocks': {
+                    A: {
+                        'A.a': '',
+                        'A.b': '',
+                        'A.a-dir': {},
+                        'A.b-dir': {}
                     },
-                    {
-                        directory: 'B',
-                        items: [
-                            { file: 'B.a' },
-                            { file: 'B.b' },
-                            { directory: 'B.a-dir', items: [] },
-                            { directory: 'B.b-dir', items: [] }
-                        ]
+                    B: {
+                        'B.a': '',
+                        'B.b': '',
+                        'B.a-dir': {},
+                        'B.b-dir': {}
                     }
-                ]
-            }, {
-                directory: 'bundle', items: []
-            }]);
-
-            fileSystem.setup();
+                },
+                bundle: {}
+            });
 
             bundle = new TestNode('bundle');
 
-            fileLevels = [path.join(fileSystem._root, 'files.blocks')];
-            dirLevels = [path.join(fileSystem._root, 'dirs.blocks')];
-            suffixLevels = [path.join(fileSystem._root, 'suffix.blocks')];
+            fileLevels = ['files.blocks'];
+            dirLevels = ['dirs.blocks'];
+            suffixLevels = ['suffix.blocks'];
         });
 
         afterEach(function () {
-            fileSystem.teardown();
+            mockFs.restore();
         });
 
         it('must get block file by bemdecl', function (done) {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.bemdecl.js', { blocks: [{ name: 'block' }] });
+                    bundle.provideTechData('?.bemdecl.js', { blocks: [{ name: 'fully-block' }] });
 
                     return bundle.runTechAndGetResults(filesTech, {
                         depsFile: '?.bemdecl.js'
@@ -106,8 +94,8 @@ describe('techs', function () {
                 })
                 .then(function (result) {
                     var files = result['bundle.files'],
-                        file = files.getByName('block')[0],
-                        filename = path.join(fileLevels[0], 'block', 'block');
+                        file = files.getByName('fully-block')[0],
+                        filename = path.join(cwd, fileLevels[0], 'fully-block', 'fully-block');
 
                     file.fullname.must.be(filename);
                 })
@@ -118,14 +106,14 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'block' }] });
+                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'fully-block' }] });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
                     var files = result['bundle.files'],
-                        file = files.getByName('block')[0],
-                        filename = path.join(fileLevels[0], 'block', 'block');
+                        file = files.getByName('fully-block')[0],
+                        filename = path.join(cwd, fileLevels[0], 'fully-block', 'fully-block');
 
                     file.fullname.must.be(filename);
                 })
@@ -136,14 +124,15 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'block', mod: 'mod', val: true }] });
+                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'fully-block',
+                        mod: 'bool-mod', val: true }] });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
                     var files = result['bundle.files'],
-                        file = files.getByName('block_mod')[0],
-                        filename = path.join(fileLevels[0], 'block', '_mod', 'block_mod');
+                        file = files.getByName('fully-block_bool-mod')[0],
+                        filename = path.join(cwd, fileLevels[0], 'fully-block', '_bool-mod', 'fully-block_bool-mod');
 
                     file.fullname.must.be(filename);
                 })
@@ -154,14 +143,19 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'block', mod: 'modName', val: 'modVal' }] });
+                    bundle.provideTechData('?.deps.js', { deps: [{
+                        block: 'fully-block',
+                        mod: 'mod-name',
+                        val: 'mod-val'
+                    }] });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
                     var files = result['bundle.files'],
-                        file = files.getByName('block_modName_modVal')[0],
-                        filename = path.join(fileLevels[0], 'block', '_modName', 'block_modName_modVal');
+                        file = files.getByName('fully-block_mod-name_mod-val')[0],
+                        filename = path.join(cwd, fileLevels[0], 'fully-block',
+                            '_mod-name', 'fully-block_mod-name_mod-val');
 
                     file.fullname.must.be(filename);
                 })
@@ -172,14 +166,14 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: fileLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'block', elem: 'elem' }] });
+                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'fully-block', elem: 'elem' }] });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
                     var files = result['bundle.files'],
-                        file = files.getByName('block__elem')[0],
-                        filename = path.join(fileLevels[0], 'block', '__elem', 'block__elem');
+                        file = files.getByName('fully-block__elem')[0],
+                        filename = path.join(cwd, fileLevels[0], 'fully-block', '__elem', 'fully-block__elem');
 
                     file.fullname.must.be(filename);
                 })
@@ -191,15 +185,16 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', {
-                        deps: [{ block: 'block', elem: 'elem', mod: 'mod', val: true }]
+                        deps: [{ block: 'fully-block', elem: 'elem', mod: 'bool-mod', val: true }]
                     });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
                     var files = result['bundle.files'],
-                        file = files.getByName('block__elem_mod')[0],
-                        filename = path.join(fileLevels[0], 'block', '__elem', '_mod', 'block__elem_mod');
+                        file = files.getByName('fully-block__elem_bool-mod')[0],
+                        filename = path.join(cwd, fileLevels[0], 'fully-block', '__elem',
+                            '_bool-mod', 'fully-block__elem_bool-mod');
 
                     file.fullname.must.be(filename);
                 })
@@ -211,16 +206,16 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', {
-                        deps: [{ block: 'block', elem: 'elem', mod: 'modName', val: 'modVal' }]
+                        deps: [{ block: 'fully-block', elem: 'elem', mod: 'mod-name', val: 'mod-val' }]
                     });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
                     var files = result['bundle.files'],
-                        file = files.getByName('block__elem_modName_modVal')[0],
-                        filename = path.join(fileLevels[0], 'block', '__elem',
-                        '_modName', 'block__elem_modName_modVal');
+                        file = files.getByName('fully-block__elem_mod-name_mod-val')[0],
+                        filename = path.join(cwd, fileLevels[0], 'fully-block', '__elem',
+                        '_mod-name', 'fully-block__elem_mod-name_mod-val');
 
                     file.fullname.must.be(filename);
                 })
@@ -231,14 +226,14 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: dirLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'block' }] });
+                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'fully-block' }] });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
                     var dirs = result['bundle.dirs'],
-                        dir = dirs.getByName('block.dir')[0],
-                        dirname = path.join(dirLevels[0], 'block', 'block.dir');
+                        dir = dirs.getByName('fully-block.dir')[0],
+                        dirname = path.join(cwd, dirLevels[0], 'fully-block', 'fully-block.dir');
 
                     dir.fullname.must.be(dirname);
                 })
@@ -249,14 +244,15 @@ describe('techs', function () {
             bundle.runTech(levelsTech, { levels: dirLevels })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'block', mod: 'mod', val: true }] });
+                    bundle.provideTechData('?.deps.js', { deps: [{ block: 'fully-block',
+                        mod: 'bool-mod', val: true }] });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
                     var dirs = result['bundle.dirs'],
-                        dir = dirs.getByName('block_mod.dir')[0],
-                        dirname = path.join(dirLevels[0], 'block', '_mod', 'block_mod.dir');
+                        dir = dirs.getByName('fully-block_bool-mod.dir')[0],
+                        dirname = path.join(cwd, dirLevels[0], 'fully-block', '_bool-mod', 'fully-block_bool-mod.dir');
 
                     dir.fullname.must.be(dirname);
                 })
@@ -268,15 +264,16 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', {
-                        deps: [{ block: 'block', mod: 'modName', val: 'modVal' }]
+                        deps: [{ block: 'fully-block', mod: 'mod-name', val: 'mod-val' }]
                     });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
                     var dirs = result['bundle.dirs'],
-                        dir = dirs.getByName('block_modName_modVal.dir')[0],
-                        dirname = path.join(dirLevels[0], 'block', '_modName', 'block_modName_modVal.dir');
+                        dir = dirs.getByName('fully-block_mod-name_mod-val.dir')[0],
+                        dirname = path.join(cwd, dirLevels[0], 'fully-block',
+                            '_mod-name', 'fully-block_mod-name_mod-val.dir');
 
                     dir.fullname.must.be(dirname);
                 })
@@ -288,15 +285,15 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', {
-                        deps: [{ block: 'block', elem: 'elem' }]
+                        deps: [{ block: 'fully-block', elem: 'elem' }]
                     });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
                     var dirs = result['bundle.dirs'],
-                        dir = dirs.getByName('block__elem.dir')[0],
-                        dirname = path.join(dirLevels[0], 'block', '__elem', 'block__elem.dir');
+                        dir = dirs.getByName('fully-block__elem.dir')[0],
+                        dirname = path.join(cwd, dirLevels[0], 'fully-block', '__elem', 'fully-block__elem.dir');
 
                     dir.fullname.must.be(dirname);
                 })
@@ -308,15 +305,16 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', {
-                        deps: [{ block: 'block', elem: 'elem', mod: 'mod', val: true }]
+                        deps: [{ block: 'fully-block', elem: 'elem', mod: 'bool-mod', val: true }]
                     });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
                     var dirs = result['bundle.dirs'],
-                        dir = dirs.getByName('block__elem_mod.dir')[0],
-                        dirname = path.join(dirLevels[0], 'block', '__elem', '_mod', 'block__elem_mod.dir');
+                        dir = dirs.getByName('fully-block__elem_bool-mod.dir')[0],
+                        dirname = path.join(cwd, dirLevels[0], 'fully-block', '__elem',
+                            '_bool-mod', 'fully-block__elem_bool-mod.dir');
 
                     dir.fullname.must.be(dirname);
                 })
@@ -328,16 +326,16 @@ describe('techs', function () {
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', {
-                        deps: [{ block: 'block', elem: 'elem', mod: 'modName', val: 'modVal' }]
+                        deps: [{ block: 'fully-block', elem: 'elem', mod: 'mod-name', val: 'mod-val' }]
                     });
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(function (result) {
                     var dirs = result['bundle.dirs'],
-                        dir = dirs.getByName('block__elem_modName_modVal.dir')[0],
-                        dirname = path.join(dirLevels[0], 'block', '__elem',
-                        '_modName', 'block__elem_modName_modVal.dir');
+                        dir = dirs.getByName('fully-block__elem_mod-name_mod-val.dir')[0],
+                        dirname = path.join(cwd, dirLevels[0], 'fully-block', '__elem',
+                        '_mod-name', 'fully-block__elem_mod-name_mod-val.dir');
 
                     dir.fullname.must.be(dirname);
                 })
@@ -356,10 +354,10 @@ describe('techs', function () {
                     var files = result['bundle.files'],
                         aFiles = files.getBySuffix('a'),
                         bFiles = files.getBySuffix('b'),
-                        filenameAa = path.join(suffixLevels[0], 'A', 'A.a'),
-                        filenameBa = path.join(suffixLevels[0], 'B', 'B.a'),
-                        filenameAb = path.join(suffixLevels[0], 'A', 'A.b'),
-                        filenameBb = path.join(suffixLevels[0], 'B', 'B.b');
+                        filenameAa = path.join(cwd, suffixLevels[0], 'A', 'A.a'),
+                        filenameBa = path.join(cwd, suffixLevels[0], 'B', 'B.a'),
+                        filenameAb = path.join(cwd, suffixLevels[0], 'A', 'A.b'),
+                        filenameBb = path.join(cwd, suffixLevels[0], 'B', 'B.b');
 
                     aFiles[0].fullname.must.be(filenameAa);
                     aFiles[1].fullname.must.be(filenameBa);
@@ -382,10 +380,10 @@ describe('techs', function () {
                     var dirs = result['bundle.dirs'],
                         aFiles = dirs.getBySuffix('a-dir'),
                         bFiles = dirs.getBySuffix('b-dir'),
-                        filenameAa = path.join(suffixLevels[0], 'A', 'A.a-dir'),
-                        filenameBa = path.join(suffixLevels[0], 'B', 'B.a-dir'),
-                        filenameAb = path.join(suffixLevels[0], 'A', 'A.b-dir'),
-                        filenameBb = path.join(suffixLevels[0], 'B', 'B.b-dir');
+                        filenameAa = path.join(cwd, suffixLevels[0], 'A', 'A.a-dir'),
+                        filenameBa = path.join(cwd, suffixLevels[0], 'B', 'B.a-dir'),
+                        filenameAb = path.join(cwd, suffixLevels[0], 'A', 'A.b-dir'),
+                        filenameBb = path.join(cwd, suffixLevels[0], 'B', 'B.b-dir');
 
                     aFiles[0].fullname.must.be(filenameAa);
                     aFiles[1].fullname.must.be(filenameBa);
@@ -402,8 +400,8 @@ describe('techs', function () {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', {
                         deps: [
-                            { block: 'block', mod: 'mod' },
-                            { block: 'block', mod: 'mod', val: true }
+                            { block: 'fully-block', mod: 'bool-mod' },
+                            { block: 'fully-block', mod: 'bool-mod', val: true }
                         ]
                     });
 

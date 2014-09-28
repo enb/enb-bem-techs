@@ -1,12 +1,12 @@
 var path = require('path'),
-    FileSystem = require('enb/lib/test/mocks/test-file-system'),
+    mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
-    LevelsTech = require('../../techs/levels');
+    LevelsTech = require('../../techs/levels'),
+    cwd = process.cwd();
 
 describe('techs', function () {
     describe('levels', function () {
-        var fileSystem,
-            bundle,
+        var bundle,
             desktopBundle,
             blocksDirname,
             commonLevel,
@@ -18,77 +18,48 @@ describe('techs', function () {
             fullyDesktopLevels;
 
         beforeEach(function () {
-            fileSystem = new FileSystem([
-                {
-                    directory: 'blocks',
-                    items: [{
-                        directory: 'fully-block',
-                        items: [
-                            { file: 'fully-block' },
-                            { directory: 'fully-block.dir', items: [] },
-                            { directory: '_bool-mod',
-                                items: [
-                                    { file: 'fully-block_bool-mod' },
-                                    { directory: 'fully-block_bool-mod.dir', items: [] }
-                                ]
+            mockFs({
+                blocks: {
+                    'fully-block': {
+                        'fully-block': '',
+                        'fully-block.dir': {},
+                        '_bool-mod': {
+                            'fully-block_bool-mod': '',
+                            'fully-block_bool-mod.dir': {}
+                        },
+                        '_mod-name': {
+                            'fully-block_mod-name_mod-val': '',
+                            'fully-block_mod-name_mod-val.dir': {}
+                        },
+                        __elem: {
+                            'fully-block__elem': '',
+                            'fully-block__elem.dir': {},
+                            '_bool-mod': {
+                                'fully-block__elem_bool-mod': '',
+                                'fully-block__elem_bool-mod.dir': {}
                             },
-                            { directory: '_modName',
-                                items: [
-                                    { file: 'fully-block_modName_modVal' },
-                                    { directory: 'fully-block_modName_modVal.dir', items: [] }
-                                ]
-                            },
-                            { directory: '__elem',
-                                items: [
-                                    { file: 'fully-block__elem' },
-                                    { directory: 'fully-block__elem.dir', items: [] },
-                                    { directory: '_bool-mod',
-                                        items: [
-                                            { file: 'fully-block__elem_bool-mod' },
-                                            { directory: 'fully-block__elem_bool-mod.dir', items: [] }
-                                        ]
-                                    },
-                                    { directory: '_modName',
-                                        items: [
-                                            { file: 'fully-block__elem_modName_modVal' },
-                                            { directory: 'fully-block__elem_modName_modVal.dir', items: [] }
-                                        ]
-                                    }
-                                ]
+                            '_mod-name': {
+                                'fully-block__elem_mod-name_mod-val': '',
+                                'fully-block__elem_mod-name_mod-val.dir': {}
                             }
-                        ]
-                    }]
+                        }
+                    }
                 },
-                {
-                    directory: 'common.blocks',
-                    items: [{
-                        directory: 'block-1',
-                        items: [
-                            { file: 'block-1' },
-                            { directory: 'block-1.dir', items: [] }
-                        ]
-                    }]
+                'common.blocks': {
+                    'block-1': {
+                        'block-1': '',
+                        'block-1.dir': {}
+                    }
                 },
-                {
-                    directory: 'desktop.blocks',
-                    items: [{
-                        directory: 'block-1',
-                        items: [
-                            { file: 'block-1' },
-                            { directory: 'block-1.dir', items: [] }
-                        ]
-                    }]
+                'desktop.blocks': {
+                    'block-1': {
+                        'block-1': '',
+                        'block-1.dir': {}
+                    }
                 },
-                {
-                    directory: 'bundle',
-                    items: []
-                },
-                {
-                    directory: 'desktop.bundle',
-                    items: []
-                }
-            ]);
-            fileSystem.setup();
+                bundle: {},
+                'desktop.bundle': {}
+            });
 
             bundle = new TestNode('bundle');
             desktopBundle = new TestNode('desktop.bundle');
@@ -98,15 +69,15 @@ describe('techs', function () {
             desktopLevel = 'desktop.blocks';
             desktopLevels = [commonLevel, desktopLevel];
 
-            fullyBlockDirname = path.join(fileSystem._root, 'blocks', 'fully-block');
+            fullyBlockDirname = path.join(cwd, 'blocks', 'fully-block');
 
-            fullyCommonLevel = path.join(fileSystem._root, commonLevel);
-            fullyDesktopLevel = path.join(fileSystem._root, desktopLevel);
+            fullyCommonLevel = path.join(cwd, commonLevel);
+            fullyDesktopLevel = path.join(cwd, desktopLevel);
             fullyDesktopLevels = [fullyCommonLevel, fullyDesktopLevel];
         });
 
         afterEach(function () {
-            fileSystem.teardown();
+            mockFs.restore();
         });
 
         it('must detect block file in level', function (done) {
@@ -160,9 +131,9 @@ describe('techs', function () {
         it('must detect mod file of block in level', function (done) {
             bundle.runTech(LevelsTech, { levels: [blocksDirname] })
                 .then(function (levels) {
-                    var name = 'fully-block_modName_modVal',
-                        file = levels.getBlockFiles('fully-block', 'modName', 'modVal')[0],
-                        filename = path.join(fullyBlockDirname, '_modName', name);
+                    var name = 'fully-block_mod-name_mod-val',
+                        file = levels.getBlockFiles('fully-block', 'mod-name', 'mod-val')[0],
+                        filename = path.join(fullyBlockDirname, '_mod-name', name);
 
                     file.fullname.must.be(filename);
                 })
@@ -172,9 +143,9 @@ describe('techs', function () {
         it('must detect mod dir of block in level', function (done) {
             bundle.runTech(LevelsTech, { levels: [blocksDirname] })
                 .then(function (levels) {
-                    var name = 'fully-block_modName_modVal',
-                        dir = levels.getBlockEntities('fully-block', 'modName', 'modVal').dirs[0],
-                        dirname = path.join(fullyBlockDirname, '_modName', name + '.dir');
+                    var name = 'fully-block_mod-name_mod-val',
+                        dir = levels.getBlockEntities('fully-block', 'mod-name', 'mod-val').dirs[0],
+                        dirname = path.join(fullyBlockDirname, '_mod-name', name + '.dir');
 
                     dir.fullname.must.be(dirname);
                 })
@@ -232,21 +203,21 @@ describe('techs', function () {
         it('must detect mod file of elem in level', function (done) {
             bundle.runTech(LevelsTech, { levels: [blocksDirname] })
                 .then(function (levels) {
-                    var name = 'fully-block__elem_modName_modVal',
-                        file = levels.getElemFiles('fully-block', 'elem', 'modName', 'modVal')[0],
-                        filename = path.join(fullyBlockDirname, '__elem', '_modName', name);
+                    var name = 'fully-block__elem_mod-name_mod-val',
+                        file = levels.getElemFiles('fully-block', 'elem', 'mod-name', 'mod-val')[0],
+                        filename = path.join(fullyBlockDirname, '__elem', '_mod-name', name);
 
                     file.fullname.must.be(filename);
                 })
                 .then(done, done);
         });
 
-        it('must detect mod file of elem in level', function (done) {
+        it('must detect mod dir of elem in level', function (done) {
             bundle.runTech(LevelsTech, { levels: [blocksDirname] })
                 .then(function (levels) {
-                    var name = 'fully-block__elem_modName_modVal',
-                        dir = levels.getElemEntities('fully-block', 'elem', 'modName', 'modVal').dirs[0],
-                        dirname = path.join(fullyBlockDirname, '__elem', '_modName', name + '.dir');
+                    var name = 'fully-block__elem_mod-name_mod-val',
+                        dir = levels.getElemEntities('fully-block', 'elem', 'mod-name', 'mod-val').dirs[0],
+                        dirname = path.join(fullyBlockDirname, '__elem', '_mod-name', name + '.dir');
 
                     dir.fullname.must.be(dirname);
                 })
