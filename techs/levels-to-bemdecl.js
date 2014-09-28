@@ -100,16 +100,19 @@ function processElems(deps, block, elems) {
 function processMods(deps, block, mods, elem) {
     if (mods) {
         Object.keys(mods).forEach(function (modName) {
-            var dep = {
+            var vals = Object.keys(mods[modName]);
+
+            vals.forEach(function (val) {
+                var dep = {
                     block: block,
                     mod: modName
-                },
-                val = Object.keys(mods[modName])[0];
+                };
 
-            val && val !== '*' && (dep.val = val);
-            elem && (dep.elem = elem);
+                val && val !== '*' && (dep.val = val);
+                elem && (dep.elem = elem);
 
-            deps.push(dep);
+                deps.push(dep);
+            });
         });
     }
 }

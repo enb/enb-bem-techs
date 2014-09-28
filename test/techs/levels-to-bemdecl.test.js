@@ -14,7 +14,7 @@ describe('techs', function () {
                         name: 'fully-block',
                         mods: [
                             {
-                                name: 'bool-mod',
+                                name: 'bool-mod'
                             }
                         ]
                     },
