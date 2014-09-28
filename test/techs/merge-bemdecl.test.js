@@ -1,37 +1,35 @@
-var FileSystem = require('enb/lib/test/mocks/test-file-system'),
+var mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     mergeTech = require('../../techs/merge-bemdecl');
 
 describe('techs', function () {
     describe('merge-bemdecl', function () {
-        var fileSystem,
-            bundle,
+        var bundle,
             dataBundle;
 
         beforeEach(function () {
-            fileSystem = new FileSystem([{
-                directory: 'bundle', items: [
-                    { file: 'block.bemdecl.js', content: stringify([{ name: 'block' }]) },
-                    { file: 'block-mod.bemdecl.js', content: stringify([{
+            mockFs({
+                bundle: {
+                    'block.bemdecl.js': stringify([{ name: 'block' }]),
+                    'block-mod.bemdecl.js': stringify([{
                         name: 'block',
                         mods: [{ name: 'modName', vals: [{ name: 'modVal' }] }]
-                    }]) },
-                    { file: 'elem.bemdecl.js', content: stringify([{
+                    }]),
+                    'elem.bemdecl.js': stringify([{
                         name: 'block',
                         elems: [{ name: 'elem' }]
-                    }]) },
-                    { file: 'elem-mod.bemdecl.js', content: stringify([{
+                    }]),
+                    'elem-mod.bemdecl.js': stringify([{
                         name: 'block',
                         elems: [{ name: 'elem', mods: [{ name: 'modName', vals: [{ name: 'modVal' }] }] }]
-                    }]) },
+                    }]),
 
-                    { file: 'empty.bemdecl.js', content: stringify([]) },
-                    { file: 'set.bemdecl.js', content: stringify([{ name: '1' }, { name: '2' }, { name: '3' }]) },
-                    { file: 'part.bemdecl.js', content: stringify([{ name: '2' }]) },
-                    { file: 'nonexistent.bemdecl.js', content: stringify([{ name: 'O_o' }]) }
-                ]
-            }]);
-            fileSystem.setup();
+                    'empty.bemdecl.js': stringify([]),
+                    'set.bemdecl.js': stringify([{ name: '1' }, { name: '2' }, { name: '3' }]),
+                    'part.bemdecl.js': stringify([{ name: '2' }]),
+                    'nonexistent.bemdecl.js': stringify([{ name: 'O_o' }])
+                }
+            });
 
             bundle = new TestNode('bundle');
             dataBundle = new TestNode('bundle');
@@ -40,7 +38,7 @@ describe('techs', function () {
         });
 
         afterEach(function () {
-            fileSystem.teardown();
+            mockFs.restore();
         });
 
         it('must require result target from data', function (done) {

@@ -1,12 +1,11 @@
-var FileSystem = require('enb/lib/test/mocks/test-file-system'),
+var mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     levelsTech = require('../../techs/levels'),
     bemdeclTech = require('../../techs/levels-to-bemdecl');
 
 describe('techs', function () {
     describe('levels-to-bemdecl', function () {
-        var fileSystem,
-            bundle,
+        var bundle,
             bemdecl = {
                 blocks: [
                     { name: 'fully-block' },
@@ -56,57 +55,41 @@ describe('techs', function () {
             };
 
         beforeEach(function () {
-            fileSystem = new FileSystem([{
-                directory: 'blocks',
-                items: [{
-                    directory: 'fully-block',
-                    items: [
-                        { file: 'fully-block' },
-                        { directory: 'fully-block.dir', items: [] },
-                        { directory: '_bool-mod',
-                            items: [
-                                { file: 'fully-block_bool-mod' },
-                                { directory: 'fully-block_bool-mod.dir', items: [] }
-                            ]
+            mockFs({
+                blocks: {
+                    'fully-block': {
+                        'fully-block': '',
+                        'fully-block.dir': {},
+                        '_bool-mod': {
+                            'fully-block_bool-mod': '',
+                            'fully-block_bool-mod.dir': {}
                         },
-                        { directory: '_mod-name',
-                            items: [
-                                { file: 'fully-block_mod-name_mod-val' },
-                                { directory: 'fully-block_mod-name_mod-val.dir', items: [] }
-                            ]
+                        '_mod-name': {
+                            'fully-block_mod-name_mod-val': '',
+                            'fully-block_mod-name_mod-val.dir': {}
                         },
-                        { directory: '__elem',
-                            items: [
-                                { file: 'fully-block__elem' },
-                                { directory: 'fully-block__elem.dir', items: [] },
-                                { directory: '_bool-mod',
-                                    items: [
-                                        { file: 'fully-block__elem_bool-mod' },
-                                        { directory: 'fully-block__elem_bool-mod.dir', items: [] }
-                                    ]
-                                },
-                                { directory: '_mod-name',
-                                    items: [
-                                        { file: 'fully-block__elem_mod-name_mod-val' },
-                                        { directory: 'fully-block__elem_mod-name_mod-val.dir', items: [] }
-                                    ]
-                                }
-                            ]
+                        __elem: {
+                            'fully-block__elem': '',
+                            'fully-block__elem.dir': {},
+                            '_bool-mod': {
+                                'fully-block__elem_bool-mod': '',
+                                'fully-block__elem_bool-mod.dir': {}
+                            },
+                            '_mod-name': {
+                                'fully-block__elem_mod-name_mod-val': '',
+                                'fully-block__elem_mod-name_mod-val.dir': {}
+                            }
                         }
-                    ]
-                }]
-            },
-            {
-                directory: 'bundle',
-                items: []
-            }]);
-            fileSystem.setup();
+                    }
+                },
+                bundle: {}
+            });
 
             bundle = new TestNode('bundle');
         });
 
         afterEach(function () {
-            fileSystem.teardown();
+            mockFs.restore();
         });
 
         it('must provide result target', function (done) {

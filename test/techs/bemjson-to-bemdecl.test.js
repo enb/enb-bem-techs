@@ -1,76 +1,42 @@
-var FileSystem = require('enb/lib/test/mocks/test-file-system'),
+var mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     bemdeclTech = require('../../techs/bemjson-to-bemdecl');
 
 describe('techs', function () {
     describe('bemdecl-from-bemjson', function () {
-        var fileSystem,
-            bundle;
+        var bundle;
 
         beforeEach(function () {
-            fileSystem = new FileSystem([{
-                directory: 'bundle', items: [
-                    {
-                        file: 'block.bemjson.js',
-                        content: stringify({ block: 'block' })
-                    },
-                    {
-                        file: 'block-bool-mod.bemjson.js',
-                        content: stringify({ block: 'block', mods: { mod: true } })
-                    },
-                    {
-                        file: 'block-mod.bemjson.js',
-                        content: stringify({ block: 'block', mods: { modName: 'modVal' } })
-                    },
-                    {
-                        file: 'elem.bemjson.js',
-                        content: stringify({ block: 'block', elem: 'elem' })
-                    },
-                    {
-                        file: 'elem-bool-mod.bemjson.js',
-                        content: stringify({ block: 'block', elem: 'elem', elemMods: { mod: true } })
-                    },
-                    {
-                        file: 'elem-mod.bemjson.js',
-                        content: stringify({ block: 'block', elem: 'elem', elemMods: { modName: 'modVal' } })
-                    },
-                    {
-                        file: 'attrs.bemjson.js',
-                        content: stringify({ attrs: {
-                            block: 'block',
-                            mods: { mod: true, modName: 'modVal' },
-                            elem: 'elem' },
-                            elemMods: { mod: true, modName: 'modVal' }
-                        })
-                    },
-                    {
-                        file: 'custom.bemjson.js',
-                        content: stringify({
-                            custom: { block: 'block' }
-                        })
-                    },
-                    {
-                        file: 'deep-custom.bemjson.js',
-                        content: stringify({
-                            custom: {
-                                one: { block: 'block-1' },
-                                two: { block: 'block-2' }
-                            }
-                        })
-                    },
-                    {
-                        file: 'undefined.bemjson.js',
-                        content: stringify([undefined])
-                    }
-                ]
-            }]);
-            fileSystem.setup();
+            mockFs({
+                bundle: {
+                    'block.bemjson.js': stringify({ block: 'block' }),
+                    'block-bool-mod.bemjson.js': stringify({ block: 'block', mods: { mod: true } }),
+                    'block-mod.bemjson.js': stringify({ block: 'block', mods: { modName: 'modVal' } }),
+                    'elem.bemjson.js': stringify({ block: 'block', elem: 'elem' }),
+                    'elem-bool-mod.bemjson.js': stringify({ block: 'block', elem: 'elem', elemMods: { mod: true } }),
+                    'elem-mod.bemjson.js': stringify({ block: 'block', elem: 'elem', elemMods: { modName: 'modVal' } }),
+                    'attrs.bemjson.js': stringify({ attrs: {
+                        block: 'block',
+                        mods: { mod: true, modName: 'modVal' },
+                        elem: 'elem' },
+                        elemMods: { mod: true, modName: 'modVal' }
+                    }),
+                    'custom.bemjson.js': stringify({ custom: { block: 'block' } }),
+                    'deep-custom.bemjson.js': stringify({
+                        custom: {
+                            one: { block: 'block-1' },
+                            two: { block: 'block-2' }
+                        }
+                    }),
+                    'undefined.bemjson.js': stringify([undefined])
+                }
+            });
 
             bundle = new TestNode('bundle');
         });
 
         afterEach(function () {
-            fileSystem.teardown();
+            mockFs.restore();
         });
 
         it('must require result', function (done) {

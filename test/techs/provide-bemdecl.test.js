@@ -1,27 +1,21 @@
-var FileSystem = require('enb/lib/test/mocks/test-file-system'),
+var mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     provideTech = require('../../techs/provide-bemdecl');
 
 describe('techs', function () {
     describe('provide-bemdecl', function () {
-        var fileSystem,
-            fromFileBundle,
+        var fromFileBundle,
             fromDataBundle,
             toBundle;
 
         beforeEach(function () {
-            fileSystem = new FileSystem([
-                {
-                    directory: 'from-file-bundle',
-                    items: [{
-                        file: 'from-file-bundle.bemdecl.js',
-                        content: stringify([{ name: 'block' }])
-                    }]
+            mockFs({
+                'from-file-bundle': {
+                    'from-file-bundle.bemdecl.js': stringify([{ name: 'block' }])
                 },
-                { directory: 'from-data-bundle', items: [] },
-                { directory: 'to-bundle', items: [] }
-            ]);
-            fileSystem.setup();
+                'from-data-bundle': {},
+                'to-bundle': {}
+            });
 
             fromFileBundle = new TestNode('from-file-bundle');
             fromDataBundle = new TestNode('from-data-bundle');
@@ -33,7 +27,7 @@ describe('techs', function () {
         });
 
         afterEach(function () {
-            fileSystem.teardown();
+            mockFs.restore();
         });
 
         it('must provide `?.bemdecl.js` target from file', function (done) {

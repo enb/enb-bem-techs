@@ -1,31 +1,26 @@
-var FileSystem = require('enb/lib/test/mocks/test-file-system'),
+var mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     mergeTech = require('../../techs/merge-deps');
 
 describe('techs', function () {
     describe('merge-deps', function () {
-        var fileSystem,
-            bundle,
+        var bundle,
             dataBundle;
 
         beforeEach(function () {
-            fileSystem = new FileSystem([{
-                directory: 'bundle', items: [
-                    { file: 'block.deps.js', content: stringify([{ block: 'block' }]) },
-                    { file: 'block-mod.deps.js', content: stringify([{ block: 'block',
-                        mod: 'modName', val: 'modVal' }]) },
-                    { file: 'elem.deps.js', content: stringify([{ block: 'block', elem: 'elem' }]) },
-                    { file: 'elem-mod.deps.js', content: stringify([{ block: 'block', elem: 'elem',
-                        mod: 'modName', val: 'modVal' }]) },
+            mockFs({
+                bundle: {
+                    'block.deps.js': stringify([{ block: 'block' }]),
+                    'block-mod.deps.js': stringify([{ block: 'block', mod: 'modName', val: 'modVal' }]),
+                    'elem.deps.js': stringify([{ block: 'block', elem: 'elem' }]),
+                    'elem-mod.deps.js': stringify([{ block: 'block', elem: 'elem', mod: 'modName', val: 'modVal' }]),
 
-                    { file: 'empty.deps.js', content: stringify([]) },
-                    { file: 'set.deps.js', content: stringify([{ block: '1' }, { block: '2' }, { block: '3' }]) },
-                    { file: 'part.deps.js', content: stringify([{ block: '2' }]) },
-                    { file: 'nonexistent.deps.js', content: stringify([{ block: 'O_o' }]) }
-                ]
-            }]);
-
-            fileSystem.setup();
+                    'empty.deps.js': stringify([]),
+                    'set.deps.js': stringify([{ block: '1' }, { block: '2' }, { block: '3' }]),
+                    'part.deps.js': stringify([{ block: '2' }]),
+                    'nonexistent.deps.js': stringify([{ block: 'O_o' }])
+                }
+            });
 
             bundle = new TestNode('bundle');
             dataBundle = new TestNode('bundle');
@@ -34,7 +29,7 @@ describe('techs', function () {
         });
 
         afterEach(function () {
-            fileSystem.teardown();
+            mockFs.restore();
         });
 
         it('must require result target from data', function (done) {
