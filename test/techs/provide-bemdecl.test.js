@@ -1,29 +1,28 @@
 var mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
-    provideTech = require('../../techs/provide-bemdecl');
+    Tech = require('../../techs/provide-bemdecl');
 
 describe('techs', function () {
-    describe('provide-bemdecl', function () {
-        var fromFileBundle,
-            fromDataBundle,
-            toBundle;
+    describe('provide-deps', function () {
+        var fsBundle,
+            dataBundle,
+            bundle,
+            bemdecl = [{ name: 'block' }];
 
         beforeEach(function () {
             mockFs({
-                'from-file-bundle': {
-                    'from-file-bundle.bemdecl.js': stringify([{ name: 'block' }])
+                'fs-bundle': {
+                    'fs-bundle.bemdecl.js': 'exports.blocks = ' + JSON.stringify(bemdecl) + ';'
                 },
-                'from-data-bundle': {},
-                'to-bundle': {}
+                'data-bundle': {},
+                bundle: {}
             });
 
-            fromFileBundle = new TestNode('from-file-bundle');
-            fromDataBundle = new TestNode('from-data-bundle');
+            fsBundle = new TestNode('fs-bundle');
+            dataBundle = new TestNode('data-bundle');
 
-            toBundle = new TestNode('to-bundle');
-            toBundle.provideNodeTechData('from-data-bundle', 'from-data-bundle.bemdecl.js', {
-                blocks: [{ name: 'block' }]
-            });
+            bundle = new TestNode('bundle');
+            bundle.provideNodeTechData('data-bundle', 'data-bundle.bemdecl.js', { blocks: bemdecl });
         });
 
         afterEach(function () {
@@ -31,47 +30,43 @@ describe('techs', function () {
         });
 
         it('must provide `?.bemdecl.js` target from file', function (done) {
-            toBundle.runTech(provideTech, {
-                    node: 'from-file-bundle',
-                    source: 'from-file-bundle.bemdecl.js' })
-                .then(function (bemdecl) {
-                    bemdecl.blocks.must.eql([{ name: 'block' }]);
+            bundle.runTech(Tech, {
+                node: 'fs-bundle',
+                source: 'fs-bundle.bemdecl.js' })
+                .then(function (res) {
+                    res.blocks.must.eql(bemdecl);
                 })
                 .then(done, done);
         });
 
         it('must provide `?.bemdecl.js` target from data', function (done) {
-            toBundle.runTech(provideTech, {
-                    node: 'from-data-bundle',
-                    source: 'from-data-bundle.bemdecl.js' })
-                .then(function (bemdecl) {
-                    bemdecl.blocks.must.eql([{ name: 'block' }]);
+            bundle.runTech(Tech, {
+                node: 'data-bundle',
+                source: 'data-bundle.bemdecl.js' })
+                .then(function (res) {
+                    res.blocks.must.eql(bemdecl);
                 })
                 .then(done, done);
         });
 
         it('must require `?.bemdecl.js` target from file', function (done) {
-            toBundle.runTechAndRequire(provideTech, {
-                    node: 'from-file-bundle',
-                    source: 'from-file-bundle.bemdecl.js' })
-                .spread(function (bemdecl) {
-                    bemdecl.blocks.must.eql([{ name: 'block' }]);
+            bundle.runTechAndRequire(Tech, {
+                node: 'fs-bundle',
+                source: 'fs-bundle.bemdecl.js' })
+                .spread(function (res) {
+                    res.blocks.must.eql(bemdecl);
                 })
                 .then(done, done);
         });
 
-        it('must require `?.bemdecl.js` target from data', function (done) {
-            toBundle.runTechAndRequire(provideTech, {
-                    node: 'from-data-bundle',
-                    source: 'from-data-bundle.bemdecl.js' })
-                .spread(function (bemdecl) {
-                    bemdecl.blocks.must.eql([{ name: 'block' }]);
+        it('must require `?.deps.js` target from data', function (done) {
+            bundle.runTechAndRequire(Tech, {
+                node: 'data-bundle',
+                source: 'data-bundle.bemdecl.js' })
+                .spread(function (res) {
+                    res.blocks.must.eql(bemdecl);
                 })
                 .then(done, done);
         });
     });
 });
-
-function stringify(bemjson) {
-    return 'exports.blocks = ' + JSON.stringify(bemjson) + ';';
-}

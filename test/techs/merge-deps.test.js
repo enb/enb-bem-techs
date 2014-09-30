@@ -1,122 +1,115 @@
-var mockFs = require('mock-fs'),
+var vow = require('vow'),
+    mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
-    mergeTech = require('../../techs/merge-deps');
+    Tech = require('../../techs/merge-deps');
 
 describe('techs', function () {
     describe('merge-deps', function () {
-        var bundle,
-            dataBundle;
-
-        beforeEach(function () {
-            mockFs({
-                bundle: {
-                    'block.deps.js': stringify([{ block: 'block' }]),
-                    'block-mod.deps.js': stringify([{ block: 'block', mod: 'modName', val: 'modVal' }]),
-                    'elem.deps.js': stringify([{ block: 'block', elem: 'elem' }]),
-                    'elem-mod.deps.js': stringify([{ block: 'block', elem: 'elem', mod: 'modName', val: 'modVal' }]),
-
-                    'empty.deps.js': stringify([]),
-                    'set.deps.js': stringify([{ block: '1' }, { block: '2' }, { block: '3' }]),
-                    'part.deps.js': stringify([{ block: '2' }]),
-                    'nonexistent.deps.js': stringify([{ block: 'O_o' }])
-                }
-            });
-
-            bundle = new TestNode('bundle');
-            dataBundle = new TestNode('bundle');
-
-            dataBundle.provideTechData('data.deps.js', { deps: [{ block: 'block' }] });
-        });
-
         afterEach(function () {
             mockFs.restore();
         });
 
-        it('must require result target from data', function (done) {
-            dataBundle.runTechAndRequire(mergeTech, { sources: ['data.deps.js'] })
-                .spread(function (result) {
-                    result.deps.must.eql([{ block: 'block' }]);
-                })
-                .then(done, done);
-        });
-
         it('must provide result from data', function (done) {
-            dataBundle.runTech(mergeTech, { sources: ['data.deps.js'] })
-                .then(function (res) {
-                    res.deps.must.eql([{ block: 'block' }]);
-                })
-                .then(done, done);
-        });
+            var sources = [[{ block: 'block' }]],
+                deps = [{ block: 'block' }];
 
-        it('must require result target from file', function (done) {
-            bundle.runTechAndRequire(mergeTech, { sources: ['block.deps.js'] })
-                .spread(function (result) {
-                    result.deps.must.eql([{ block: 'block' }]);
-                })
-                .then(done, done);
+            assert(sources, deps, done);
         });
 
         it('must merge block with mod of block', function (done) {
-            bundle.runTech(mergeTech, { sources: ['block.deps.js', 'block-mod.deps.js'] })
-                .then(function (res) {
-                    res.deps.must.eql([
-                        { block: 'block' },
-                        { block: 'block', mod: 'modName', val: 'modVal' }
-                    ]);
-                })
-                .then(done, done);
+            var decl1 = [{ block: 'block' }],
+                decl2 = [{ block: 'block', mod: 'mod-name', val: 'mod-val' }],
+                expected = [
+                    { block: 'block' },
+                    { block: 'block', mod: 'mod-name', val: 'mod-val' }
+                ];
+
+            assert([decl1, decl2], expected, done);
         });
 
         it('must merge block with elem', function (done) {
-            bundle.runTech(mergeTech, { sources: ['block.deps.js', 'elem.deps.js'] })
-                .then(function (res) {
-                    res.deps.must.eql([
-                        { block: 'block' },
-                        { block: 'block', elem: 'elem' }
-                    ]);
-                })
-                .then(done, done);
+            var decl1 = [{ block: 'block' }],
+                decl2 = [{ block: 'block', elem: 'elem' }],
+                expected = [
+                    { block: 'block' },
+                    { block: 'block', elem: 'elem' }
+                ];
+
+            assert([decl1, decl2], expected, done);
         });
 
         it('must merge elem with mod of elem', function (done) {
-            bundle.runTech(mergeTech, { sources: [
-                    'elem.deps.js', 'elem-mod.deps.js'
-                ] })
-                .then(function (res) {
-                    res.deps.must.eql([
-                        { block: 'block', elem: 'elem' },
-                        { block: 'block', elem: 'elem', mod: 'modName', val: 'modVal' }
-                    ]);
-                })
-                .then(done, done);
+            var decl1 = [{ block: 'block', elem: 'elem' }],
+                decl2 = [{ block: 'block', elem: 'elem', mod: 'mod-name', val: 'mod-val' }],
+                expected = [
+                    { block: 'block', elem: 'elem' },
+                    { block: 'block', elem: 'elem', mod: 'mod-name', val: 'mod-val' }
+                ];
+
+            assert([decl1, decl2], expected, done);
         });
 
         it('must merge set with empty set', function (done) {
-            bundle.runTech(mergeTech, { sources: ['empty.deps.js', 'set.deps.js'] })
-                .then(function (res) {
-                    res.deps.must.eql([{ block: '1' }, { block: '2' }, { block: '3' }]);
-                })
-                .then(done, done);
+            var decl1 = [],
+                decl2 = [{ block: '1' }, { block: '2' }, { block: '3' }],
+                expected = [{ block: '1' }, { block: '2' }, { block: '3' }];
+
+            assert([decl1, decl2], expected, done);
         });
 
         it('must merge intersecting sets', function (done) {
-            bundle.runTech(mergeTech, { sources: ['set.deps.js', 'part.deps.js'] })
-                .then(function (res) {
-                    res.deps.must.eql([{ block: '1' }, { block: '2' }, { block: '3' }]);
-                })
-                .then(done, done);
+            var decl1 = [{ block: '1' }, { block: '2' }, { block: '3' }],
+                decl2 = [{ block: '2' }],
+                expected = [{ block: '1' }, { block: '2' }, { block: '3' }];
+
+            assert([decl1, decl2], expected, done);
         });
 
         it('must merge disjoint sets', function (done) {
-            bundle.runTech(mergeTech, { sources: ['set.deps.js', 'nonexistent.deps.js'] })
-                .then(function (res) {
-                    res.deps.must.eql([{ block: '1' }, { block: '2' }, { block: '3' }, { block: 'O_o' }]);
-                })
-                .then(done, done);
+            var decl1 = [{ block: '1' }, { block: '2' }, { block: '3' }],
+                decl2 = [{ block: 'O_o' }],
+                expected = [{ block: '1' }, { block: '2' }, { block: '3' }, { block: 'O_o' }];
+
+            assert([decl1, decl2], expected, done);
         });
     });
 });
 
-function stringify(bemjson) {
-    return 'exports.deps = ' + JSON.stringify(bemjson) + ';';
+function assert(sources, expected, done) {
+    var dataBundle = new TestNode('data-bundle'),
+        fsBundle,
+        dir = {},
+        options = { sources: [] },
+        dataOptions = { sources: [] };
+
+    mockFs({ 'data-bundle': {} });
+
+    sources.forEach(function (deps, i) {
+        var target = i + '.deps.js',
+            dataTarget = 'data-' + target;
+
+        dir[target] = 'exports.deps = ' + JSON.stringify(deps) + ';';
+        options.sources.push(target);
+
+        dataBundle.provideTechData(dataTarget, { deps: deps });
+        dataOptions.sources.push(dataTarget);
+    });
+
+    mockFs({ 'fs-bundle': dir, 'data-bundle': {} });
+
+    fsBundle = (new TestNode('fs-bundle'));
+
+    return vow.all([
+            fsBundle.runTechAndGetResults(Tech, options),
+            fsBundle.runTechAndRequire(Tech, options),
+            dataBundle.runTechAndGetResults(Tech, dataOptions),
+            dataBundle.runTechAndRequire(Tech, dataOptions)
+        ])
+        .spread(function (data1, target1, data2, target2) {
+            data1['fs-bundle.deps.js'].deps.must.eql(expected);
+            target1[0].deps.must.eql(expected);
+            data2['data-bundle.deps.js'].deps.must.eql(expected);
+            target2[0].deps.must.eql(expected);
+        })
+        .then(done, done);
 }
