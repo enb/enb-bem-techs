@@ -1,144 +1,130 @@
-var mockFs = require('mock-fs'),
+var vow = require('vow'),
+    mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
-    mergeTech = require('../../techs/merge-bemdecl');
+    Tech = require('../../techs/merge-bemdecl');
 
 describe('techs', function () {
     describe('merge-bemdecl', function () {
-        var bundle,
-            dataBundle;
-
-        beforeEach(function () {
-            mockFs({
-                bundle: {
-                    'block.bemdecl.js': stringify([{ name: 'block' }]),
-                    'block-mod.bemdecl.js': stringify([{
-                        name: 'block',
-                        mods: [{ name: 'modName', vals: [{ name: 'modVal' }] }]
-                    }]),
-                    'elem.bemdecl.js': stringify([{
-                        name: 'block',
-                        elems: [{ name: 'elem' }]
-                    }]),
-                    'elem-mod.bemdecl.js': stringify([{
-                        name: 'block',
-                        elems: [{ name: 'elem', mods: [{ name: 'modName', vals: [{ name: 'modVal' }] }] }]
-                    }]),
-
-                    'empty.bemdecl.js': stringify([]),
-                    'set.bemdecl.js': stringify([{ name: '1' }, { name: '2' }, { name: '3' }]),
-                    'part.bemdecl.js': stringify([{ name: '2' }]),
-                    'nonexistent.bemdecl.js': stringify([{ name: 'O_o' }])
-                }
-            });
-
-            bundle = new TestNode('bundle');
-            dataBundle = new TestNode('bundle');
-
-            dataBundle.provideTechData('data.bemdecl.js', { blocks: [{ name: 'block' }] });
-        });
-
         afterEach(function () {
             mockFs.restore();
         });
 
-        it('must require result target from data', function (done) {
-            dataBundle.runTechAndRequire(mergeTech, { sources: ['data.bemdecl.js'] })
-                .spread(function (bemdecl) {
-                    bemdecl.blocks.must.eql([{ name: 'block' }]);
-                })
-                .then(done, done);
-        });
+        it('must provide result', function (done) {
+            var sources = [[{ name: 'block' }]],
+                bemdecl = [{ name: 'block' }];
 
-        it('must provide result from data', function (done) {
-            dataBundle.runTech(mergeTech, { sources: ['data.bemdecl.js'] })
-                .then(function (bemdecl) {
-                    bemdecl.blocks.must.eql([{ name: 'block' }]);
-                })
-                .then(done, done);
-        });
-
-        it('must require result target from file', function (done) {
-            bundle.runTechAndRequire(mergeTech, { sources: ['block.bemdecl.js'] })
-                .spread(function (bemdecl) {
-                    bemdecl.blocks.must.eql([{ name: 'block' }]);
-                })
-                .then(done, done);
+            assert(sources, bemdecl, done);
         });
 
         it('must merge block with mod of block', function (done) {
-            bundle.runTech(mergeTech, { sources: [
-                    'block.bemdecl.js', 'block-mod.bemdecl.js'
-                ] })
-                .then(function (bemdecl) {
-                    bemdecl.blocks.must.eql([
-                        { name: 'block' },
-                        { name: 'block', mods: [{ name: 'modName', vals: [{ name: 'modVal' }] }] }
-                    ]);
-                })
-                .then(done, done);
+            var bemdecl1 = [{ name: 'block' }],
+                bemdecl2 = [{
+                    name: 'block',
+                    mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }]
+                }],
+                exepted = [
+                    { name: 'block' },
+                    { name: 'block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }
+                ];
+
+            assert([bemdecl1, bemdecl2], exepted, done);
         });
 
         it('must merge block with elem', function (done) {
-            bundle.runTech(mergeTech, { sources: [
-                    'block.bemdecl.js', 'elem.bemdecl.js'
-                ] })
-                .then(function (bemdecl) {
-                    bemdecl.blocks.must.eql([
-                        { name: 'block' },
-                        { name: 'block', elems: [{ name: 'elem' }] }
-                    ]);
-                })
-                .then(done, done);
+            var bemdecl1 = [{ name: 'block' }],
+                bemdecl2 = [{
+                    name: 'block',
+                    elems: [{ name: 'elem' }]
+                }],
+                exepted = [
+                    { name: 'block' },
+                    { name: 'block', elems: [{ name: 'elem' }] }
+                ];
+
+            assert([bemdecl1, bemdecl2], exepted, done);
         });
 
         it('must merge elem with mod of elem', function (done) {
-            bundle.runTech(mergeTech, { sources: [
-                    'elem.bemdecl.js', 'elem-mod.bemdecl.js'
-                ] })
-                .then(function (bemdecl) {
-                    bemdecl.blocks.must.eql([
-                        { name: 'block' },
-                        { name: 'block', elems: [{ name: 'elem' }] },
-                        { name: 'block', elems: [{ name: 'elem', mods: [
-                            { name: 'modName', vals: [{ name: 'modVal' }] }
-                        ] }] }
-                    ]);
-                })
-                .then(done, done);
+            var bemdecl1 = [{
+                    name: 'block',
+                    elems: [{ name: 'elem' }]
+                }],
+                bemdecl2 = [{
+                    name: 'block',
+                    elems: [{ name: 'elem', mods: [{ name: 'modName', vals: [{ name: 'modVal' }] }] }]
+                }],
+                exepted = [
+                    { name: 'block' },
+                    { name: 'block', elems: [{ name: 'elem' }] },
+                    { name: 'block', elems: [{ name: 'elem', mods: [
+                        { name: 'modName', vals: [{ name: 'modVal' }] }
+                    ] }] }
+                ];
+
+            assert([bemdecl1, bemdecl2], exepted, done);
         });
 
         it('must merge set with empty set', function (done) {
-            bundle.runTech(mergeTech, { sources: [
-                    'empty.bemdecl.js', 'set.bemdecl.js'
-                ] })
-                .then(function (bemdecl) {
-                    bemdecl.blocks.must.eql([{ name: '1' }, { name: '2' }, { name: '3' }]);
-                })
-                .then(done, done);
+            var bemdecl1 = [],
+                bemdecl2 = [{ name: '1' }, { name: '2' }, { name: '3' }],
+                exepted = [{ name: '1' }, { name: '2' }, { name: '3' }];
+
+            assert([bemdecl1, bemdecl2], exepted, done);
         });
 
         it('must merge intersecting sets', function (done) {
-            bundle.runTech(mergeTech, { sources: [
-                    'set.bemdecl.js', 'part.bemdecl.js'
-                ] })
-                .then(function (bemdecl) {
-                    bemdecl.blocks.must.eql([{ name: '1' }, { name: '2' }, { name: '3' }]);
-                })
-                .then(done, done);
+            var bemdecl1 = [{ name: '1' }, { name: '2' }, { name: '3' }],
+                bemdecl2 = [{ name: '2' }],
+                exepted = [{ name: '1' }, { name: '2' }, { name: '3' }];
+
+            assert([bemdecl1, bemdecl2], exepted, done);
         });
 
         it('must merge disjoint sets', function (done) {
-            bundle.runTech(mergeTech, { sources: [
-                    'set.bemdecl.js', 'nonexistent.bemdecl.js'
-                ] })
-                .then(function (bemdecl) {
-                    bemdecl.blocks.must.eql([{ name: '1' }, { name: '2' }, { name: '3' }, { name: 'O_o' }]);
-                })
-                .then(done, done);
+            var bemdecl1 = [{ name: '1' }, { name: '2' }, { name: '3' }],
+                bemdecl2 = [{ name: 'O_o' }],
+                exepted = [{ name: '1' }, { name: '2' }, { name: '3' }, { name: 'O_o' }];
+
+            assert([bemdecl1, bemdecl2], exepted, done);
         });
     });
 });
 
-function stringify(bemjson) {
-    return 'exports.blocks = ' + JSON.stringify(bemjson) + ';';
+function assert(sources, expected, done) {
+    var dataBundle = new TestNode('data-bundle'),
+        fsBundle,
+        dir = {},
+        options = { sources: [] },
+        dataOptions = { sources: [] };
+
+    mockFs({ 'data-bundle': {} });
+
+    sources.forEach(function (bemdecl, i) {
+        var target = i + '.bemdecl.js',
+            dataTarget = 'data-' + target;
+
+        dir[target] = 'exports.blocks = ' + JSON.stringify(bemdecl) + ';';
+        options.sources.push(target);
+
+        dataBundle.provideTechData(dataTarget, { blocks: bemdecl });
+        dataOptions.sources.push(dataTarget);
+    });
+
+    mockFs({ 'fs-bundle': dir, 'data-bundle': {} });
+
+    fsBundle = (new TestNode('fs-bundle'));
+
+    return vow.all([
+            fsBundle.runTechAndGetResults(Tech, options),
+            fsBundle.runTechAndRequire(Tech, options),
+            dataBundle.runTechAndGetResults(Tech, dataOptions),
+            dataBundle.runTechAndRequire(Tech, dataOptions)
+        ])
+        .spread(function (data1, target1, data2, target2) {
+            data1['fs-bundle.bemdecl.js'].blocks.must.eql(expected);
+            target1[0].blocks.must.eql(expected);
+            data2['data-bundle.bemdecl.js'].blocks.must.eql(expected);
+            target2[0].blocks.must.eql(expected);
+        })
+        .then(done, done);
 }

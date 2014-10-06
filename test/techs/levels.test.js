@@ -1,266 +1,307 @@
 var path = require('path'),
     mockFs = require('mock-fs'),
+    naming = require('bem-naming'),
+    cwd = process.cwd(),
     TestNode = require('enb/lib/test/mocks/test-node'),
-    LevelsTech = require('../../techs/levels'),
-    cwd = process.cwd();
+    Tech = require('../../techs/levels');
 
 describe('techs', function () {
     describe('levels', function () {
-        var bundle,
-            desktopBundle,
-            blocksDirname,
-            commonLevel,
-            desktopLevel,
-            desktopLevels,
-            fullyBlockDirname,
-            fullyCommonLevel,
-            fullyDesktopLevel,
-            fullyDesktopLevels;
-
-        beforeEach(function () {
-            mockFs({
-                blocks: {
-                    'fully-block': {
-                        'fully-block': '',
-                        'fully-block.dir': {},
-                        '_bool-mod': {
-                            'fully-block_bool-mod': '',
-                            'fully-block_bool-mod.dir': {}
-                        },
-                        '_mod-name': {
-                            'fully-block_mod-name_mod-val': '',
-                            'fully-block_mod-name_mod-val.dir': {}
-                        },
-                        __elem: {
-                            'fully-block__elem': '',
-                            'fully-block__elem.dir': {},
-                            '_bool-mod': {
-                                'fully-block__elem_bool-mod': '',
-                                'fully-block__elem_bool-mod.dir': {}
-                            },
-                            '_mod-name': {
-                                'fully-block__elem_mod-name_mod-val': '',
-                                'fully-block__elem_mod-name_mod-val.dir': {}
-                            }
-                        }
-                    }
-                },
-                'common.blocks': {
-                    'block-1': {
-                        'block-1': '',
-                        'block-1.dir': {}
-                    }
-                },
-                'desktop.blocks': {
-                    'block-1': {
-                        'block-1': '',
-                        'block-1.dir': {}
-                    }
-                },
-                bundle: {},
-                'desktop.bundle': {}
-            });
-
-            bundle = new TestNode('bundle');
-            desktopBundle = new TestNode('desktop.bundle');
-
-            blocksDirname = 'blocks';
-            commonLevel = 'common.blocks';
-            desktopLevel = 'desktop.blocks';
-            desktopLevels = [commonLevel, desktopLevel];
-
-            fullyBlockDirname = path.join(cwd, 'blocks', 'fully-block');
-
-            fullyCommonLevel = path.join(cwd, commonLevel);
-            fullyDesktopLevel = path.join(cwd, desktopLevel);
-            fullyDesktopLevels = [fullyCommonLevel, fullyDesktopLevel];
-        });
-
         afterEach(function () {
             mockFs.restore();
         });
 
         it('must detect block file in level', function (done) {
-            bundle.runTech(LevelsTech, { levels: [blocksDirname] })
-                .then(function (levels) {
-                    var name = 'fully-block',
-                        file = levels.getBlockFiles('fully-block')[0],
-                        filename = path.join(fullyBlockDirname, name);
+            var scheme = {
+                blocks: {
+                    block: {
+                        'block.ext': ''
+                    }
+                }
+            };
 
-                    file.fullname.must.be(filename);
-                })
-                .then(done, done);
+            hasFile(scheme, 'block.ext', done);
         });
 
         it('must detect block dir in level', function (done) {
-            bundle.runTech(LevelsTech, { levels: [blocksDirname] })
-                .then(function (levels) {
-                    var name = 'fully-block',
-                        dir = levels.getBlockEntities('fully-block').dirs[0],
-                        dirname = path.join(fullyBlockDirname, name + '.dir');
+            var scheme = {
+                blocks: {
+                    block: {
+                        'block.ext': {}
+                    }
+                }
+            };
 
-                    dir.fullname.must.be(dirname);
-                })
-                .then(done, done);
+            hasDir(scheme, 'block.ext', done);
         });
 
         it('must detect boolean mod file of block in level', function (done) {
-            bundle.runTech(LevelsTech, { levels: [blocksDirname] })
-                .then(function (levels) {
-                    var name = 'fully-block_bool-mod',
-                        file = levels.getBlockFiles('fully-block', 'bool-mod', true)[0],
-                        filename = path.join(fullyBlockDirname, '_bool-mod', name);
+            var scheme = {
+                blocks: {
+                    block: {
+                        '_bool-mod': {
+                            'block_bool-mod.ext': ''
+                        }
+                    }
+                }
+            };
 
-                    file.fullname.must.be(filename);
-                })
-                .then(done, done);
+            hasFile(scheme, 'block_bool-mod.ext', done);
         });
 
         it('must detect boolean mod dir of block in level', function (done) {
-            bundle.runTech(LevelsTech, { levels: [blocksDirname] })
-                .then(function (levels) {
-                    var name = 'fully-block_bool-mod',
-                        dir = levels.getBlockEntities('fully-block', 'bool-mod', true).dirs[0],
-                        dirname = path.join(fullyBlockDirname, '_bool-mod', name + '.dir');
+            var scheme = {
+                blocks: {
+                    block: {
+                        '_bool-mod': {
+                            'block_bool-mod.ext': {}
+                        }
+                    }
+                }
+            };
 
-                    dir.fullname.must.be(dirname);
-                })
-                .then(done, done);
+            hasDir(scheme, 'block_bool-mod.ext', done);
         });
 
         it('must detect mod file of block in level', function (done) {
-            bundle.runTech(LevelsTech, { levels: [blocksDirname] })
-                .then(function (levels) {
-                    var name = 'fully-block_mod-name_mod-val',
-                        file = levels.getBlockFiles('fully-block', 'mod-name', 'mod-val')[0],
-                        filename = path.join(fullyBlockDirname, '_mod-name', name);
+            var scheme = {
+                blocks: {
+                    block: {
+                        '_mod-name': {
+                            'block_mod-name_mod-val.ext': ''
+                        }
+                    }
+                }
+            };
 
-                    file.fullname.must.be(filename);
-                })
-                .then(done, done);
+            hasFile(scheme, 'block_mod-name_mod-val.ext', done);
         });
 
         it('must detect mod dir of block in level', function (done) {
-            bundle.runTech(LevelsTech, { levels: [blocksDirname] })
-                .then(function (levels) {
-                    var name = 'fully-block_mod-name_mod-val',
-                        dir = levels.getBlockEntities('fully-block', 'mod-name', 'mod-val').dirs[0],
-                        dirname = path.join(fullyBlockDirname, '_mod-name', name + '.dir');
+            var scheme = {
+                blocks: {
+                    block: {
+                        '_mod-name': {
+                            'block_mod-name_mod-val.ext': {}
+                        }
+                    }
+                }
+            };
 
-                    dir.fullname.must.be(dirname);
-                })
-                .then(done, done);
+            hasDir(scheme, 'block_mod-name_mod-val.ext', done);
         });
 
         it('must detect elem file of block in level', function (done) {
-            bundle.runTech(LevelsTech, { levels: [blocksDirname] })
-                .then(function (levels) {
-                    var name = 'fully-block__elem',
-                        file = levels.getElemFiles('fully-block', 'elem')[0],
-                        filename = path.join(fullyBlockDirname, '__elem', name);
+            var scheme = {
+                blocks: {
+                    block: {
+                        '__elem-name': {
+                            'block__elem-name.ext': ''
+                        }
+                    }
+                }
+            };
 
-                    file.fullname.must.be(filename);
-                })
-                .then(done, done);
+            hasFile(scheme, 'block__elem-name.ext', done);
         });
 
         it('must detect elem dir of block in level', function (done) {
-            bundle.runTech(LevelsTech, { levels: [blocksDirname] })
-                .then(function (levels) {
-                    var name = 'fully-block__elem',
-                        dir = levels.getElemEntities('fully-block', 'elem').dirs[0],
-                        dirname = path.join(fullyBlockDirname, '__elem', name + '.dir');
+            var scheme = {
+                blocks: {
+                    block: {
+                        '__elem-name': {
+                            'block__elem-name.ext': {}
+                        }
+                    }
+                }
+            };
 
-                    dir.fullname.must.be(dirname);
-                })
-                .then(done, done);
+            hasDir(scheme, 'block__elem-name.ext', done);
         });
 
         it('must detect boolean mod file of elem in level', function (done) {
-            bundle.runTech(LevelsTech, { levels: [blocksDirname] })
-                .then(function (levels) {
-                    var name = 'fully-block__elem_bool-mod',
-                        file = levels.getElemFiles('fully-block', 'elem', 'bool-mod', true)[0],
-                        filename = path.join(fullyBlockDirname, '__elem', '_bool-mod', name);
+            var scheme = {
+                blocks: {
+                    block: {
+                        '__elem-name': {
+                            '_bool-mod': {
+                                'block__elem-name_bool-mod.ext': ''
+                            }
+                        }
+                    }
+                }
+            };
 
-                    file.fullname.must.be(filename);
-                })
-                .then(done, done);
+            hasFile(scheme, 'block__elem-name_bool-mod.ext', done);
         });
 
         it('must detect boolean mod file of elem in level', function (done) {
-            bundle.runTech(LevelsTech, { levels: [blocksDirname] })
-                .then(function (levels) {
-                    var name = 'fully-block__elem_bool-mod',
-                        dir = levels.getElemEntities('fully-block', 'elem', 'bool-mod', true).dirs[0],
-                        dirname = path.join(fullyBlockDirname, '__elem', '_bool-mod', name + '.dir');
+            var scheme = {
+                blocks: {
+                    block: {
+                        '__elem-name': {
+                            '_bool-mod': {
+                                'block__elem-name_bool-mod.ext': {}
+                            }
+                        }
+                    }
+                }
+            };
 
-                    dir.fullname.must.be(dirname);
-                })
-                .then(done, done);
+            hasDir(scheme, 'block__elem-name_bool-mod.ext', done);
         });
 
         it('must detect mod file of elem in level', function (done) {
-            bundle.runTech(LevelsTech, { levels: [blocksDirname] })
-                .then(function (levels) {
-                    var name = 'fully-block__elem_mod-name_mod-val',
-                        file = levels.getElemFiles('fully-block', 'elem', 'mod-name', 'mod-val')[0],
-                        filename = path.join(fullyBlockDirname, '__elem', '_mod-name', name);
+            var scheme = {
+                blocks: {
+                    block: {
+                        '__elem-name': {
+                            '_mod-name': {
+                                'block__elem-name_mod-name_mod-val.ext': ''
+                            }
+                        }
+                    }
+                }
+            };
 
-                    file.fullname.must.be(filename);
-                })
-                .then(done, done);
+            hasFile(scheme, 'block__elem-name_mod-name_mod-val.ext', done);
         });
 
         it('must detect mod dir of elem in level', function (done) {
-            bundle.runTech(LevelsTech, { levels: [blocksDirname] })
-                .then(function (levels) {
-                    var name = 'fully-block__elem_mod-name_mod-val',
-                        dir = levels.getElemEntities('fully-block', 'elem', 'mod-name', 'mod-val').dirs[0],
-                        dirname = path.join(fullyBlockDirname, '__elem', '_mod-name', name + '.dir');
+            var scheme = {
+                blocks: {
+                    block: {
+                        '__elem-name': {
+                            '_mod-name': {
+                                'block__elem-name_mod-name_mod-val.ext': {}
+                            }
+                        }
+                    }
+                }
+            };
 
-                    dir.fullname.must.be(dirname);
-                })
-                .then(done, done);
+            hasDir(scheme, 'block__elem-name_mod-name_mod-val.ext', done);
         });
 
         it('must detect block files in levels', function (done) {
-            desktopBundle.runTech(LevelsTech, { levels: desktopLevels })
-                .then(function (levels) {
-                    var files = levels.getBlockFiles('block-1'),
-                        filename1 = path.join(fullyCommonLevel, 'block-1', 'block-1'),
-                        filename2 = path.join(fullyDesktopLevel, 'block-1', 'block-1');
+            var scheme = {
+                'common.blocks': {
+                    block: {
+                        'block.ext': ''
+                    }
+                },
+                'desktop.blocks': {
+                    block: {
+                        'block.ext': ''
+                    }
+                }
+            };
 
-                    files[0].fullname.must.be(filename1);
-                    files[1].fullname.must.be(filename2);
+            getLevels(scheme)
+                .then(function (levels) {
+                    var files = getFiles(levels, 'block');
+
+                    files[0].fullname.must.be(path.join(cwd, 'common.blocks/block/block.ext'));
+                    files[1].fullname.must.be(path.join(cwd, 'desktop.blocks/block/block.ext'));
                 })
                 .then(done, done);
         });
 
         it('must detect block dirs in levels', function (done) {
-            desktopBundle.runTech(LevelsTech, { levels: desktopLevels })
-                .then(function (levels) {
-                    var dirs = levels.getBlockEntities('block-1').dirs,
-                        commonDirname = path.join(fullyCommonLevel, 'block-1', 'block-1.dir'),
-                        desktopDirname = path.join(fullyDesktopLevel, 'block-1', 'block-1.dir');
+            var scheme = {
+                'common.blocks': {
+                    block: {
+                        'block.ext': {}
+                    }
+                },
+                'desktop.blocks': {
+                    block: {
+                        'block.ext': {}
+                    }
+                }
+            };
 
-                    dirs[0].fullname.must.be(commonDirname);
-                    dirs[1].fullname.must.be(desktopDirname);
+            getLevels(scheme)
+                .then(function (levels) {
+                    var dirs = getDirs(levels, 'block');
+
+                    dirs[0].fullname.must.be(path.join(cwd, 'common.blocks/block/block.ext'));
+                    dirs[1].fullname.must.be(path.join(cwd, 'desktop.blocks/block/block.ext'));
                 })
                 .then(done, done);
         });
 
         it('must handle full paths', function (done) {
-            desktopBundle.runTech(LevelsTech, { levels: fullyDesktopLevels })
-                .then(function (levels) {
-                    var dirs = levels.getBlockEntities('block-1').dirs,
-                        commonDirname = path.join(fullyCommonLevel, 'block-1', 'block-1.dir'),
-                        desktopDirname = path.join(fullyDesktopLevel, 'block-1', 'block-1.dir');
+            mockFs({
+                blocks: {
+                    block: {
+                        'block.ext': ''
+                    }
+                },
+                bundle: {}
+            });
 
-                    dirs[0].fullname.must.be(commonDirname);
-                    dirs[1].fullname.must.be(desktopDirname);
+            var bundle = new TestNode('bundle'),
+                levelDirname = path.join(cwd, 'blocks');
+
+            bundle.runTech(Tech, { levels: [levelDirname] })
+                .then(function (levels) {
+                    var files = getFiles(levels, 'block');
+
+                    files[0].name.must.be('block.ext');
+                    files.must.have.length(1);
                 })
                 .then(done, done);
         });
     });
 });
+
+function getLevels(fsScheme) {
+    var levels = Object.keys(fsScheme),
+        bundle;
+
+    fsScheme['bundle'] = {};
+    mockFs(fsScheme);
+
+    bundle = new TestNode('bundle');
+
+    return bundle.runTech(Tech, { levels: levels });
+}
+
+function getEntityFiles(levels, entity, field) {
+    var notation = naming.parse(entity);
+
+    if (notation.elem) {
+        return levels.getElemEntities(notation.block, notation.elem, notation.modName, notation.modVal)[field];
+    } else {
+        return levels.getBlockEntities(notation.block, notation.modName, notation.modVal)[field];
+    }
+}
+
+function getFiles(levels, entity) {
+    return getEntityFiles(levels, entity, 'files');
+}
+
+function getDirs(levels, entity) {
+    return getEntityFiles(levels, entity, 'dirs');
+}
+
+function hasEntity(fsScheme, filename, field, done) {
+    getLevels(fsScheme)
+        .then(function (levels) {
+            var name = filename.split('.')[0],
+                files = getEntityFiles(levels, name, field);
+
+            files[0].name.must.be(filename);
+            files.must.have.length(1);
+        })
+        .then(done, done);
+}
+
+function hasFile(fsScheme, filenames, done) {
+    hasEntity(fsScheme, filenames, 'files', done);
+}
+
+function hasDir(fsScheme, filenames, done) {
+    hasEntity(fsScheme, filenames, 'dirs', done);
+}

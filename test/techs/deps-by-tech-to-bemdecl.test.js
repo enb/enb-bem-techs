@@ -1,4 +1,5 @@
-var mockFs = require('mock-fs'),
+var vow = require('vow'),
+    mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     levelsTech = require('../../techs/levels'),
     filesTech = require('../../techs/files'),
@@ -6,689 +7,398 @@ var mockFs = require('mock-fs'),
     bemdeclFromDepsByTechTech = require('../../techs/deps-by-tech-to-bemdecl');
 
 describe('techs', function () {
-    describe('deps-by-tech-to-bemdecl', function () {
-        var bundle,
-            shouldLevels,
-            mustLevels;
-
-        beforeEach(function () {
-            mockFs({
-                'should-deps-js.blocks': {
-                    block: {
-                        'block.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            shouldDeps: [{ tech: 'destTech', block: 'other-block' }]
-                        })
-                    },
-                    'block-bool-mod': {
-                        'block-bool-mod.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            shouldDeps: [{ tech: 'destTech', block: 'other-block', mods: { mod: true } }]
-                        })
-                    },
-                    'block-mod': {
-                        'block-mod.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            shouldDeps: [{ tech: 'destTech', block: 'other-block', mods: { modName: 'modVal' } }]
-                        })
-                    },
-                    elem: {
-                        'elem.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            shouldDeps: [{ tech: 'destTech', block: 'other-block', elem: 'elem' }]
-                        })
-                    },
-                    elems: {
-                        'elems.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            shouldDeps: [{ tech: 'destTech', block: 'other-block', elems: ['elem-1', 'elem-2'] }]
-                        })
-                    },
-                    'elem-bool-mod': {
-                        'elem-bool-mod.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            shouldDeps: [{ tech: 'destTech', block: 'other-block', elem: 'elem', mods: { mod: true } }]
-                        })
-                    },
-                    'elem-mod': {
-                        'elem-mod.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            shouldDeps: [{ tech: 'destTech', block: 'other-block',
-                                elem: 'elem', mods: { modName: 'modVal' } }]
-                        })
-                    },
-
-                    A: {
-                        'A.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            shouldDeps: [{ tech: 'destTech', block: 'B' }]
-                        })
-                    },
-                    B: {
-                        'B.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            shouldDeps: [{ tech: 'destTech', block: 'A' }]
-                        })
-                    },
-
-                    'some-block': {
-                        'some-block.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            shouldDeps: [
-                                { tech: 'destTech', mods: { some: true } },
-                                { tech: 'destTech', elem: 'some-elem-1' },
-                                { tech: 'destTech', elem: 'some-elem-2', mods: { some: true } }
-                            ]
-                        })
-                    }
-                },
-                'must-deps-js.blocks': {
-                    block: {
-                        'block.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            mustDeps: [{ tech: 'destTech', block: 'other-block' }]
-                        })
-                    },
-                    'block-bool-mod': {
-                        'block-bool-mod.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            mustDeps: [{ tech: 'destTech', block: 'other-block', mods: { mod: true } }]
-                        })
-                    },
-                    'block-mod': {
-                        'block-mod.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            mustDeps: [{ tech: 'destTech', block: 'other-block', mods: { modName: 'modVal' } }]
-                        })
-                    },
-                    elem: {
-                        'elem.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            mustDeps: [{ tech: 'destTech', block: 'other-block', elem: 'elem' }]
-                        })
-                    },
-                    elems: {
-                        'elems.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            mustDeps: [{ tech: 'destTech', block: 'other-block', elems: ['elem-1', 'elem-2'] }]
-                        })
-                    },
-                    'elem-bool-mod': {
-                        'elem-bool-mod.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            mustDeps: [{ tech: 'destTech', block: 'other-block', elem: 'elem', mods: { mod: true } }]
-                        })
-                    },
-                    'elem-mod': {
-                        'elem-mod.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            mustDeps: [{ tech: 'destTech', block: 'other-block',
-                                elem: 'elem', mods: { modName: 'modVal' } }]
-                        })
-                    },
-
-                    A: {
-                        'A.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            mustDeps: [{ tech: 'destTech', block: 'B' }]
-                        })
-                    },
-                    B: {
-                        'B.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            mustDeps: [{ tech: 'destTech', block: 'A' }]
-                        })
-                    }
-                },
-                bundle: {
-                    'some-block.bemdecl.js': stringifyBemdecl([{ name: 'some-block' }]),
-                    'block.bemdecl.js': stringifyBemdecl([{ name: 'block' }]),
-                    'block-bool-mod.bemdecl.js': stringifyBemdecl([{ name: 'block-bool-mod' }]),
-                    'block-mod.bemdecl.js': stringifyBemdecl([{ name: 'block-mod' }]),
-                    'elem.bemdecl.js': stringifyBemdecl([{ name: 'elem' }]),
-                    'elems.bemdecl.js': stringifyBemdecl([{ name: 'elems' }]),
-                    'elem-bool-mod.bemdecl.js': stringifyBemdecl([{ name: 'elem-bool-mod' }]),
-                    'elem-mod.bemdecl.js': stringifyBemdecl([{ name: 'elem-mod' }]),
-                    'loop.bemdecl.js': stringifyBemdecl([{ name: 'A' }])
-                }
-            });
-
-            bundle = new TestNode('bundle');
-            shouldLevels = ['should-deps-js.blocks'];
-            mustLevels = ['must-deps-js.blocks'];
-        });
-
+    describe('deps', function () {
         afterEach(function () {
             mockFs.restore();
         });
 
-        it('must add block field to dep by context', function (done) {
-            bundle.runTech(levelsTech, { levels: shouldLevels })
-                .then(function (levels) {
-                    bundle.provideTechData('?.levels', levels);
+        describe('deps.js format', function () {
+            it('must add should dep of block', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    shouldDeps: [{ tech: 'destTech', block: 'other-block' }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    exepted = [{ name: 'other-block' }];
 
-                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'some-block.bemdecl.js' });
-                })
-                .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res);
+                assert(scheme, bemdecl, exepted, done);
+            });
 
-                    return bundle.runTechAndGetResults(filesTech);
-                })
-                .then(function (res) {
-                    var files = res['bundle.files'];
+            it('must add should dep of block boolean mod', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    shouldDeps: [{ tech: 'destTech', block: 'other-block', mods: { mod: true } }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    exepted = [{ name: 'other-block', mods: [{ name: 'mod', vals: [{ name: true }] }] }];
 
-                    bundle.provideTechData('?.files', files);
+                assert(scheme, bemdecl, exepted, done);
+            });
 
-                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-                        sourceTech: 'sourceTech',
-                        destTech: 'destTech'
-                    });
-                })
-                .spread(function (target) {
-                    target.blocks.must.eql([
-                        { name: 'some-block', mods: [{ name: 'some', vals: [{ name: true }] }] },
-                        { name: 'some-block', elems: [{ name: 'some-elem-1' }] },
-                        { name: 'some-block', elems: [{ name: 'some-elem-2',
-                            mods: [{ name: 'some', vals: [{ name: true }] }]
-                        }] }
-                    ]);
-                })
-                .then(done, done);
-        });
+            it('must add should dep of block mod', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    shouldDeps: [{
+                                        tech: 'destTech',
+                                        block: 'other-block',
+                                        mods: { 'mod-name': 'mod-val' }
+                                    }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    exepted = [{ name: 'other-block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }];
 
-        it('must add should dep of block', function (done) {
-            bundle.runTech(levelsTech, { levels: shouldLevels })
-                .then(function (levels) {
-                    bundle.provideTechData('?.levels', levels);
+                assert(scheme, bemdecl, exepted, done);
+            });
 
-                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block.bemdecl.js' });
-                })
-                .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res);
+            it('must add should dep of elem', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    shouldDeps: [{ tech: 'destTech', block: 'other-block', elem: 'elem' }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    exepted = [{ name: 'other-block', elems: [{ name: 'elem' }] }];
 
-                    return bundle.runTechAndGetResults(filesTech);
-                })
-                .then(function (res) {
-                    var files = res['bundle.files'];
+                assert(scheme, bemdecl, exepted, done);
+            });
 
-                    bundle.provideTechData('?.files', files);
-
-                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-                        sourceTech: 'sourceTech',
-                        destTech: 'destTech'
-                    });
-                })
-                .spread(function (target) {
-                    target.blocks.must.eql([
-                        { name: 'other-block' }
-                    ]);
-                })
-                .then(done, done);
-        });
-
-        it('must add should dep of block boolean mod', function (done) {
-            bundle.runTech(levelsTech, { levels: shouldLevels })
-                .then(function (levels) {
-                    bundle.provideTechData('?.levels', levels);
-
-                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-bool-mod.bemdecl.js' });
-                })
-                .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res);
-
-                    return bundle.runTechAndGetResults(filesTech);
-                })
-                .then(function (res) {
-                    var files = res['bundle.files'];
-
-                    bundle.provideTechData('?.files', files);
-
-                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-                        sourceTech: 'sourceTech',
-                        destTech: 'destTech'
-                    });
-                })
-                .spread(function (target) {
-                    target.blocks.must.eql([
-                        { name: 'other-block', mods: [{ name: 'mod', vals: [{ name: true }] }] }
-                    ]);
-                })
-                .then(done, done);
-        });
-
-        it('must add should dep of block mod', function (done) {
-            bundle.runTech(levelsTech, { levels: shouldLevels })
-                .then(function (levels) {
-                    bundle.provideTechData('?.levels', levels);
-
-                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-mod.bemdecl.js' });
-                })
-                .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res);
-
-                    return bundle.runTechAndGetResults(filesTech);
-                })
-                .then(function (res) {
-                    var files = res['bundle.files'];
-
-                    bundle.provideTechData('?.files', files);
-
-                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-                        sourceTech: 'sourceTech',
-                        destTech: 'destTech'
-                    });
-                })
-                .spread(function (target) {
-                    target.blocks.must.eql([
-                        { name: 'other-block', mods: [{ name: 'modName', vals: [{ name: 'modVal' }] }] }
-                    ]);
-                })
-                .then(done, done);
-        });
-
-        it('must add should dep of elem', function (done) {
-            bundle.runTech(levelsTech, { levels: shouldLevels })
-                .then(function (levels) {
-                    bundle.provideTechData('?.levels', levels);
-
-                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem.bemdecl.js' });
-                })
-                .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res);
-
-                    return bundle.runTechAndGetResults(filesTech);
-                })
-                .then(function (res) {
-                    var files = res['bundle.files'];
-
-                    bundle.provideTechData('?.files', files);
-
-                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-                        sourceTech: 'sourceTech',
-                        destTech: 'destTech'
-                    });
-                })
-                .spread(function (target) {
-                    target.blocks.must.eql([
-                        { name: 'other-block', elems: [{ name: 'elem' }] }
-                    ]);
-                })
-                .then(done, done);
-        });
-
-        it('must add should dep of elems', function (done) {
-            bundle.runTech(levelsTech, { levels: shouldLevels })
-                .then(function (levels) {
-                    bundle.provideTechData('?.levels', levels);
-
-                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elems.bemdecl.js' });
-                })
-                .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res);
-
-                    return bundle.runTechAndGetResults(filesTech);
-                })
-                .then(function (res) {
-                    var files = res['bundle.files'];
-
-                    bundle.provideTechData('?.files', files);
-
-                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-                        sourceTech: 'sourceTech',
-                        destTech: 'destTech'
-                    });
-                })
-                .spread(function (target) {
-                    target.blocks.must.eql([
+            it('must add should dep of elems', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    shouldDeps: [
+                                        { tech: 'destTech', block: 'other-block', elems: ['elem-1', 'elem-2'] }
+                                    ]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    exepted = [
                         { name: 'other-block' },
                         { name: 'other-block', elems: [{ name: 'elem-1' }] },
                         { name: 'other-block', elems: [{ name: 'elem-2' }] }
-                    ]);
-                })
-                .then(done, done);
-        });
+                    ];
 
-        it('must add should dep of elem bool mod', function (done) {
-            bundle.runTech(levelsTech, { levels: shouldLevels })
-                .then(function (levels) {
-                    bundle.provideTechData('?.levels', levels);
+                assert(scheme, bemdecl, exepted, done);
+            });
 
-                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-bool-mod.bemdecl.js' });
-                })
-                .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res);
-
-                    return bundle.runTechAndGetResults(filesTech);
-                })
-                .then(function (res) {
-                    var files = res['bundle.files'];
-
-                    bundle.provideTechData('?.files', files);
-
-                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-                        sourceTech: 'sourceTech',
-                        destTech: 'destTech'
-                    });
-                })
-                .spread(function (target) {
-                    target.blocks.must.eql([
-                        {
-                            name: 'other-block',
-                            elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }]
+            it('must add should dep of elem bool mod', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    shouldDeps: [{
+                                        tech: 'destTech',
+                                        block: 'other-block',
+                                        elem: 'elem', mods: { mod: true }
+                                    }]
+                                })
+                            }
                         }
-                    ]);
-                })
-                .then(done, done);
-        });
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    exepted = [{
+                        name: 'other-block',
+                        elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }]
+                    }];
 
-        it('must add should dep of elem mod', function (done) {
-            bundle.runTech(levelsTech, { levels: shouldLevels })
-                .then(function (levels) {
-                    bundle.provideTechData('?.levels', levels);
+                assert(scheme, bemdecl, exepted, done);
+            });
 
-                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-mod.bemdecl.js' });
-                })
-                .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res);
-
-                    return bundle.runTechAndGetResults(filesTech);
-                })
-                .then(function (res) {
-                    var files = res['bundle.files'];
-
-                    bundle.provideTechData('?.files', files);
-
-                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-                        sourceTech: 'sourceTech',
-                        destTech: 'destTech'
-                    });
-                })
-                .spread(function (target) {
-                    target.blocks.must.eql([
-                        {
-                            name: 'other-block',
-                            elems: [{ name: 'elem', mods: [{ name: 'modName', vals: [{ name: 'modVal' }] }] }]
+            it('must add should dep of elem mod', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    shouldDeps: [{
+                                        tech: 'destTech',
+                                        block: 'other-block',
+                                        elem: 'elem',
+                                        mods: { 'mod-name': 'mod-val' }
+                                    }]
+                                })
+                            }
                         }
-                    ]);
-                })
-                .then(done, done);
-        });
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    exepted = [ {
+                        name: 'other-block',
+                        elems: [{ name: 'elem', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }]
+                    }];
 
-        it('must add loop shouldDeps', function (done) {
-            bundle.runTech(levelsTech, { levels: shouldLevels })
-                .then(function (levels) {
-                    bundle.provideTechData('?.levels', levels);
+                assert(scheme, bemdecl, exepted, done);
+            });
 
-                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'loop.bemdecl.js' });
-                })
-                .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res);
-
-                    return bundle.runTechAndGetResults(filesTech);
-                })
-                .then(function (res) {
-                    var files = res['bundle.files'];
-
-                    bundle.provideTechData('?.files', files);
-
-                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-                        sourceTech: 'sourceTech',
-                        destTech: 'destTech'
-                    });
-                })
-                .spread(function (target) {
-                    target.blocks.must.eql([
-//                        { block: 'A' },
+            it('must add loop shouldDeps', function (done) {
+                var scheme = {
+                        blocks: {
+                            A: {
+                                'A.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    shouldDeps: [{ tech: 'destTech', block: 'B' }]
+                                })
+                            },
+                            B: {
+                                'B.deps.js': stringifyDepsJs({
+                                    shouldDeps: [{ tech: 'destTech', block: 'A' }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'A' }],
+                    exepted = [
+                        // { name: 'A' },
                         { name: 'B' }
-                    ]);
-                })
-                .then(done, done);
-        });
+                    ];
 
-        it('must add must dep of block', function (done) {
-            bundle.runTech(levelsTech, { levels: mustLevels })
-                .then(function (levels) {
-                    bundle.provideTechData('?.levels', levels);
+                assert(scheme, bemdecl, exepted, done);
+            });
 
-                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block.bemdecl.js' });
-                })
-                .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res);
+            it('must add must dep of block', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    mustDeps: [{ tech: 'destTech', block: 'other-block' }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    exepted = [{ name: 'other-block' }];
 
-                    return bundle.runTechAndGetResults(filesTech);
-                })
-                .then(function (res) {
-                    var files = res['bundle.files'];
+                assert(scheme, bemdecl, exepted, done);
+            });
 
-                    bundle.provideTechData('?.files', files);
+            it('must add must dep of block boolean mod', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    mustDeps: [{ tech: 'destTech', block: 'other-block', mods: { mod: true } }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    exepted = [{ name: 'other-block', mods: [{ name: 'mod', vals: [{ name: true }] }] }];
 
-                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-                        sourceTech: 'sourceTech',
-                        destTech: 'destTech'
-                    });
-                })
-                .spread(function (target) {
-                    target.blocks.must.eql([
-                        { name: 'other-block' }
-                    ]);
-                })
-                .then(done, done);
-        });
+                assert(scheme, bemdecl, exepted, done);
+            });
 
-        it('must add must dep of block boolean mod', function (done) {
-            bundle.runTech(levelsTech, { levels: mustLevels })
-                .then(function (levels) {
-                    bundle.provideTechData('?.levels', levels);
+            it('must add must dep of block mod', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    mustDeps: [
+                                        { tech: 'destTech', block: 'other-block', mods: { 'mod-name': 'mod-val' } }
+                                    ]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    exepted = [{ name: 'other-block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }];
 
-                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-bool-mod.bemdecl.js' });
-                })
-                .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res);
+                assert(scheme, bemdecl, exepted, done);
+            });
 
-                    return bundle.runTechAndGetResults(filesTech);
-                })
-                .then(function (res) {
-                    var files = res['bundle.files'];
+            it('must add must dep of elem', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    mustDeps: [{ tech: 'destTech', block: 'other-block', elem: 'elem' }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    exepted = [{ name: 'other-block', elems: [{ name: 'elem' }] }];
 
-                    bundle.provideTechData('?.files', files);
+                assert(scheme, bemdecl, exepted, done);
+            });
 
-                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-                        sourceTech: 'sourceTech',
-                        destTech: 'destTech'
-                    });
-                })
-                .spread(function (target) {
-                    target.blocks.must.eql([
-                        { name: 'other-block', mods: [{ name: 'mod', vals: [{ name: true }] }] }
-                    ]);
-                })
-                .then(done, done);
-        });
-
-        it('must add must dep of block mod', function (done) {
-            bundle.runTech(levelsTech, { levels: mustLevels })
-                .then(function (levels) {
-                    bundle.provideTechData('?.levels', levels);
-
-                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'block-mod.bemdecl.js' });
-                })
-                .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res);
-
-                    return bundle.runTechAndGetResults(filesTech);
-                })
-                .then(function (res) {
-                    var files = res['bundle.files'];
-
-                    bundle.provideTechData('?.files', files);
-
-                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-                        sourceTech: 'sourceTech',
-                        destTech: 'destTech'
-                    });
-                })
-                .spread(function (target) {
-                    target.blocks.must.eql([
-                        { name: 'other-block', mods: [{ name: 'modName', vals: [{ name: 'modVal' }] }] }
-                    ]);
-                })
-                .then(done, done);
-        });
-
-        it('must add must dep of elem', function (done) {
-            bundle.runTech(levelsTech, { levels: mustLevels })
-                .then(function (levels) {
-                    bundle.provideTechData('?.levels', levels);
-
-                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem.bemdecl.js' });
-                })
-                .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res);
-
-                    return bundle.runTechAndGetResults(filesTech);
-                })
-                .then(function (res) {
-                    var files = res['bundle.files'];
-
-                    bundle.provideTechData('?.files', files);
-
-                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-                        sourceTech: 'sourceTech',
-                        destTech: 'destTech'
-                    });
-                })
-                .spread(function (target) {
-                    target.blocks.must.eql([
-                        { name: 'other-block', elems: [{ name: 'elem' }] }
-                    ]);
-                })
-                .then(done, done);
-        });
-
-        it('must add must dep of elems', function (done) {
-            bundle.runTech(levelsTech, { levels: mustLevels })
-                .then(function (levels) {
-                    bundle.provideTechData('?.levels', levels);
-
-                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elems.bemdecl.js' });
-                })
-                .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res);
-
-                    return bundle.runTechAndGetResults(filesTech);
-                })
-                .then(function (res) {
-                    var files = res['bundle.files'];
-
-                    bundle.provideTechData('?.files', files);
-
-                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-                        sourceTech: 'sourceTech',
-                        destTech: 'destTech'
-                    });
-                })
-                .spread(function (target) {
-                    target.blocks.must.eql([
+            it('must add must dep of elems', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    mustDeps: [{ tech: 'destTech', block: 'other-block', elems: ['elem-1', 'elem-2'] }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    exepted = [
                         { name: 'other-block' },
                         { name: 'other-block', elems: [{ name: 'elem-1' }] },
                         { name: 'other-block', elems: [{ name: 'elem-2' }] }
-                    ]);
-                })
-                .then(done, done);
-        });
+                    ];
 
-        it('must add must dep of elem bool mod', function (done) {
-            bundle.runTech(levelsTech, { levels: mustLevels })
-                .then(function (levels) {
-                    bundle.provideTechData('?.levels', levels);
+                assert(scheme, bemdecl, exepted, done);
+            });
 
-                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-bool-mod.bemdecl.js' });
-                })
-                .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res);
-
-                    return bundle.runTechAndGetResults(filesTech);
-                })
-                .then(function (res) {
-                    var files = res['bundle.files'];
-
-                    bundle.provideTechData('?.files', files);
-
-                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-                        sourceTech: 'sourceTech',
-                        destTech: 'destTech'
-                    });
-                })
-                .spread(function (target) {
-                    target.blocks.must.eql([
-                        {
-                            name: 'other-block',
-                            elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }]
+            it('must add must dep of elem bool mod', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    mustDeps: [
+                                        { tech: 'destTech', block: 'other-block', elem: 'elem', mods: { mod: true } }
+                                    ]
+                                })
+                            }
                         }
-                    ]);
-                })
-                .then(done, done);
-        });
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    exepted = [{
+                        name: 'other-block',
+                        elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }]
+                    }];
 
-        it('must add must dep of elem mod', function (done) {
-            bundle.runTech(levelsTech, { levels: mustLevels })
-                .then(function (levels) {
-                    bundle.provideTechData('?.levels', levels);
+                assert(scheme, bemdecl, exepted, done);
+            });
 
-                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'elem-mod.bemdecl.js' });
-                })
-                .spread(function (res) {
-                    bundle.provideTechData('?.deps.js', res);
-
-                    return bundle.runTechAndGetResults(filesTech);
-                })
-                .then(function (res) {
-                    var files = res['bundle.files'];
-
-                    bundle.provideTechData('?.files', files);
-
-                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-                        sourceTech: 'sourceTech',
-                        destTech: 'destTech'
-                    });
-                })
-                .spread(function (target) {
-                    target.blocks.must.eql([
-                        {
-                            name: 'other-block',
-                            elems: [{ name: 'elem', mods: [{ name: 'modName', vals: [{ name: 'modVal' }] }] }]
+            it('must add must dep of elem mod', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    mustDeps: [{
+                                        tech: 'destTech',
+                                        block: 'other-block',
+                                        elem: 'elem',
+                                        mods: { 'mod-name': 'mod-val' }
+                                    }]
+                                })
+                            }
                         }
-                    ]);
-                })
-                .then(done, done);
-        });
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    exepted = [ {
+                        name: 'other-block',
+                        elems: [{ name: 'elem', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }]
+                    }];
 
-//        it('must throw if loop mustDeps', function (done) {
-//            bundle.runTech(levelsTech, { levels: mustLevels })
-//                .then(function () {
-//                    return bundle.runTechAndRequire(depsTech, { bemdeclFile: 'loop.bemdecl.js' });
-//                })
-//                .then(function () {
-//                    return bundle.runTechAndGetResults(filesTech);
-//                })
-//                .then(function () {
-//                    return bundle.runTechAndRequire(bemdeclFromDepsByTechTech, {
-//                        sourceTech: 'sourceTech',
-//                        destTech: 'destTech'
-//                    });
-//                })
-//                .fail(function (err) {
-//                    err.must.throw();
-//                })
-//                .then(done, done);
-//        });
+                assert(scheme, bemdecl, exepted, done);
+            });
+
+            it('must add loop shouldDeps', function (done) {
+                var scheme = {
+                        blocks: {
+                            A: {
+                                'A.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    mustDeps: [{ tech: 'destTech', block: 'B' }]
+                                })
+                            },
+                            B: {
+                                'B.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ tech: 'destTech', block: 'A' }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'A' }],
+                    exepted = [
+                        // { name: 'A' },
+                        { name: 'B' }
+                    ];
+
+                assert(scheme, bemdecl, exepted, done);
+            });
+        });
     });
 });
 
-function stringifyDepsJs(bemjson) {
-    return '(' + JSON.stringify(bemjson) + ')';
+function getResults(fsScheme, bemdecl) {
+    var levels = Object.keys(fsScheme),
+        options = {
+            sourceTech: 'sourceTech',
+            destTech: 'destTech'
+        },
+        bundle;
+
+    fsScheme['bundle'] = {};
+
+    mockFs(fsScheme);
+
+    bundle = new TestNode('bundle');
+    bundle.provideTechData('?.bemdecl.js', { blocks: bemdecl });
+
+    return bundle.runTech(levelsTech, { levels: levels })
+        .then(function (levels) {
+            bundle.provideTechData('?.levels', levels);
+
+            return bundle.runTechAndGetResults(depsTech);
+        })
+        .spread(function (res) {
+            bundle.provideTechData('?.deps.js', res);
+
+            return bundle.runTechAndGetResults(filesTech);
+        })
+        .then(function (res) {
+            var files = res['bundle.files'];
+
+            bundle.provideTechData('?.files', files);
+
+            return vow.all([
+                bundle.runTechAndGetResults(bemdeclFromDepsByTechTech, options),
+                bundle.runTechAndRequire(bemdeclFromDepsByTechTech, options)
+            ]);
+        })
+        .spread(function (target1, target2) {
+            return [target1['bundle.bemdecl.js'].blocks, target2[0].blocks];
+        });
 }
 
-function stringifyBemdecl(bemjson) {
-    return 'exports.blocks = ' + JSON.stringify(bemjson) + ';';
+function assert(fsScheme, bemdecl, exepted, done) {
+    getResults(fsScheme, bemdecl)
+        .then(function (results) {
+            results.forEach(function (actualBemdecl) {
+                actualBemdecl.must.eql(exepted);
+            });
+        })
+        .then(done, done);
+}
+
+function stringifyDepsJs(bemjson) {
+    return '(' + JSON.stringify(bemjson) + ')';
 }
