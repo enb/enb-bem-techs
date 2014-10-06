@@ -77,7 +77,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
         return this.node.requireSources([this._levelsTarget, this._declFile])
             .spread(function (levels, sourceDeps) {
-                var depFiles = levels.getFilesBySuffix('deps.js').concat(levels.getFilesBySuffix('deps.yaml'));
+                var depFiles = levels.getFilesBySuffix('deps.js');
 
                 if (cache.needRebuildFile('deps-file', targetFilename) ||
                     cache.needRebuildFile('decl-file', declFilename) ||
@@ -119,10 +119,10 @@ function requireSourceDeps(data, filename) {
             asyncRequire(filename)
         ))
         .then(function (sourceDeps) {
-            if (sourceDeps.blocks) {
-                return deps.fromBemdecl(sourceDeps.blocks);
+            if (sourceDeps.deps) {
+                return deps.toBemdecl(sourceDeps.deps);
             }
 
-            return sourceDeps.deps;
+            return sourceDeps.blocks;
         });
 }
