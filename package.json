@@ -44,7 +44,7 @@
   },
   "main": "lib/index.js",
   "scripts": {
-    "test": "npm run lint && npm run techs-test && npm run unit-test && npm run cover",
+    "test": "npm run lint && npm run cover",
     "lint": "jshint . && jscs -c .jscs.js .",
     "techs-test": "mocha test/techs",
     "unit-test":  "mocha test/unit",
