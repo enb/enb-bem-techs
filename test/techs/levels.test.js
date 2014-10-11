@@ -1,7 +1,6 @@
 var path = require('path'),
     mockFs = require('mock-fs'),
     naming = require('bem-naming'),
-    cwd = process.cwd(),
     TestNode = require('enb/lib/test/mocks/test-node'),
     Tech = require('../../techs/levels');
 
@@ -13,222 +12,228 @@ describe('techs', function () {
 
         it('must detect block file in level', function (done) {
             var scheme = {
-                blocks: {
-                    block: {
-                        'block.ext': ''
+                    blocks: {
+                        block: {
+                            'block.ext': ''
+                        }
                     }
-                }
-            };
+                },
+                files = ['blocks/block/block.ext'];
 
-            hasFile(scheme, 'block.ext', done);
+            hasFiles(scheme, files, done);
         });
 
         it('must detect block dir in level', function (done) {
             var scheme = {
-                blocks: {
-                    block: {
-                        'block.ext': {}
+                    blocks: {
+                        block: {
+                            'block.ext': {}
+                        }
                     }
-                }
-            };
+                },
+                dirs = ['blocks/block/block.ext'];
 
-            hasDir(scheme, 'block.ext', done);
+            hasDirs(scheme, dirs, done);
         });
 
         it('must detect boolean mod file of block in level', function (done) {
             var scheme = {
-                blocks: {
-                    block: {
-                        '_bool-mod': {
-                            'block_bool-mod.ext': ''
+                    blocks: {
+                        block: {
+                            '_bool-mod': {
+                                'block_bool-mod.ext': ''
+                            }
                         }
                     }
-                }
-            };
+                },
+                files = ['blocks/block/_bool-mod/block_bool-mod.ext'];
 
-            hasFile(scheme, 'block_bool-mod.ext', done);
+            hasFiles(scheme, files, done);
         });
 
         it('must detect boolean mod dir of block in level', function (done) {
             var scheme = {
-                blocks: {
-                    block: {
-                        '_bool-mod': {
-                            'block_bool-mod.ext': {}
+                    blocks: {
+                        block: {
+                            '_bool-mod': {
+                                'block_bool-mod.ext': {}
+                            }
                         }
                     }
-                }
-            };
+                },
+                dirs = ['blocks/block/_bool-mod/block_bool-mod.ext'];
 
-            hasDir(scheme, 'block_bool-mod.ext', done);
+            hasDirs(scheme, dirs, done);
         });
 
         it('must detect mod file of block in level', function (done) {
             var scheme = {
-                blocks: {
-                    block: {
-                        '_mod-name': {
-                            'block_mod-name_mod-val.ext': ''
+                    blocks: {
+                        block: {
+                            '_mod-name': {
+                                'block_mod-name_mod-val.ext': ''
+                            }
                         }
                     }
-                }
-            };
+                },
+                files = ['blocks/block/_mod-name/block_mod-name_mod-val.ext'];
 
-            hasFile(scheme, 'block_mod-name_mod-val.ext', done);
+            hasFiles(scheme, files, done);
         });
 
         it('must detect mod dir of block in level', function (done) {
             var scheme = {
-                blocks: {
-                    block: {
-                        '_mod-name': {
-                            'block_mod-name_mod-val.ext': {}
+                    blocks: {
+                        block: {
+                            '_mod-name': {
+                                'block_mod-name_mod-val.ext': {}
+                            }
                         }
                     }
-                }
-            };
+                },
+                dirs = ['blocks/block/_mod-name/block_mod-name_mod-val.ext'];
 
-            hasDir(scheme, 'block_mod-name_mod-val.ext', done);
+            hasDirs(scheme, dirs, done);
         });
 
         it('must detect elem file of block in level', function (done) {
             var scheme = {
-                blocks: {
-                    block: {
-                        '__elem-name': {
-                            'block__elem-name.ext': ''
+                    blocks: {
+                        block: {
+                            '__elem-name': {
+                                'block__elem-name.ext': ''
+                            }
                         }
                     }
-                }
-            };
+                },
+                files = ['blocks/block/__elem-name/block__elem-name.ext'];
 
-            hasFile(scheme, 'block__elem-name.ext', done);
+            hasFiles(scheme, files, done);
         });
 
         it('must detect elem dir of block in level', function (done) {
             var scheme = {
-                blocks: {
-                    block: {
-                        '__elem-name': {
-                            'block__elem-name.ext': {}
+                    blocks: {
+                        block: {
+                            '__elem-name': {
+                                'block__elem-name.ext': {}
+                            }
                         }
                     }
-                }
-            };
+                },
+                dirs = ['blocks/block/__elem-name/block__elem-name.ext'];
 
-            hasDir(scheme, 'block__elem-name.ext', done);
+            hasDirs(scheme, dirs, done);
         });
 
         it('must detect boolean mod file of elem in level', function (done) {
             var scheme = {
-                blocks: {
-                    block: {
-                        '__elem-name': {
-                            '_bool-mod': {
-                                'block__elem-name_bool-mod.ext': ''
+                    blocks: {
+                        block: {
+                            '__elem-name': {
+                                '_bool-mod': {
+                                    'block__elem-name_bool-mod.ext': ''
+                                }
                             }
                         }
                     }
-                }
-            };
+                },
+                files = ['blocks/block/__elem-name/_bool-mod/block__elem-name_bool-mod.ext'];
 
-            hasFile(scheme, 'block__elem-name_bool-mod.ext', done);
+            hasFiles(scheme, files, done);
         });
 
-        it('must detect boolean mod file of elem in level', function (done) {
+        it('must detect boolean mod dir of elem in level', function (done) {
             var scheme = {
-                blocks: {
-                    block: {
-                        '__elem-name': {
-                            '_bool-mod': {
-                                'block__elem-name_bool-mod.ext': {}
+                    blocks: {
+                        block: {
+                            '__elem-name': {
+                                '_bool-mod': {
+                                    'block__elem-name_bool-mod.ext': {}
+                                }
                             }
                         }
                     }
-                }
-            };
+                },
+                dirs = ['blocks/block/__elem-name/_bool-mod/block__elem-name_bool-mod.ext'];
 
-            hasDir(scheme, 'block__elem-name_bool-mod.ext', done);
+            hasDirs(scheme, dirs, done);
         });
 
         it('must detect mod file of elem in level', function (done) {
             var scheme = {
-                blocks: {
-                    block: {
-                        '__elem-name': {
-                            '_mod-name': {
-                                'block__elem-name_mod-name_mod-val.ext': ''
+                    blocks: {
+                        block: {
+                            '__elem-name': {
+                                '_mod-name': {
+                                    'block__elem-name_mod-name_mod-val.ext': ''
+                                }
                             }
                         }
                     }
-                }
-            };
+                },
+                files = ['blocks/block/__elem-name/_mod-name/block__elem-name_mod-name_mod-val.ext'];
 
-            hasFile(scheme, 'block__elem-name_mod-name_mod-val.ext', done);
+            hasFiles(scheme, files, done);
         });
 
         it('must detect mod dir of elem in level', function (done) {
             var scheme = {
-                blocks: {
-                    block: {
-                        '__elem-name': {
-                            '_mod-name': {
-                                'block__elem-name_mod-name_mod-val.ext': {}
+                    blocks: {
+                        block: {
+                            '__elem-name': {
+                                '_mod-name': {
+                                    'block__elem-name_mod-name_mod-val.ext': {}
+                                }
                             }
                         }
                     }
-                }
-            };
+                },
+                dirs = ['blocks/block/__elem-name/_mod-name/block__elem-name_mod-name_mod-val.ext'];
 
-            hasDir(scheme, 'block__elem-name_mod-name_mod-val.ext', done);
+            hasDirs(scheme, dirs, done);
         });
 
         it('must detect block files in levels', function (done) {
             var scheme = {
-                'common.blocks': {
-                    block: {
-                        'block.ext': ''
+                    'level-1': {
+                        block: {
+                            'block.ext': ''
+                        }
+                    },
+                    'level-2': {
+                        block: {
+                            'block.ext': ''
+                        }
                     }
                 },
-                'desktop.blocks': {
-                    block: {
-                        'block.ext': ''
-                    }
-                }
-            };
+                files = [
+                    'level-1/block/block.ext',
+                    'level-2/block/block.ext'
+                ];
 
-            getLevels(scheme)
-                .then(function (levels) {
-                    var files = getFiles(levels, 'block');
-
-                    files[0].fullname.must.be(path.join(cwd, 'common.blocks/block/block.ext'));
-                    files[1].fullname.must.be(path.join(cwd, 'desktop.blocks/block/block.ext'));
-                })
-                .then(done, done);
+            hasFiles(scheme, files, done);
         });
 
         it('must detect block dirs in levels', function (done) {
             var scheme = {
-                'common.blocks': {
-                    block: {
-                        'block.ext': {}
+                    'level-1': {
+                        block: {
+                            'block.ext': {}
+                        }
+                    },
+                    'level-2': {
+                        block: {
+                            'block.ext': {}
+                        }
                     }
                 },
-                'desktop.blocks': {
-                    block: {
-                        'block.ext': {}
-                    }
-                }
-            };
+                dirs = [
+                    'level-1/block/block.ext',
+                    'level-2/block/block.ext'
+                ];
 
-            getLevels(scheme)
-                .then(function (levels) {
-                    var dirs = getDirs(levels, 'block');
-
-                    dirs[0].fullname.must.be(path.join(cwd, 'common.blocks/block/block.ext'));
-                    dirs[1].fullname.must.be(path.join(cwd, 'desktop.blocks/block/block.ext'));
-                })
-                .then(done, done);
+            hasDirs(scheme, dirs, done);
         });
 
         it('must handle full paths', function (done) {
@@ -242,11 +247,11 @@ describe('techs', function () {
             });
 
             var bundle = new TestNode('bundle'),
-                levelDirname = path.join(cwd, 'blocks');
+                levelDirname = path.resolve('blocks');
 
             bundle.runTech(Tech, { levels: [levelDirname] })
                 .then(function (levels) {
-                    var files = getFiles(levels, 'block');
+                    var files = getEntityFiles(levels, 'block', 'files');
 
                     files[0].name.must.be('block.ext');
                     files.must.have.length(1);
@@ -268,40 +273,35 @@ function getLevels(fsScheme) {
     return bundle.runTech(Tech, { levels: levels });
 }
 
-function getEntityFiles(levels, entity, field) {
+function getEntityFiles(levels, entity, filetype) {
     var notation = naming.parse(entity);
 
     if (notation.elem) {
-        return levels.getElemEntities(notation.block, notation.elem, notation.modName, notation.modVal)[field];
+        return levels.getElemEntities(notation.block, notation.elem, notation.modName, notation.modVal)[filetype];
     } else {
-        return levels.getBlockEntities(notation.block, notation.modName, notation.modVal)[field];
+        return levels.getBlockEntities(notation.block, notation.modName, notation.modVal)[filetype];
     }
 }
 
-function getFiles(levels, entity) {
-    return getEntityFiles(levels, entity, 'files');
-}
-
-function getDirs(levels, entity) {
-    return getEntityFiles(levels, entity, 'dirs');
-}
-
-function hasEntity(fsScheme, filename, field, done) {
+function has(fsScheme, filenames, filetype, done) {
     getLevels(fsScheme)
         .then(function (levels) {
-            var name = filename.split('.')[0],
-                files = getEntityFiles(levels, name, field);
+            filenames.forEach(function (filename, i) {
+                var basename = path.basename(filename).split('.')[0],
+                    fullname = path.resolve(filename),
+                    files = getEntityFiles(levels, basename, filetype);
 
-            files[0].name.must.be(filename);
-            files.must.have.length(1);
+                files.must.have.length(filenames.length);
+                files[i].fullname.must.be(fullname);
+            });
         })
         .then(done, done);
 }
 
-function hasFile(fsScheme, filenames, done) {
-    hasEntity(fsScheme, filenames, 'files', done);
+function hasFiles(fsScheme, filenames, done) {
+    has(fsScheme, filenames, 'files', done);
 }
 
-function hasDir(fsScheme, filenames, done) {
-    hasEntity(fsScheme, filenames, 'dirs', done);
+function hasDirs(fsScheme, filenames, done) {
+    has(fsScheme, filenames, 'dirs', done);
 }
