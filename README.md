@@ -173,7 +173,7 @@ nodeConfig.addTech([require('enb-bem-techs/techs/provide-bemdecl'), {
 **Опции**
 
 * *String* **sourceTech** — имя исходной технологии. Обязательная опция.
-* *String* **destTech** — имя конечной технологии. Обязательная опция.
+* *String* **destTech** — имя конечной технологии.
 * *String* **filesTarget** — `files`-таргет, на основе которого получается список исходных файлов (его предоставляет технология `files`). По умолчанию — `?.files`.
 * *String* **sourceSuffixes** — суффиксы файлов, по которым строится `files`-таргет. По умолчанию — `'deps.js'`.
 * *String* **target** — результирующий BEMDECL-таргет. По умолчанию — `?.bemdecl.js`.
