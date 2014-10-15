@@ -40,7 +40,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._target = this.node.unmaskTargetName(this.getOption('target', '?.bemdecl.js'));
         this._filesTarget = this.node.unmaskTargetName(this.getOption('filesTarget', '?.files'));
         this._sourceTech = this.getRequiredOption('sourceTech');
-        this._destTech = this.getRequiredOption('destTech');
+        this._destTech = this.getOption('destTech');
     },
 
     getTargets: function () {
@@ -87,7 +87,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                                             deps.flattenDeps(dep[depType]).forEach(function (singleDep) {
                                                 singleDep.block || (singleDep.block = notation.block);
 
-                                                if (singleDep.tech === destTech) {
+                                                if (!destTech || singleDep.tech === destTech) {
                                                     var key = depKey(singleDep);
                                                     if (!depIndex[key]) {
                                                         depIndex[key] = true;
