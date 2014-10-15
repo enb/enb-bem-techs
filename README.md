@@ -134,7 +134,7 @@ nodeConfig.addTech([require('enb-bem-techs/techs/levels'), {
 **Опции**
 
 * *String* **target** — результирующий BEMDECL-таргет. По умолчанию — `?.bemdecl.js`.
-* *String* **levelsTarget** — исходный `levels`. По умолчанию — `?.levels`.
+* *String* **source** — исходный `levels`. По умолчанию — `?.levels`.
 
 **Пример**
 
