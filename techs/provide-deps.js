@@ -83,7 +83,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                 var preDeps = results[fromNode][0];
 
                 if (cache.needRebuildFile('deps-file', targetFilename) ||
-                    cache.needRebuildFile('source-deps-file', sourceFilename)
+                    cache.needRebuildFile('deps-source-file', sourceFilename)
                 ) {
                     return requireDeps(preDeps, sourceFilename)
                         .then(function (res) {

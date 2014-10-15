@@ -30,7 +30,7 @@ describe('techs', function () {
             var bundle = new TestNode('bundle'),
                 cache = bundle.getNodeCache('bundle.deps.js');
 
-            cache.cacheFileInfo('source-deps-file', path.resolve('bundle/bundle.bemdecl.js'));
+            cache.cacheFileInfo('decl-file', path.resolve('bundle/bundle.bemdecl.js'));
             cache.cacheFileInfo('deps-file', path.resolve('bundle/bundle.deps.js'));
 
             bundle.runTech(levelsTech, { levels: ['blocks'] })

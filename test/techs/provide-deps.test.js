@@ -83,7 +83,7 @@ describe('techs', function () {
             var bundle = new TestNode('bundle-2'),
                 cache = bundle.getNodeCache('bundle-2.deps.js');
 
-            cache.cacheFileInfo('source-deps-file', path.resolve('bundle-1/bundle-1.deps.js'));
+            cache.cacheFileInfo('deps-source-file', path.resolve('bundle-1/bundle-1.deps.js'));
             cache.cacheFileInfo('deps-file', path.resolve('bundle-2/bundle-2.deps.js'));
 
             return bundle.runTech(Tech, { node: 'bundle-1' })

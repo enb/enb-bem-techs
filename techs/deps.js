@@ -79,7 +79,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                 var depFiles = levels.getFilesBySuffix('deps.js').concat(levels.getFilesBySuffix('deps.yaml'));
 
                 if (cache.needRebuildFile('deps-file', targetFilename) ||
-                    cache.needRebuildFile('source-deps-file', declFilename) ||
+                    cache.needRebuildFile('decl-file', declFilename) ||
                     cache.needRebuildFileList('deps-file-list', depFiles)
                 ) {
                     return requireSourceDeps(sourceDeps, declFilename)
@@ -95,7 +95,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                                     return vfs.write(targetFilename, str, 'utf8')
                                         .then(function () {
                                             cache.cacheFileInfo('deps-file', targetFilename);
-                                            cache.cacheFileInfo('source-deps-file', declFilename);
+                                            cache.cacheFileInfo('decl-file', declFilename);
                                             cache.cacheFileList('deps-file-list', depFiles);
                                             node.resolveTarget(target, { deps: resolvedDeps });
                                         });
