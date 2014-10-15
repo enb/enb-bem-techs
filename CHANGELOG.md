@@ -16,7 +16,9 @@
 
 * Добавлена `levels-to-bemdecl` технология.
 * Опция `levels` из `levels` технологии теперь может принимать пути относительно корня, вместо абсолютных.
+* Опция `destTech` из `deps-by-tech-to-bemdecl` технологии теперь не является обязательной.
 * Технология `bemdecl-from-bemjson` переименована в `bemjson-to-bemdecl`.
+* Технология `bemdecl-from-deps-by-tech.js` переименована в `deps-by-tech-to-bemdecl`.
 * Технология `bemdecl-merge` переименована в `merge-bemdecl`.
 * Технология `deps-merge` переименована в `merge-deps`.
 * Технология `deps-subtract` переименована в `subtract-deps`.

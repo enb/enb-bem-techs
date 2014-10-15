@@ -23,8 +23,7 @@ describe('techs', function () {
             var bundle = new TestNode('bundle'),
                 cache = bundle.getNodeCache('bundle.bemdecl.js'),
                 options = {
-                    sourceTech: 'sourceTech',
-                    destTech: 'destTech'
+                    sourceTech: 'sourceTech'
                 };
 
             cache.cacheFileInfo('bemdecl-file', path.resolve('bundle/bundle.bemdecl.js'));
@@ -44,7 +43,7 @@ describe('techs', function () {
                             block: {
                                 'block.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
-                                    shouldDeps: [{ tech: 'destTech', block: 'other-block' }]
+                                    shouldDeps: [{ block: 'other-block' }]
                                 })
                             }
                         }
@@ -61,7 +60,7 @@ describe('techs', function () {
                             block: {
                                 'block.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
-                                    shouldDeps: [{ tech: 'destTech', block: 'other-block', mods: { mod: true } }]
+                                    shouldDeps: [{ block: 'other-block', mods: { mod: true } }]
                                 })
                             }
                         }
@@ -79,7 +78,6 @@ describe('techs', function () {
                                 'block.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
                                     shouldDeps: [{
-                                        tech: 'destTech',
                                         block: 'other-block',
                                         mods: { 'mod-name': 'mod-val' }
                                     }]
@@ -99,7 +97,7 @@ describe('techs', function () {
                             block: {
                                 'block.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
-                                    shouldDeps: [{ tech: 'destTech', block: 'other-block', elem: 'elem' }]
+                                    shouldDeps: [{ block: 'other-block', elem: 'elem' }]
                                 })
                             }
                         }
@@ -117,7 +115,7 @@ describe('techs', function () {
                                 'block.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
                                     shouldDeps: [
-                                        { tech: 'destTech', block: 'other-block', elems: ['elem-1', 'elem-2'] }
+                                        { block: 'other-block', elems: ['elem-1', 'elem-2'] }
                                     ]
                                 })
                             }
@@ -140,7 +138,6 @@ describe('techs', function () {
                                 'block.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
                                     shouldDeps: [{
-                                        tech: 'destTech',
                                         block: 'other-block',
                                         elem: 'elem', mods: { mod: true }
                                     }]
@@ -164,7 +161,6 @@ describe('techs', function () {
                                 'block.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
                                     shouldDeps: [{
-                                        tech: 'destTech',
                                         block: 'other-block',
                                         elem: 'elem',
                                         mods: { 'mod-name': 'mod-val' }
@@ -188,12 +184,12 @@ describe('techs', function () {
                             A: {
                                 'A.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
-                                    shouldDeps: [{ tech: 'destTech', block: 'B' }]
+                                    shouldDeps: [{ block: 'B' }]
                                 })
                             },
                             B: {
                                 'B.deps.js': stringifyDepsJs({
-                                    shouldDeps: [{ tech: 'destTech', block: 'A' }]
+                                    shouldDeps: [{ block: 'A' }]
                                 })
                             }
                         }
@@ -213,7 +209,7 @@ describe('techs', function () {
                             block: {
                                 'block.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
-                                    mustDeps: [{ tech: 'destTech', block: 'other-block' }]
+                                    mustDeps: [{ block: 'other-block' }]
                                 })
                             }
                         }
@@ -230,7 +226,7 @@ describe('techs', function () {
                             block: {
                                 'block.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
-                                    mustDeps: [{ tech: 'destTech', block: 'other-block', mods: { mod: true } }]
+                                    mustDeps: [{ block: 'other-block', mods: { mod: true } }]
                                 })
                             }
                         }
@@ -248,7 +244,7 @@ describe('techs', function () {
                                 'block.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
                                     mustDeps: [
-                                        { tech: 'destTech', block: 'other-block', mods: { 'mod-name': 'mod-val' } }
+                                        { block: 'other-block', mods: { 'mod-name': 'mod-val' } }
                                     ]
                                 })
                             }
@@ -266,7 +262,7 @@ describe('techs', function () {
                             block: {
                                 'block.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
-                                    mustDeps: [{ tech: 'destTech', block: 'other-block', elem: 'elem' }]
+                                    mustDeps: [{ block: 'other-block', elem: 'elem' }]
                                 })
                             }
                         }
@@ -283,7 +279,7 @@ describe('techs', function () {
                             block: {
                                 'block.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
-                                    mustDeps: [{ tech: 'destTech', block: 'other-block', elems: ['elem-1', 'elem-2'] }]
+                                    mustDeps: [{ block: 'other-block', elems: ['elem-1', 'elem-2'] }]
                                 })
                             }
                         }
@@ -305,7 +301,7 @@ describe('techs', function () {
                                 'block.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
                                     mustDeps: [
-                                        { tech: 'destTech', block: 'other-block', elem: 'elem', mods: { mod: true } }
+                                        { block: 'other-block', elem: 'elem', mods: { mod: true } }
                                     ]
                                 })
                             }
@@ -327,7 +323,6 @@ describe('techs', function () {
                                 'block.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
                                     mustDeps: [{
-                                        tech: 'destTech',
                                         block: 'other-block',
                                         elem: 'elem',
                                         mods: { 'mod-name': 'mod-val' }
@@ -351,12 +346,12 @@ describe('techs', function () {
                             A: {
                                 'A.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
-                                    mustDeps: [{ tech: 'destTech', block: 'B' }]
+                                    mustDeps: [{ block: 'B' }]
                                 })
                             },
                             B: {
                                 'B.deps.js': stringifyDepsJs({
-                                    mustDeps: [{ tech: 'destTech', block: 'A' }]
+                                    mustDeps: [{ block: 'A' }]
                                 })
                             }
                         }
@@ -369,17 +364,60 @@ describe('techs', function () {
 
                 assert(scheme, bemdecl, exepted, done);
             });
+
+            it('must add blocks only with `tech`', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    mustDeps: [
+                                        { block: 'block-with-destTech', tech: 'destTech' },
+                                        { block: 'other-block' }
+                                    ]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    exepted = [
+                        { name: 'block-with-destTech' }
+                    ];
+
+                assert(scheme, bemdecl, exepted, {
+                    sourceTech: 'sourceTech',
+                    destTech: 'destTech'
+                }, done);
+            });
+
+            it('must add block with `tech` if `destTech` option not specified', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    mustDeps: [{ block: 'block-with-destTech', tech: 'destTech' }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    exepted = [
+                        { name: 'block-with-destTech' }
+                    ];
+
+                assert(scheme, bemdecl, exepted, done);
+            });
         });
     });
 });
 
-function getResults(fsScheme, bemdecl) {
+function getResults(fsScheme, bemdecl, options) {
     var levels = Object.keys(fsScheme),
-        options = {
-            sourceTech: 'sourceTech',
-            destTech: 'destTech'
-        },
         bundle;
+
+    options || (options = {});
+    options.sourceTech || (options.sourceTech = 'sourceTech');
 
     fsScheme['bundle'] = {};
 
@@ -414,8 +452,12 @@ function getResults(fsScheme, bemdecl) {
         });
 }
 
-function assert(fsScheme, bemdecl, exepted, done) {
-    getResults(fsScheme, bemdecl)
+function assert(fsScheme, bemdecl, exepted, options, done) {
+    if (!done) {
+        done = options;
+    }
+
+    getResults(fsScheme, bemdecl, options)
         .then(function (results) {
             results.forEach(function (actualBemdecl) {
                 actualBemdecl.must.eql(exepted);
