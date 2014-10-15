@@ -1,4 +1,5 @@
-var vow = require('vow'),
+var path = require('path'),
+    vow = require('vow'),
     mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     Tech = require('../../techs/merge-deps');
@@ -14,6 +15,34 @@ describe('techs', function () {
                 deps = [{ block: 'block' }];
 
             assert(sources, deps, done);
+        });
+
+        it('must provide result from cache', function (done) {
+            mockFs({
+                bundle: {
+                    'bundle.deps.js': 'exports.deps = ' + JSON.stringify([
+                        { block: 'block-1' },
+                        { block: 'block-2' }
+                    ]) + ';',
+                    'bundle-1.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'block-1' }]) + ';',
+                    'bundle-2.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'block-2' }]) + ';'
+                }
+            });
+
+            var bundle = new TestNode('bundle'),
+                cache = bundle.getNodeCache('bundle.deps.js');
+
+            cache.cacheFileInfo('deps-file', path.resolve('bundle/bundle.deps.js'));
+            cache.cacheFileList('source-file-list', [
+                path.resolve('bundle/bundle-1.deps.js'),
+                path.resolve('bundle/bundle-2.deps.js')
+            ]);
+
+            return bundle.runTech(Tech, { sources: ['bundle-1.deps.js', 'bundle-2.deps.js'] })
+                .then(function (target) {
+                    target.deps.must.eql([{ block: 'block-1' }, { block: 'block-2' }]);
+                })
+                .then(done, done);
         });
 
         it('must merge block with mod of block', function (done) {
@@ -44,6 +73,17 @@ describe('techs', function () {
                 expected = [
                     { block: 'block', elem: 'elem' },
                     { block: 'block', elem: 'elem', mod: 'mod-name', val: 'mod-val' }
+                ];
+
+            assert([decl1, decl2], expected, done);
+        });
+
+        it('must merge elems of block', function (done) {
+            var decl1 = [{ block: 'block', elem: 'elem-1' }],
+                decl2 = [{ block: 'block', elem: 'elem-2' }],
+                expected = [
+                    { block: 'block', elem: 'elem-1' },
+                    { block: 'block', elem: 'elem-2' }
                 ];
 
             assert([decl1, decl2], expected, done);

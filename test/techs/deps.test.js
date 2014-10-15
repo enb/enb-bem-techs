@@ -1,4 +1,5 @@
-var vow = require('vow'),
+var path = require('path'),
+    vow = require('vow'),
     mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     levelsTech = require('../../techs/levels'),
@@ -8,6 +9,44 @@ describe('techs', function () {
     describe('deps', function () {
         afterEach(function () {
             mockFs.restore();
+        });
+
+        it('must provide result from cache', function (done) {
+            var bemdecl = [{ name: 'block' }],
+                deps = [{ block: 'block' }, { block: 'other-block' }];
+
+            mockFs({
+                blocks: {
+                    block: {
+                        'block.deps.js': stringifyDepsJs({ shouldDeps: [{ block: 'other-block' }] })
+                    }
+                },
+                bundle: {
+                    'bundle.bemdecl.js': 'exports.blocks = ' + JSON.stringify(bemdecl) + ';',
+                    'bundle.deps.js': 'exports.deps = ' + JSON.stringify(deps) + ';'
+                }
+            });
+
+            var bundle = new TestNode('bundle'),
+                cache = bundle.getNodeCache('bundle.deps.js');
+
+            cache.cacheFileInfo('source-deps-file', path.resolve('bundle/bundle.bemdecl.js'));
+            cache.cacheFileInfo('deps-file', path.resolve('bundle/bundle.deps.js'));
+
+            bundle.runTech(levelsTech, { levels: ['blocks'] })
+                .then(function (levels) {
+                    bundle.provideTechData('?.levels', levels);
+                    cache.cacheFileList('deps-file-list', levels.getFilesBySuffix('deps.js'));
+
+                    return bundle.runTechAndRequire(depsTech);
+                })
+                .spread(function (target) {
+                    target.deps.must.eql([
+                        { block: 'block' },
+                        { block: 'other-block' }
+                    ]);
+                })
+                .then(done, done);
         });
 
         describe('deps.js format', function () {

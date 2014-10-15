@@ -1,4 +1,5 @@
-var vow = require('vow'),
+var path = require('path'),
+    vow = require('vow'),
     mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     Tech = require('../../techs/subtract-deps');
@@ -7,6 +8,29 @@ describe('techs', function () {
     describe('subtract-deps', function () {
         afterEach(function () {
             mockFs.restore();
+        });
+
+        it('must provide result from cache', function (done) {
+            mockFs({
+                bundle: {
+                    'bundle.deps.js': 'exports.deps = ' + JSON.stringify([]) + ';',
+                    'bundle-1.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'block-1' }]) + ';',
+                    'bundle-2.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'block-1' }]) + ';'
+                }
+            });
+
+            var bundle = new TestNode('bundle'),
+                cache = bundle.getNodeCache('bundle.deps.js');
+
+            cache.cacheFileInfo('deps-file', path.resolve('bundle/bundle.deps.js'));
+            cache.cacheFileInfo('deps-from-file', path.resolve('bundle/bundle-1.deps.js'));
+            cache.cacheFileInfo('deps-what-file', path.resolve('bundle/bundle-2.deps.js'));
+
+            return bundle.runTech(Tech, { from: 'bundle-1.deps.js', what: 'bundle-2.deps.js' })
+                .then(function (target) {
+                    target.deps.must.eql([]);
+                })
+                .then(done, done);
         });
 
         it('must subtract block from block', function (done) {

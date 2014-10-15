@@ -1,4 +1,5 @@
-var mockFs = require('mock-fs'),
+var path = require('path'),
+    mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     Tech = require('../../techs/provide-bemdecl');
 
@@ -65,6 +66,29 @@ describe('techs', function () {
                 source: 'data-bundle.bemdecl.js' })
                 .spread(function (res) {
                     res.blocks.must.eql(bemdecl);
+                })
+                .then(done, done);
+        });
+
+        it('must provide result from cache', function (done) {
+            mockFs({
+                'bundle-1': {
+                    'bundle-1.bemdecl.js': 'exports.blocks = ' + JSON.stringify([{ block: 'block' }]) + ';'
+                },
+                'bundle-2': {
+                    'bundle-2.bemdecl.js': 'exports.blocks = ' + JSON.stringify([{ block: 'block' }]) + ';'
+                }
+            });
+
+            var bundle = new TestNode('bundle-2'),
+                cache = bundle.getNodeCache('bundle-2.bemdecl.js');
+
+            cache.cacheFileInfo('bemdecl-source-file', path.resolve('bundle-1/bundle-1.bemdecl.js'));
+            cache.cacheFileInfo('bemdecl-file', path.resolve('bundle-2/bundle-2.bemdecl.js'));
+
+            return bundle.runTech(Tech, { node: 'bundle-1' })
+                .then(function (target) {
+                    target.blocks.must.eql([{ block: 'block' }]);
                 })
                 .then(done, done);
         });

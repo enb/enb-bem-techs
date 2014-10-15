@@ -1,4 +1,5 @@
-var vow = require('vow'),
+var path = require('path'),
+    vow = require('vow'),
     mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     Tech = require('../../techs/merge-bemdecl');
@@ -14,6 +15,34 @@ describe('techs', function () {
                 bemdecl = [{ name: 'block' }];
 
             assert(sources, bemdecl, done);
+        });
+
+        it('must provide result from cache', function (done) {
+            mockFs({
+                bundle: {
+                    'bundle.bemdecl.js': 'exports.blocks = ' + JSON.stringify([
+                        { name: 'block-1' },
+                        { name: 'block-2' }
+                    ]) + ';',
+                    'bundle-1.bemdecl.js': 'exports.blocks = ' + JSON.stringify([{ name: 'block-1' }]) + ';',
+                    'bundle-2.bemdecl.js': 'exports.blocks = ' + JSON.stringify([{ name: 'block-2' }]) + ';'
+                }
+            });
+
+            var bundle = new TestNode('bundle'),
+                cache = bundle.getNodeCache('bundle.bemdecl.js');
+
+            cache.cacheFileInfo('bemdecl-file', path.resolve('bundle/bundle.bemdecl.js'));
+            cache.cacheFileList('source-file-list', [
+                path.resolve('bundle/bundle-1.bemdecl.js'),
+                path.resolve('bundle/bundle-2.bemdecl.js')
+            ]);
+
+            return bundle.runTech(Tech, { sources: ['bundle-1.bemdecl.js', 'bundle-2.bemdecl.js'] })
+                .then(function (target) {
+                    target.blocks.must.eql([{ name: 'block-1' }, { name: 'block-2' }]);
+                })
+                .then(done, done);
         });
 
         it('must merge block with mod of block', function (done) {
@@ -59,6 +88,24 @@ describe('techs', function () {
                     { name: 'block', elems: [{ name: 'elem', mods: [
                         { name: 'modName', vals: [{ name: 'modVal' }] }
                     ] }] }
+                ];
+
+            assert([bemdecl1, bemdecl2], exepted, done);
+        });
+
+        it('must merge elems of block', function (done) {
+            var bemdecl1 = [{
+                    name: 'block',
+                    elems: [{ name: 'elem-1' }]
+                }],
+                bemdecl2 = [{
+                    name: 'block',
+                    elems: [{ name: 'elem-2' }]
+                }],
+                exepted = [
+                    { name: 'block' },
+                    { name: 'block', elems: [{ name: 'elem-1' }] },
+                    { name: 'block', elems: [{ name: 'elem-2' }] }
                 ];
 
             assert([bemdecl1, bemdecl2], exepted, done);

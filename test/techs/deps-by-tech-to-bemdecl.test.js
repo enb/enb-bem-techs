@@ -1,4 +1,5 @@
-var vow = require('vow'),
+var path = require('path'),
+    vow = require('vow'),
     mockFs = require('mock-fs'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     levelsTech = require('../../techs/levels'),
@@ -10,6 +11,30 @@ describe('techs', function () {
     describe('deps', function () {
         afterEach(function () {
             mockFs.restore();
+        });
+
+        it('must provide result from cache', function (done) {
+            mockFs({
+                bundle: {
+                    'bundle.bemdecl.js': 'exports.blocks = ' + JSON.stringify([{ name: 'other-block' }]) + ';'
+                }
+            });
+
+            var bundle = new TestNode('bundle'),
+                cache = bundle.getNodeCache('bundle.bemdecl.js'),
+                options = {
+                    sourceTech: 'sourceTech',
+                    destTech: 'destTech'
+                };
+
+            cache.cacheFileInfo('bemdecl-file', path.resolve('bundle/bundle.bemdecl.js'));
+            cache.cacheFileInfo('files-file', path.resolve('bundle/bundle.files'));
+
+            return bundle.runTech(bemdeclFromDepsByTechTech, options)
+                .then(function (target) {
+                    target.blocks.must.eql([{ name: 'other-block' }]);
+                })
+                .then(done, done);
         });
 
         describe('deps.js format', function () {
