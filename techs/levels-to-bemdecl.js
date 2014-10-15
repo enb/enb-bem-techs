@@ -7,7 +7,7 @@
  * **Опции**
  *
  * * *String* **target** — Результирующий bemdecl-таргет. По умолчанию — `?.bemdecl.js`.
- * * *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
+ * * *String* **source** — Исходный levels. По умолчанию — `?.levels`.
  *
  * * **Пример**
  *
@@ -29,8 +29,8 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
     configure: function () {
         this._target = this.node.unmaskTargetName(
             this.getOption('target', this.node.getTargetName('bemdecl.js')));
-        this._levelsTarget = this.node.unmaskTargetName(
-            this.getOption('levelsTarget', this.node.getTargetName('levels')));
+        this._source = this.node.unmaskTargetName(
+            this.getOption('source', this.node.getTargetName('levels')));
     },
 
     getTargets: function () {
@@ -43,7 +43,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             bemdeclFilename = node.resolvePath(target),
             cache = node.getNodeCache(target);
 
-        return node.requireSources([this._levelsTarget]).spread(function (levels) {
+        return node.requireSources([this._source]).spread(function (levels) {
             if (cache.needRebuildFile('bemdecl-file', bemdeclFilename)) {
                 var resDeps = [],
                     blocks = [],
