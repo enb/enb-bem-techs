@@ -3,7 +3,7 @@ node_js:
   - "0.10"
 env:
   global:
-    - GH_REF: github.com/enb-bem/enb-bem.git
+    - GH_REF: github.com/enb-bem/enb-bem-techs.git
     - ISTANBUL_COVERAGE: true
 branches:
   only:
