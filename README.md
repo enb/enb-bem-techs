@@ -6,7 +6,7 @@ enb-bem-techs
 Пакет для сборки проектов, в основе которых лежит [БЭМ-методология](http://ru.bem.info/method/).
 
 Установка
-----------
+---------
 
 ```sh
 $ npm install --save-dev enb-bem-techs
@@ -375,3 +375,8 @@ nodeConfig.addTechs([
 ```javascript
 nodeConfig.addTech(require('enb-bem-techs/techs/files'));
 ```
+
+Лицензия
+--------
+
+© 2014 YANDEX LLC. Код лицензирован [Mozilla Public License 2.0](LICENSE.txt).
