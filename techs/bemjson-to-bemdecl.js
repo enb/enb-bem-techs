@@ -2,19 +2,36 @@
  * bemjson-to-bemdecl
  * ==================
  *
- * Формирует *bemdecl* на основе `?.bemjson.js`.
+ * Формирует BEMDECL-файл из BEMJSON-файла.
  *
- * **Опции**
+ * Опции:
  *
- * * *String* **source** — Исходный bemjson-таргет. По умолчанию — `?.bemjson.js`.
- * * *String* **target** — Результирующий bemdecl-таргет. По умолчанию — `?.bemdecl.js`.
+ * `target`
  *
- * **Пример**
+ * Тип: `String`. По умолчанию: `?.bemdecl.js`.
+ * Результирующий BEMDECL-файл.
  *
- * ```javascript
- * nodeConfig.addTech(require('enb-bem-techs/techs/bemjson-to-bemdecl'));
+ * `source`
+ *
+ * Тип: `String`. По умолчанию: `?.bemjson.js`.
+ * Исходный BEMJSON-файл.
+ *
+ * Пример:
+ *
+ * ```js
+ * var techs = require('enb-bem-techs'),
+ * provide = require('enb/techs/file-provider');
+ *
+ * nodeConfig.addTechs([
+ *     // Предоставляет BEMJSON-файл, написанный вручную, для ENB.
+ *     // В опции `target` путь до BEMJSON-файла.
+ *     [provide, { target: '?.bemjson.js' }],
+ *
+ *     // Строим BEMDECL-файл по полученному BEMJSON-файлу.
+ *     // BEMJSON-файл берём из `?.bemjson.js`, т.к. опция `source` по умолчанию — `?.bemjson.js`.
+ *     [techs.bemjsonToBemdecl]
+ * ]);
  * ```
- *
  */
 var inherit = require('inherit'),
     vfs = require('enb/lib/fs/async-fs'),

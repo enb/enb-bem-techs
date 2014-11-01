@@ -2,30 +2,35 @@
  * subtract-deps
  * =============
  *
- * Формирует *deps* с помощью вычитания одного deps-файла из другого.
- * Может применяться в паре с `deps-provider` для получения deps для bembundle.
+ * Формирует DEPS-файл, вычитая один DEPS-файл из другого.
  *
- * **Опции**
+ * Опции:
  *
- * * *String* **from** — Таргет, из которого вычитать. Обязательная опция.
- * * *String* **what** — Таргет, который вычитать. Обязательная опция.
- * * *String* **target** — Результирующий deps-таргет. По умолчанию — `?.deps.js`.
+ * `target`
  *
- * **Пример**
+ * Тип: `String`. По умолчанию: `?.deps.js`.
+ * Результирующий DEPS-файл.
  *
- * ```javascript
- * nodeConfig.addTechs([
- *     [require('enb-bem-techs/techs/deps'), { target: 'router.tmp.deps.js' }],
- *     [require('enb-bem-techs/techs/provide-deps'), {
- *         node: 'pages/index',
- *         depsTarget: 'index.deps.js'
- *     }],
- *     [require('enb-bem-techs/techs/subtract-deps'), {
- *         what: 'index.deps.js',
- *         from: 'router.tmp.deps.js',
- *         target: 'router.deps.js'
- *     }]
- * ]);
+ * `from`
+ *
+ * Тип: `String`. Обязательная опция.
+ * DEPS-файл, из которого вычитают.
+ *
+ * `what`
+ *
+ * Тип: `String`. Обязательная опция.
+ * DEPS-файл, который вычитают.
+ *
+ * Пример:
+ *
+ * ```js
+ * var techs = require('enb-bem-techs');
+ *
+ * nodeConfig.addTech([techs.subtractDeps, {
+ *     what: 'bundle-1.deps.js',
+ *     from: 'bundle-2.deps.js',
+ *     target: 'bundle.deps.js'
+ * } ]);
  * ```
  */
 var inherit = require('inherit'),

@@ -2,19 +2,42 @@
  * merge-deps
  * ==========
  *
- * Формирует *deps* с помощью объединения других deps-файлов.
+ * Объединяет DEPS-файлы в результирующий.
  *
- * **Опции**
+ * Может понадобиться для формирования `merged`-бандла.
  *
- * * *String[]* **sources** — Исходные deps-таргеты. Обязательная опция.
- * * *String* **target** — Результирующий deps-таргет. По умолчанию — `?.deps.js`.
+ * Опции:
  *
- * **Пример**
+ * `target`
  *
- * ```javascript
- * nodeConfig.addTech([require('enb-bem-techs/techs/merge-deps'), {
- *     sources: ['search.deps.js', 'router.deps.js'],
- *     target: 'all.deps.js'
+ * Тип: `String`. По умолчанию: `?.deps.js`.
+ * Результирующий DEPS-файл.
+ *
+ * `sources`
+ *
+ * Тип: `String[]`. Обязательная опция.
+ * Исходные DEPS-файлы. Обязательная опция.
+ *
+ * Пример:
+ *
+ * Ноды в файловой системе до сборки:
+ *
+ * merged-bundle/
+ * ├── bundle-1.deps.js
+ * └── bundle-2.deps.js
+ *
+ * Что должно получиться после сборки:
+ *
+ * merged-bundle/
+ * ├── bundle-1.deps.js
+ * ├── bundle-2.deps.js
+ * └── merged-bundle.deps.js
+ *
+ * ```js
+ * var techs = require('enb-bem-techs');
+ * nodeConfig.addTech([techs.mergeDeps, {
+ *     sources: ['bundle-1.deps.js', 'bundle-2.deps.js'],
+ *     target: 'merged-bundle.deps.js'
  * }]);
  * ```
  */

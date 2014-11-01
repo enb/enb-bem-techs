@@ -2,17 +2,34 @@
  * levels-to-bemdecl
  * =================
  *
- * Формирует *bemdecl*, состоящий из всех сущностей, найденных на уровнях.
+ * Формирует BEMDECL-файл, состоящий из всех БЭМ-сущностей, найденных в указанных уровнях.
  *
- * **Опции**
+ * Опции:
  *
- * * *String* **target** — Результирующий bemdecl-таргет. По умолчанию — `?.bemdecl.js`.
- * * *String* **source** — Исходный levels. По умолчанию — `?.levels`.
+ * `target`
  *
- * * **Пример**
+ * Тип: `String`. По умолчанию: `?.bemdecl.js`.
+ * Результирующий BEMDECL-файл.
  *
- * ```javascript
- * nodeConfig.addTech(require('enb-bem-techs/techs/levels-to-bemdecl'));
+ * `source`
+ *
+ * Тип: `String`. По умолчанию: `?.levels`.
+ * Таргет с интроспекцией уровней (результат сканирования `levels` технологией).
+ *
+ * Пример:
+ *
+ * ```js
+ * var techs = require('enb-bem-techs');
+ *
+ * nodeConfig.addTechs([
+ *     // Сканируем уровни проекта.
+ *     // Результат записываем в `?.levels`, т.к. опция `target` по умолчанию — `?.levels`.
+ *     [techs.levels, { levels: ['blocks'] }],
+ *
+ *     // Строим BEMDECL-файл по результатам сканирования уровней.
+ *     // Интроспекцию берём из `?.levels`, т.к. опция `source` по умолчанию — `?.levels`.
+ *     [techs.levelsToBemdecl]
+ * ]);
  * ```
  */
 var inherit = require('inherit'),

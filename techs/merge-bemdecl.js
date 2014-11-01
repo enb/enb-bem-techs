@@ -2,21 +2,46 @@
  * merge-bemdecl
  * =============
  *
- * Формирует *bemdecl* с помощью объединения других bemdecl-файлов.
+ * Объединяет BEMDECL-файлы в результирующий.
  *
- ***Опции**
+ * Может понадобиться для формирования `merged`-бандла.
  *
- ** *String[]* **sources** — Исходные bemdecl-таргеты. Обязательная опция.
- ** *String* **target** — Результирующий bemdecl-таргет. По умолчанию — `?.bemdecl.js`.
+ * Опции:
  *
- ***Пример**
+ * `target`
  *
- *```javascript
- *nodeConfig.addTech([require('enb-bem-techs/techs/merge-bemdecl'), {
- *    sources: ['search.bemdecl.js', 'router.bemdecl.js'],
- *    target: 'all.bemdecl.js'
- *}]);
- *```
+ * Тип: `String`. По умолчанию: `?.bemdecl.js`.
+ * Результирующий BEMDECL-файл.
+ *
+ * `sources`
+ *
+ * Тип: `String[]`. Обязательная опция.
+ *
+ * Исходные BEMDECL-файлы.
+ *
+ * Пример:
+ *
+ * Ноды в файловой системе до сборки:
+ *
+ * merged-bundle/
+ * ├── bundle-1.bemdecl.js
+ * └── bundle-2.bemdecl.js
+ *
+ * Что должно получиться после сборки:
+ *
+ * merged-bundle/
+ * ├── bundle-1.bemdecl.js
+ * ├── bundle-2.bemdecl.js
+ * └── merged-bundle.bemdecl.js
+ *
+ * ```js
+ * var techs = require('enb-bem-techs');
+ *
+ * nodeConfig.addTech([techs.mergeBemdecl, {
+ *     sources: ['bundle-1.bemdecl.js', 'bundle-2.bemdecl.js'],
+ *     target: 'merged-bundle.bemdecl.js'
+ * }]);
+ * ```
  */
 var inherit = require('inherit'),
     vow = require('vow'),

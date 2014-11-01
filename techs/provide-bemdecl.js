@@ -2,25 +2,66 @@
  * provide-bemdecl
  * ===============
  *
- * Копирует *bemdecl* в текущую ноду под нужным именем из другой ноды. Может понадобиться, например,
- * для объединения bemdecl'ов.
+ * Копирует BEMDECL-файл в текущую ноду по указанному имени из указанной ноды.
  *
- * **Опции**
+ * Может понадобиться для объединения BEMDECL-файлов из разных нод.
  *
- * * *String* **node** — Путь исходной ноды с нужным bemdecl'ом. Обязательная опция.
- * * *String* **source** — Исходный bemdecl, который будет копироваться.
- *   По умолчанию — `?.bemdecl.js` (демаскируется в рамках исходной ноды).
- * * *String* **target** — Результирующий bemdecl-таргет.
- *   По умолчанию — `?.bemdecl.js` (демаскируется в рамках текущей ноды).
+ * Опции:
  *
- * **Пример**
+ * `target`
  *
- * ```javascript
- * nodeConfig.addTech([require('enb-bem-techs/techs/provide-bemdecl'), {
- *     node: 'bundles/router',
- *     source: 'router.bemdecl.js',
- *     target: 'router.bemdecl.js'
- * }]);
+ * Тип: `String`. По умолчанию: `?.bemdecl.js` (демаскируется в рамках текущей ноды).
+ * Результирующий BEMDECL-файл.
+ *
+ * `node`
+ *
+ * Тип: `String`. Обязательная опция.
+ * Путь ноды с исходным BEMDECL-файлом.
+ *
+ * `source`
+ *
+ * Тип: `String`. По умолчанию: `?.bemdecl.js` (демаскируется в рамках исходной ноды).
+ * Исходный BEMDECL-файл, который будет скопирован.
+ *
+ * Пример:
+ *
+ * Ноды в файловой системе до сборки:
+ *
+ * bundles/
+ * ├── bundle-1/
+ *     └── bundle-1.bemdecl.js
+ * ├── bundle-2/
+ *     └── bundle-1.bemdecl.js
+ * └── bundle-3/
+ *
+ * Что должно получиться после сборки:
+ *
+ * bundles/
+ * ├── bundle-1/
+ *     └── bundle-1.bemdecl.js
+ * ├── bundle-2/
+ *     └── bundle-2.bemdecl.js
+ * └── bundle-3/
+ *     ├── bundle-1.bemdecl.js
+ *     └── bundle-2.bemdecl.js
+ *
+ * ```js
+ * var techs = require('enb-bem-techs');
+ * config.node('bundle-3', function (nodeConfig) {
+ *     nodeConfig.addTechs([
+ *         // Копируем BEMDECL-файл из ноды `bundle-1` в `bundle-3`
+ *         [techs.provideBemdecl, {
+ *             node: 'bundles/bundle-1',
+ *             target: 'bundle-1.bemdecl.js'
+ *         }],
+ *
+ *         // Копируем BEMDECL-файл из ноды `bundle-2` в `bundle-3`
+ *         [techs.provideBemdecl, {
+ *             node: 'bundles/bundle-2',
+ *             target: 'bundle-2.bemdecl.js'
+ *         }]
+ *     ]);
+ * });
  * ```
  */
 var inherit = require('inherit'),

@@ -2,26 +2,47 @@
  * deps
  * ====
  *
- * Раскрывает зависимости. Сохраняет в виде `?.deps.js`.
+ * Дополняет декларацию БЭМ-сущностей на основе информации из технологий зависимостей (`deps.js` или `deps.yaml`)
+ * БЭМ-сущностей.
  *
- * **Опции**
+ * Опции:
  *
- * * *String* **bemdeclFile** — Файл с исходными зависимостями. По умолчанию — `?.bemdecl.js`.
- * * *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
- * * *String* **target** — Результирующий deps. По умолчанию — `?.deps.js`.
+ * `target`
  *
- * **Пример**
+ * Тип: `String`. По умолчанию: `?.deps.js`.
+ * Результирующий DEPS-файл.
  *
- * Обычное использование:
- * ```javascript
- * nodeConfig.addTech(require('enb-bem-techs/techs/deps'));
+ * `bemdeclFile`
+ *
+ * Тип: `String`. По умолчанию: `?.bemdecl.js`.
+ * Файл с декларацией БЭМ-сущностей.
+ *
+ * `levelsTarget`
+ *
+ * Тип: `String`. По умолчанию: `?.levels`.
+ * Таргет с интроспекцией уровней (результат сканирования `levels` технологией).
+ *
+ * Пример:
+ *
+ * Раскрытие зависимостей по BEMDECL-файлу.
+ *
+ * ```js
+ * var techs = require('enb-bem-techs');
+ *
+ * nodeConfig.addTech([techs.deps, {
+ *    bemdeclFile: '?.bemdecl.js',
+ *    target: '?.deps.js'
+ * }]);
  * ```
  *
- * Сборка специфического deps:
- * ```javascript
- * nodeConfig.addTech([require('enb-bem-techs/techs/deps'), {
- *     sourceDepsFile: 'search.bemdecl.js',
- *     target: 'search.deps.js'
+ * Раскрытие зависимостей по DEPS-файлу.
+ *
+ * ```js
+ * var techs = require('enb-bem-techs');
+ *
+ * nodeConfig.addTech([techs.deps, {
+ *    bemdeclFile: 'source-decl.deps.js',
+ *    target: '?.deps.js'
  * }]);
  * ```
  */

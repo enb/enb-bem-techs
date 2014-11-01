@@ -2,24 +2,82 @@
  * deps-by-tech-to-bemdecl
  * =======================
  *
- * Формирует *bemdecl* на основе depsByTech-информации из `?.deps.js`.
+ * Формирует BEMDECL-файл на основе зависимостей по технологиям (depsByTech).
+ * Такие зависимости описываются в `deps.js` технологиях БЭМ-сущностей.
  *
- * **Опции**
+ * Опции:
  *
- * * *String* **sourceTech** — Имя исходной технологии. Обязательная опция.
- * * *String* **destTech** — Имя конечной технологии.
- * * *String* **filesTarget** — files-таргет, на основе которого получается список исходных файлов
- *   (его предоставляет технология `files`). По умолчанию — `?.files`.
- * * *String* **sourceSuffixes** — суффиксы файлов, по которым строится `files`-таргет. По умолчанию — 'deps.js'.
- * * *String* **target** — Результирующий bemdecl-таргет. По умолчанию — `?.bemdecl.js`.
+ * `target`
  *
- * **Пример**
+ * Тип: `String`. По умолчанию: `?.bemdecl.js`.
+ * Результирующий BEMDECL-файл.
  *
- * ```javascript
- * nodeConfig.addTech(require('enb-bem-techs/techs/deps-by-tech-to-bemdecl'), {
- *     sourceTech: 'js',
- *     destTech: 'bemhtml'
- * });
+ * `sourceTech`
+ *
+ * Тип: `String`. Обязательная опция.
+ * Имя технологии для которой собираются зависимости.
+ *
+ * `destTech`
+ *
+ * Тип: `String`.
+ * Имя технологии от которой зависит `sourceTech`.
+ *
+ * `filesTarget`
+ *
+ * Тип: `String`. По умолчанию: `?.files`.
+ * Таргет со списоком `deps.js`-файлов (результат технологии `files`).
+ *
+ * `sourceSuffixes`
+ *
+ * Тип: `String`. По умолчанию: `['deps.js']`.
+ * Суффиксы файлов с описанием зависимостей БЭМ-сущностей.
+ *
+ * Пример:
+ *
+ * Частый случай, когда БЭМ-сущность в технологии клиенского JavaScript использует свою же технологию шаблонов.
+ *
+ * `button.deps.js`
+ *
+ * ```js
+ * {
+ *     block: 'button'
+ *     tech: 'js'              // sourceTech
+ *     shouldDeps: {
+ *         tech: 'bemhtml'     // destTech
+ *     }
+ * }
+ * ```
+ *
+ * В большинстве случаев схема построения BEMDECL-файла по `depsByTech` выглядит так:
+ *
+ * ```
+ * (BEMJSON ->) BEMDECL (1) -> deps (2) -> files (3) -> BEMDECL (4)
+ * ```
+ *
+ * 1. Получаем BEMDECL-файл (?.bemdecl.js).
+ * 2. Дополняем декларацию БЭМ-сущностей из BEMDECL-файла и записываем результат в DEPS-файл (?.deps.js).
+ * 3. Получаем упорядоченный список `deps.js` файлов (?.files.js).
+ * 4. Получаем BEMDECL-файл на основе зависимостей по технологиям (?.tech.bemdecl.js).
+ *
+ * ```js
+ * var techs = require('enb-bem-techs'),
+ * provide = require('enb/techs/file-provider');
+ *
+ * nodeConfig.addTechs([
+ *     [techs.levels, { levels: ['blocks'] }],
+ *     [provide, { target: '?.bemdecl.js' }], // (1) `?.bemdecl.js`
+ *     [techs.deps],                          // (2) `?.deps.js`
+ *     [techs.files],                         // (3) `?.files.js`
+ *     // Далее '?.bemhtml.bemdecl.js' можно использовать для сборки шаблонов,
+ *     // которые используются в клиенском JavaScript.
+ *     // Список `deps.js` файлов берём из `?.files`, т.к. опция filesTarget
+ *     // по умолчанию — `?.files`.
+ *     [techs.depsByTechToBemdecl, {          // (4) `?.bemhtml.bemdecl.js`
+ *         target: '?.bemhtml.bemdecl.js',
+ *         sourceTech: 'js',
+ *         destTech: 'bemhtml'
+ *     }]
+ * ]);
  * ```
  */
 var inherit = require('inherit'),

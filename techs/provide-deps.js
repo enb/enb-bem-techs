@@ -2,25 +2,66 @@
  * provide-deps
  * ============
  *
- * Копирует *deps* в текущую ноду под нужным именем из другой ноды.
- * Может понадобиться, например, для объединения deps'ов.
+ * Копирует DEPS-файл в текущую ноду по указанному имени из указанной ноды.
  *
- * **Опции**
+ * Может понадобиться для объединения DEPS-файлов из разных нод.
  *
- * * *String* **node** — Путь исходной ноды с нужным deps'ом. Обязательная опция.
- * * *String* **source** — Исходный deps, который будет копироваться.
- *   По умолчанию — `?.deps.js` (демаскируется в рамках исходной ноды).
- * * *String* **target** — Результирующий deps-таргет.
- *   По умолчанию — `?.deps.js` (демаскируется в рамках текущей ноды).
+ * Опции:
  *
- * **Пример**
+ * `target`
  *
- * ```javascript
- * nodeConfig.addTech([require('enb-bem-techs/techs/provide-deps'), {
- *     node: 'bundles/router',
- *     source: 'router.deps.js',
- *     target: 'router.deps.js'
- * }]);
+ * Тип: `String`. По умолчанию: `?.deps.js` (демаскируется в рамках текущей ноды).
+ * Результирующий DEPS-файл.
+ *
+ * `node`
+ *
+ * Тип: `String`. Обязательная опция.
+ * Путь ноды с исходным DEPS-файлом.
+ *
+ * `source`
+ *
+ * Тип: `String`. По умолчанию: `?.deps.js` (демаскируется в рамках исходной ноды).
+ * Исходный DEPS-файл, который будет скопирован.
+ *
+ * Пример:
+ *
+ * Ноды в файловой системе до сборки:
+ *
+ * bundles/
+ * ├── bundle-1/
+ *     └── bundle-1.deps.js
+ * ├── bundle-2/
+ *     └── bundle-1.deps.js
+ * └── bundle-3/
+ *
+ * Что должно получиться после сборки:
+ *
+ * bundles/
+ * ├── bundle-1/
+ *     └── bundle-1.deps.js
+ * ├── bundle-2/
+ *     └── bundle-2.deps.js
+ * └── bundle-3/
+ *     ├── bundle-1.deps.js
+ *     └── bundle-2.deps.js
+ *
+ * ```js
+ * var techs = require('enb-bem-techs');
+ * config.node('bundle-3', function (nodeConfig) {
+ *     nodeConfig.addTechs([
+ *         // Копируем DEPS-файл из ноды `bundle-1` в `bundle-3`
+ *         [techs.provideDeps, {
+ *             node: 'bundles/bundle-1',
+ *             target: 'bundle-1.deps.js'
+ *         }],
+ *
+ *         // Копируем DEPS-файл из ноды `bundle-2` в `bundle-3`
+ *         [techs.provideDeps, {
+ *             node: 'bundles/bundle-2',
+ *             target: 'bundle-2.deps.js'
+ *         }]
+ *     ]);
+ * });
  * ```
  */
 var inherit = require('inherit'),

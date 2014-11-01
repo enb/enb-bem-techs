@@ -2,20 +2,62 @@
  * files
  * =====
  *
- * Собирает список исходных файлов для сборки на основе *deps* и *levels*, предоставляет `?.files` и `?.dirs`.
- * Используется многими технологиями, которые объединяют множество файлов из различных уровней переопределения в один.
+ * Собирает список исходных файлов и директорий для сборки на основе декларации БЭМ-сущностей,
+ * а также результате сканирования уровней `levels` технологией.
  *
- * **Опции**
+ * Предоставляет `?.files` и `?.dirs` таргеты.
  *
- * * *String* **depsFile** — Исходный deps-таргет. По умолчанию — `?.deps.js`.
- * * *String* **levelsTarget** — Исходный levels. По умолчанию — `?.levels`.
- * * *String* **filesTarget** — Результирующий files-таргет. По умолчанию — `?.files`.
- * * *String* **dirsTarget** — Результирующий dirs-таргет. По умолчанию — `?.dirs`.
+ * Используется большинством технологиями в ENB (кроме базовых).
  *
- * **Пример**
+ * Опции:
  *
- * ```javascript
- * nodeConfig.addTech(require('enb-bem-techs/techs/files'));
+ * `filesTarget`
+ *
+ * Тип: `String`. По умолчанию: `?.files`.
+ * Результирующий `files`-таргет.
+ *
+ * `dirsTarget`
+ *
+ * Тип: `String`. По умолчанию: `?.dirs`.
+ * Результирующий `dirs`-таргет.
+ *
+ * `depsFile`
+ *
+ * Тип: `String`. По умолчанию: `?.deps.js`.
+ * Исходная декларация БЭМ-сущностей.
+ *
+ * `levelsTarget`
+ *
+ * Тип: `String`. По умолчанию: `?.levels`.
+ * Таргет с интроспекцией уровней (результат сканирования `levels` технологией).
+ *
+ * Пример:
+ *
+ * Формирование списка файлов и директорий по BEMDECL-файлу.
+ *
+ * ```js
+ * var techs = require('enb-bem-techs'),
+ * provide = require('enb/techs/file-provider');
+ *
+ * nodeConfig.addTechs([
+ *     [techs.levels, { levels: ['blocks'] }],
+ *     [provide, { target: '?.bemdecl.js' }]
+ *     [techs.files, { depsFile: '?.bemdecl.js' }]
+ * ]);
+ * ```
+ *
+ * Формирование списка файлов и директорий по DEPS-файлу.
+ *
+ * ```js
+ * var techs = require('enb-bem-techs'),
+ * provide = require('enb/techs/file-provider');
+ *
+ * nodeConfig.addTechs([
+ *     [techs.levels, { levels: ['blocks'] }],
+ *     [provide, { target: '?.bemdecl.js' }],
+ *     [techs.deps],
+ *     [techs.files]
+ * ]);
  * ```
  */
 var inherit = require('inherit'),
