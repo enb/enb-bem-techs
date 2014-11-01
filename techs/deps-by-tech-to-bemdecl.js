@@ -99,6 +99,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._filesTarget = this.node.unmaskTargetName(this.getOption('filesTarget', '?.files'));
         this._sourceTech = this.getRequiredOption('sourceTech');
         this._destTech = this.getOption('destTech');
+        this._sourceSuffixes = this.getOption('sourceSuffixes', ['deps.js']);
     },
 
     getTargets: function () {
@@ -112,14 +113,19 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             bemdeclFilename = node.resolvePath(target),
             filesFilename = node.resolvePath(this._filesTarget),
             sourceTech = this._sourceTech,
-            destTech = this._destTech;
+            destTech = this._destTech,
+            sourceSuffixes = Array.isArray(this._sourceSuffixes) ? this._sourceSuffixes : [this._sourceSuffixes];
 
         return this.node.requireSources([this._filesTarget])
             .spread(function (files) {
                 if (cache.needRebuildFile('bemdecl-file', bemdeclFilename) ||
                     cache.needRebuildFile('files-file', filesFilename)
                 ) {
-                    var depsFiles = files.bySuffix['deps.js'] || [];
+                    var depsFiles = [];
+
+                    sourceSuffixes.forEach(function (suffix) {
+                        depsFiles = depsFiles.concat(files.bySuffix[suffix]);
+                    });
 
                     return vow.all(depsFiles.map(function (file) {
                         return vfs.read(file.fullname, 'utf8').then(function (text) {
