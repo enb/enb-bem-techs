@@ -64,8 +64,8 @@ module.exports = function(config) {
             // список файлов, которые будут учавствовать в сборке.
             [techs.levels, { levels: ['blocks'] }],   // (1) -> `?.levels`
             [provide, { target: '?.bemdecl.js' }],    // (2) -> `?.bemdecl.js`
-            [techs.deps],                              // (3) `?.bemdecl.js` -> `?.deps.js`
-            [techs.files],                             // (4) `?.levels` + `?.deps.js` -> `?.files`
+            [techs.deps],                             // (3) `?.bemdecl.js` -> `?.deps.js`
+            [techs.files],                            // (4) `?.levels` + `?.deps.js` -> `?.files`
 
             // Технологии принимают на вход список файлов. Таргет, в котором хранится список файлов,
             // задается опцией `filesTarget` (по умолчанию — `?.files`). Для сборки будут

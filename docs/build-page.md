@@ -73,9 +73,9 @@ module.exports = function(config) {
             // список файлов, которые будут учавствовать в сборке.
             [techs.levels, { levels: ['blocks'] }],   // (1) -> `?.levels`
             [provide, { target: '?.bemjson.js' }],    // (2) -> `?.bemjson.js`
-            [techs.bemjsonToBemdecl],                 // (3) -> `?.bemjson.js`
-            [techs.deps],                              // (4) `?.bemdecl.js` -> `?.deps.js`
-            [techs.files],                             // (5) `?.levels` + `?.deps.js` -> `?.files`
+            [techs.bemjsonToBemdecl],                 // (3) -> `?.bemdecl.js`
+            [techs.deps],                             // (4) `?.bemdecl.js` -> `?.deps.js`
+            [techs.files],                            // (5) `?.levels` + `?.deps.js` -> `?.files`
 
             // Технологии принимают на вход список файлов. Таргет, в котором хранится список файлов,
             // задается опцией `filesTarget` (по умолчанию — `?.files`). Для сборки будут
@@ -100,14 +100,14 @@ module.exports = function(config) {
 $ enb make
 ```
 
-После сборки в папке `bundle` будут созданы `bundle.css`, `bundle.js` и `bundle.html` файлы.
+После сборки в папке `page` будут созданы `page.css`, `page.js` и `page.html` файлы.
 
 ```sh
 .enb/
 blocks/
-bundle/
-├── bundle.bemjson.js
-├── bundle.html
-├── bundle.css
-└── bundle.js
+page/
+├── page.bemjson.js
+├── page.html
+├── page.css
+└── page.js
 ```
