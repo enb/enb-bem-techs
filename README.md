@@ -18,64 +18,12 @@ $ npm install --save-dev enb-bem-techs
 
 Для работы модуля требуется зависимость от пакета `enb` версии `0.13.0` или выше.
 
-Как устроены БЭМ-проекты?
--------------------------
+Документация
+------------
 
-БЭМ-методология предпологает разделение интерфейса на независимые блоки.
-
-```sh
-blocks/
-├── head/
-├── footer/
-├── logo/
-├── button/
-└── link/
-```
-
-Каждый блок может быть реализован в одной или нескольких технологиях.
-
-```sh
-button/
-├── button.css
-└── button.js
-```
-
-Если в блоках есть элементы или модификаторы, которые используются не всегда, их реализация выносится в отдельные файлы.
-
-```sh
-button/
-├── __text/
-│   ├── button__text.css
-│   └── button__text.js
-├── _focused/
-│   ├── button_focused.css
-│   └── button_focused.js
-├── _type/
-│   ├── button_type_link.css
-│   └── button_type_link.js
-├── button.css
-└── button.js
-```
-
-В проекте может быть несколько уровней с блоками, например, для разделения кода по платформам.
-
-```sh
-src/
-├── common.blocks/
-│   ├── button/
-│   └── link/
-├── desktop.blocks/
-│   └── button/
-└── touch.blocks/
-    └── link/
-```
-
-Примеры из жизни:
-
-* [bem-core](http://ru.bem.info/libs/bem-core/current/)
-* [bem-components](http://ru.bem.info/libs/bem-components/current/)
-
-Подробнее об организации БЭМ-проектов в файловой системе читайте в разделе [методология](http://ru.bem.info/method/filesystem/) на сайте [bem.info](http://ru.bem.info/).
+* [Как устроены БЭМ-проекты](docs/bem-project.md)
+* [Сборка бандла](docs/build-bundle.md)
+* [Сборка страницы](build-page.md)
 
 С чего начать?
 --------------
