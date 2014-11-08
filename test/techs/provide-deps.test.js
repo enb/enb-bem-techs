@@ -76,7 +76,7 @@ describe('techs', function () {
                     'bundle-1.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'block' }]) + ';'
                 },
                 'bundle-2': {
-                    'bundle-2.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'block' }]) + ';'
+                    'bundle-2.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'other-block' }]) + ';'
                 }
             });
 
@@ -88,7 +88,7 @@ describe('techs', function () {
 
             return bundle.runTech(Tech, { node: 'bundle-1' })
                 .then(function (target) {
-                    target.deps.must.eql([{ block: 'block' }]);
+                    target.deps.must.eql([{ block: 'other-block' }]);
                 })
                 .then(done, done);
         });

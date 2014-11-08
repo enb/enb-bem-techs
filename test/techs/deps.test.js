@@ -16,11 +16,7 @@ describe('techs', function () {
                 deps = [{ block: 'block' }, { block: 'other-block' }];
 
             mockFs({
-                blocks: {
-                    block: {
-                        'block.deps.js': stringifyDepsJs({ shouldDeps: [{ block: 'other-block' }] })
-                    }
-                },
+                blocks: {},
                 bundle: {
                     'bundle.bemdecl.js': 'exports.blocks = ' + JSON.stringify(bemdecl) + ';',
                     'bundle.deps.js': 'exports.deps = ' + JSON.stringify(deps) + ';'
@@ -32,11 +28,11 @@ describe('techs', function () {
 
             cache.cacheFileInfo('decl-file', path.resolve('bundle/bundle.bemdecl.js'));
             cache.cacheFileInfo('deps-file', path.resolve('bundle/bundle.deps.js'));
+            cache.cacheFileList('deps-file-list', []);
 
             bundle.runTech(levelsTech, { levels: ['blocks'] })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
-                    cache.cacheFileList('deps-file-list', levels.getFilesBySuffix('deps.js'));
 
                     return bundle.runTechAndRequire(depsTech);
                 })

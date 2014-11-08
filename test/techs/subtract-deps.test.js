@@ -13,7 +13,7 @@ describe('techs', function () {
         it('must provide result from cache', function (done) {
             mockFs({
                 bundle: {
-                    'bundle.deps.js': 'exports.deps = ' + JSON.stringify([]) + ';',
+                    'bundle.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'other-block' }]) + ';',
                     'bundle-1.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'block-1' }]) + ';',
                     'bundle-2.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'block-1' }]) + ';'
                 }
@@ -28,7 +28,7 @@ describe('techs', function () {
 
             return bundle.runTech(Tech, { from: 'bundle-1.deps.js', what: 'bundle-2.deps.js' })
                 .then(function (target) {
-                    target.deps.must.eql([]);
+                    target.deps.must.eql([{ block: 'other-block' }]);
                 })
                 .then(done, done);
         });

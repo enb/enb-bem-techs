@@ -76,7 +76,7 @@ describe('techs', function () {
                     'bundle-1.bemdecl.js': 'exports.blocks = ' + JSON.stringify([{ block: 'block' }]) + ';'
                 },
                 'bundle-2': {
-                    'bundle-2.bemdecl.js': 'exports.blocks = ' + JSON.stringify([{ block: 'block' }]) + ';'
+                    'bundle-2.bemdecl.js': 'exports.blocks = ' + JSON.stringify([{ block: 'other-block' }]) + ';'
                 }
             });
 
@@ -88,7 +88,7 @@ describe('techs', function () {
 
             return bundle.runTech(Tech, { node: 'bundle-1' })
                 .then(function (target) {
-                    target.blocks.must.eql([{ block: 'block' }]);
+                    target.blocks.must.eql([{ block: 'other-block' }]);
                 })
                 .then(done, done);
         });

@@ -181,7 +181,7 @@ describe('techs', function () {
                     { block: 'block' }
                 ],
                 bemdecl = [
-                    { name: 'block' }
+                    { name: 'other-block' }
                 ];
 
             mockFs({

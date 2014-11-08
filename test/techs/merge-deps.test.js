@@ -21,8 +21,7 @@ describe('techs', function () {
             mockFs({
                 bundle: {
                     'bundle.deps.js': 'exports.deps = ' + JSON.stringify([
-                        { block: 'block-1' },
-                        { block: 'block-2' }
+                        { block: 'other-block' }
                     ]) + ';',
                     'bundle-1.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'block-1' }]) + ';',
                     'bundle-2.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'block-2' }]) + ';'
@@ -40,7 +39,7 @@ describe('techs', function () {
 
             return bundle.runTech(Tech, { sources: ['bundle-1.deps.js', 'bundle-2.deps.js'] })
                 .then(function (target) {
-                    target.deps.must.eql([{ block: 'block-1' }, { block: 'block-2' }]);
+                    target.deps.must.eql([{ block: 'other-block' }]);
                 })
                 .then(done, done);
         });
