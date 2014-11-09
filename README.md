@@ -23,7 +23,7 @@ $ npm install --save-dev enb-bem-techs
 
 * [Как устроены БЭМ-проекты](docs/bem-project.md)
 * [Сборка бандла](docs/build-bundle.md)
-* [Сборка страницы](build-page.md)
+* [Сборка страницы](docs/build-page.md)
 
 С чего начать?
 --------------
@@ -123,11 +123,13 @@ var techs = require('enb-bem-techs');
 
 nodeConfig.addTechs([
     // Сканируем уровни проекта.
-    // Результат записываем в `?.levels`, т.к. опция `target` по умолчанию — `?.levels`.
+    // Результат записываем в `?.levels`,
+    // т.к. опция `target` по умолчанию — `?.levels`.
     [techs.levels, { levels: ['blocks'] }],
 
     // Строим BEMDECL-файл по результатам сканирования уровней.
-    // Интроспекцию берём из `?.levels`, т.к. опция `source` по умолчанию — `?.levels`.
+    // Интроспекцию берём из `?.levels`,
+    // т.к. опция `source` по умолчанию — `?.levels`.
     [techs.levelsToBemdecl]
 ]);
 ```
@@ -164,7 +166,8 @@ nodeConfig.addTechs([
     [provide, { target: '?.bemjson.js' }],
 
     // Строим BEMDECL-файл по полученному BEMJSON-файлу.
-    // BEMJSON-файл берём из `?.bemjson.js`, т.к. опция `source` по умолчанию — `?.bemjson.js`.
+    // BEMJSON-файл берём из `?.bemjson.js`,
+    // т.к. опция `source` по умолчанию — `?.bemjson.js`.
     [techs.bemjsonToBemdecl]
 ]);
 ```
@@ -317,9 +320,9 @@ nodeConfig.addTech([techs.depsOld, {
 ```js
 {
     block: 'button'
-    tech: 'js'              // sourceTech
+    tech: 'js'          // sourceTech
     shouldDeps: {
-        tech: 'bemhtml'     // destTech
+        tech: 'bemhtml' // destTech
     }
 }
 ```
@@ -694,8 +697,6 @@ nodeConfig.addTech([techs.subtractDeps, {
     target: 'bundle.deps.js'
 } ]);
 ```
-
--------------------------------------------------------------------------------
 
 Лицензия
 --------
