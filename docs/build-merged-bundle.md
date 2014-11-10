@@ -8,6 +8,9 @@
 Предположим, что у нас есть несколько бандлов, каждый из которых содержит BEMDECL-файл.
 
 ```sh
+.enb/
+└── make.js          # ENB-конфиг
+desktop.blocks/       # уровень блоков
 desktop.bundles/
 ├── index/
     └── index.bemdecl.js
@@ -34,7 +37,7 @@ var fs = require('fs'),
     provide = require('enb/techs/file-provider'),
     css = require('enb/techs/css'),
     js = require('enb/techs/js'),
-    platforms = ['desktop', 'touch-phone', 'touch-pad'];
+    platforms = ['desktop'];
 
 module.exports = function (config) {
     // Создаем директории для merged-бандлов (1)
@@ -83,7 +86,7 @@ module.exports = function (config) {
 
         // Обычная сборка бандла (5)
         nodeConfig.addTechs([
-            [techs.levels, { levels: ['blocks'] }],
+            [techs.levels, { levels: ['desktop.blocks'] }],
             [techs.deps],
             [techs.files],
 
@@ -102,9 +105,11 @@ module.exports = function (config) {
 $ enb make
 ```
 
-После сборки в папке `merged` будут созданы `merged.css` и `merged.js`, а также служебные файлы.
+После сборки в директории `merged` будут созданы `merged.css` и `merged.js`, а также служебные файлы.
 
 ```sh
+.enb/
+desktop.blocks/
 desktop.bundles/
 ├── index/
 ├── price/
