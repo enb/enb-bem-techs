@@ -24,6 +24,7 @@ $ npm install --save-dev enb-bem-techs
 * [Как устроены БЭМ-проекты](docs/bem-project.md)
 * [Сборка бандла](docs/build-bundle.md)
 * [Сборка страницы](docs/build-page.md)
+* [Сборка merged-бандла](docs/build-merged-bundle.md)
 
 С чего начать?
 --------------
