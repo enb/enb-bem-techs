@@ -230,6 +230,8 @@ module.exports = function (config) {
 
 function getLevels(config) {
     return [
+        { path: 'libs/bem-core/common.blocks', check: false },
+        { path: 'libs/bem-core/desktop.blocks', check: false },
         'common.blocks',
         'desktop.blocks'
     ].map(function(level) {
@@ -246,7 +248,12 @@ var techs = require('enb-bem-techs');
 module.exports = function (config) {
     config.node('node', function (nodeConfig) {
         nodeConfig.addTech([techs.levels, {
-            levels: ['common.blocks', 'desktop.blocks']
+            levels: [
+                { path: 'libs/bem-core/common.blocks', check: false },
+                { path: 'libs/bem-core/desktop.blocks', check: false },
+                'common.blocks',
+                'desktop.blocks'
+            ]
         }]);
 
         nodeConfig.addTarget('?.levels');
