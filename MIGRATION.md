@@ -15,10 +15,10 @@
 
 ### Обязательные требования
 
-* [Технологии](#%D0%A2%D0%B5%D1%85%D0%BD%D0%BE%D0%BB%D0%BE%D0%B3%D0%B8%D0%B8)
-* [Манипуляции с BEMDECL- и DEPS-файлами](#%D0%9C%D0%B0%D0%BD%D0%B8%D0%BF%D1%83%D0%BB%D1%8F%D1%86%D0%B8%D0%B8-%D1%81-bemdecl--%D0%B8-deps-%D1%84%D0%B0%D0%B9%D0%BB%D0%B0%D0%BC%D0%B8)
-* [Получение BEMDECL-файла из BEMJSON и BEMDECL-файлов](#%D0%9F%D0%BE%D0%BB%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5-bemdecl-%D1%84%D0%B0%D0%B9%D0%BB%D0%B0-%D0%B8%D0%B7-bemjson-%D0%B8-bemdecl-%D1%84%D0%B0%D0%B9%D0%BB%D0%BE%D0%B2)
-* [Объединение BEMDECL-файлов из разных нод](#%D0%9E%D0%B1%D1%8A%D0%B5%D0%B4%D0%B8%D0%BD%D0%B5%D0%BD%D0%B8%D0%B5-bemdecl-%D1%84%D0%B0%D0%B9%D0%BB%D0%BE%D0%B2-%D0%B8%D0%B7-%D1%80%D0%B0%D0%B7%D0%BD%D1%8B%D1%85-%D0%BD%D0%BE%D0%B4)
+* [Технологии](#Технологии)
+* [Манипуляции с BEMDECL- и DEPS-файлами](#Манипуляции-с-bemdecl--и-deps-файлами)
+* [Получение BEMDECL-файла из BEMJSON и BEMDECL-файлов](#Получение-bemdecl-файла-из-bemjson-и-bemdecl-файлов)
+* [Объединение BEMDECL-файлов из разных нод](#Объединение-bemdecl-файлов-из-разных-нод)
 
 #### Технологии
 
@@ -165,9 +165,9 @@ module.exports = function (config) {
 
 ### Рекомендации
 
-* [Подключение модулей технологий](#%D0%9F%D0%BE%D0%B4%D0%BA%D0%BB%D1%8E%D1%87%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BC%D0%BE%D0%B4%D1%83%D0%BB%D0%B5%D0%B9-%D1%82%D0%B5%D1%85%D0%BD%D0%BE%D0%BB%D0%BE%D0%B3%D0%B8%D0%B9)
-* [Сканирование уровней](#%D0%A1%D0%BA%D0%B0%D0%BD%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D1%83%D1%80%D0%BE%D0%B2%D0%BD%D0%B5%D0%B9)
-* [Декларация бандлов](#%D0%94%D0%B5%D0%BA%D0%BB%D0%B0%D1%80%D0%B0%D1%86%D0%B8%D1%8F-%D0%B1%D0%B0%D0%BD%D0%B4%D0%BB%D0%BE%D0%B2)
+* [Подключение модулей технологий](#Подключение-модулей-технологий)
+* [Сканирование уровней](#Сканирование-уровней)
+* [Декларация бандлов](#Декларация-бандлов)
 
 #### Подключение модулей технологий
 
@@ -230,6 +230,8 @@ module.exports = function (config) {
 
 function getLevels(config) {
     return [
+        { path: 'libs/bem-core/common.blocks', check: false },
+        { path: 'libs/bem-core/desktop.blocks', check: false },
         'common.blocks',
         'desktop.blocks'
     ].map(function(level) {
@@ -246,7 +248,12 @@ var techs = require('enb-bem-techs');
 module.exports = function (config) {
     config.node('node', function (nodeConfig) {
         nodeConfig.addTech([techs.levels, {
-            levels: ['common.blocks', 'desktop.blocks']
+            levels: [
+                { path: 'libs/bem-core/common.blocks', check: false },
+                { path: 'libs/bem-core/desktop.blocks', check: false },
+                'common.blocks',
+                'desktop.blocks'
+            ]
         }]);
 
         nodeConfig.addTarget('?.levels');
