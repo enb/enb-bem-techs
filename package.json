@@ -27,19 +27,19 @@
     "enb": ">= 0.13.0 < 1.0.0"
   },
   "dependencies": {
-    "bem-naming": "0.3.0",
-    "vow": "0.4.5",
+    "bem-naming": "0.4.0",
+    "vow": "0.4.7",
     "inherit": "2.2.2",
-    "js-yaml": "3.2.2"
+    "js-yaml": "3.2.3"
   },
   "devDependencies": {
     "enb": ">= 0.13.0 < 1.0.0",
-    "mock-fs": "2.3.1",
-    "jshint": "2.5.6",
-    "jscs": "1.7.1",
-    "mocha": "1.21.5",
+    "mock-fs": "2.3.2",
+    "jshint": "2.5.10",
+    "jscs": "1.7.3",
+    "mocha": "2.0.1",
     "must": "0.12.0",
-    "matcha": "0.5.0",
+    "matcha": "0.6.0",
     "istanbul": "0.3.2"
   },
   "main": "index.js",
