@@ -121,11 +121,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                 if (cache.needRebuildFile('bemdecl-file', bemdeclFilename) ||
                     cache.needRebuildFile('files-file', filesFilename)
                 ) {
-                    var depsFiles = [];
-
-                    sourceSuffixes.forEach(function (suffix) {
-                        depsFiles = depsFiles.concat(files.bySuffix[suffix]);
-                    });
+                    var depsFiles = files.getBySuffix(sourceSuffixes);
 
                     return vow.all(depsFiles.map(function (file) {
                         return vfs.read(file.fullname, 'utf8').then(function (text) {
