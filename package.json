@@ -50,6 +50,6 @@
     "unit-test":  "mocha test/unit",
     "bench": "npm run bench-deps && matcha benchmark/*.js",
     "bench-deps": "cd benchmark/fixtures && bower i",
-    "cover": "istanbul cover _mocha -- test/techs test/unit"
+    "cover": "istanbul cover _mocha -- test/**/*.test.js"
   }
 }
