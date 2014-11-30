@@ -3,11 +3,11 @@ enb-bem-techs
 
 [![NPM version](http://img.shields.io/npm/v/enb-bem-techs.svg?style=flat)](http://www.npmjs.org/package/enb-bem-techs) [![Build Status](http://img.shields.io/travis/enb-bem/enb-bem-techs/master.svg?style=flat&label=travis)](https://travis-ci.org/enb-bem/enb-bem-techs) [![Build status](http://img.shields.io/appveyor/ci/enb-bem/enb-bem-techs.svg?style=flat&label=appveyor)](https://ci.appveyor.com/project/andrewblond/enb-bem-techs) [![Coverage Status](https://img.shields.io/coveralls/enb-bem/enb-bem-techs.svg?style=flat)](https://coveralls.io/r/enb-bem/enb-bem-techs?branch=master) [![Dependency Status](http://img.shields.io/david/enb-bem/enb-bem-techs.svg?style=flat)](https://david-dm.org/enb-bem/enb-bem-techs)
 
-Пакет предоставляет набор базовых технологий для сборки проектов, в основе которых лежит [БЭМ-методология](http://ru.bem.info/method/).
+Пакет предоставляет набор базовых [ENB](http://enb-make.info/)-технологий для сборки проектов, в основе которых лежит [БЭМ-методология](http://ru.bem.info/method/).
 
 Основная задача базовых технологий — подготовить промежуточный результат для технологий, которые ничего не знают о методологии и о том, как устроен проект.
 
-Большинство технологий в ENB ожидает на вход список файлов или директорий, а также информацию о требуемом порядке для их сборки.
+Большинство технологий в [ENB](http://enb-make.info/) ожидает на вход список файлов или директорий, а также информацию о требуемом порядке для их сборки.
 
 Установка
 ---------
@@ -30,9 +30,38 @@ $ npm install --save-dev enb-bem-techs
 С чего начать?
 --------------
 
-Воспользуйтесь [инструкцией по установке project-stub](http://ru.bem.info/tutorials/project-stub/), чтобы создать БЭМ-проект, настроенный для сборки с помощью ENB.
+Воспользуйтесь [инструкцией по установке project-stub](http://ru.bem.info/tutorials/project-stub/), чтобы создать БЭМ-проект, настроенный для сборки с помощью [ENB](http://enb-make.info/).
 
 Для создания проекта, подходящего под ваши задачи, ответьте на вопросы [генератора БЭМ-проектов](http://ru.bem.info/tools/bem/bem-stub/), основанного на [Yeoman](http://yeoman.io/).
+
+Пакеты
+------
+
+### Стили
+
+* [enb-stylus](https://github.com/enb-make/enb-stylus) — сборка `stylus`-файлов.
+* [enb-autoprefixer](https://github.com/enb-make/enb-autoprefixer) — поддержка `autoprefixer`.
+
+### Шаблонизация
+
+* [enb-bh](https://github.com/enb-bem/enb-bh) — сборка BH-шаблонов.
+* [enb-xjst](https://github.com/enb-bem/enb-xjst) — сборка BEMHTML и BEMTREE на основе `xjst`.
+* [enb-bemxjst](https://github.com/enb-bem/enb-bemxjst) — сборка BEMHTML и BEMTREE на основе `bem-xjst`.
+
+### Инфраструктура
+
+* [enb-bem-examples](https://github.com/enb-bem/enb-bem-examples) — сборка БЭМ-примеров.
+* [enb-bem-docs](https://github.com/enb-bem/enb-bem-docs) — сборка БЭМ-документации.
+* [enb-bem-specs](https://github.com/enb-bem/enb-bem-specs) — сборка и запуск тестов для клиентского JavaScript.
+* [enb-bem-tmpl-specs](https://github.com/enb-bem/enb-bem-tmpl-specs) — сборка и запуск тестов для БЭМ-шаблонов.
+* [enb-magic-platform](https://github.com/enb-bem/enb-magic-platform) — платформа и dev-сервер для сборки БЭМ-проектов.
+
+### Остальное
+
+* [enb-borschik](https://github.com/enb-make/enb-borschik) — поддержка `borschik`.
+* [enb-modules](https://github.com/enb-make/enb-modules) — поддержка `ym`.
+* [enb-diverse-js](https://github.com/enb-make/enb-diverse-js) — поддержка паттерна `vanilla.js` + `node.js` + `browser.js`.
+* [enb-bem-i18n](https://github.com/enb-bem/enb-bem-i18n) — поддержка `BEM.I18N`.
 
 Технологии
 ----------
