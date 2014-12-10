@@ -1,7 +1,7 @@
 {
   "author": "Andrew Abramov <andrewblond@yandex.com>",
   "name": "enb-bem-techs",
-  "version": "1.0.0-rc2",
+  "version": "1.0.0",
   "description": "BEM methodology for ENB",
   "keywords": [
     "enb",
