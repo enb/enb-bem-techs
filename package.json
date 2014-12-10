@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "enb": ">=0.13.0 <1.0.0",
-    "istanbul": "0.3.2",
+    "istanbul": "0.3.5",
     "jscs": "1.8.1",
     "jshint": "2.5.10",
     "matcha": "0.6.0",
