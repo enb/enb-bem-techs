@@ -648,7 +648,7 @@ nodeConfig.addTech([techs.mergeBemdecl, {
 
 ### `mergeDeps`
 
-Объединяет DEPS-файлы в результирующий.
+Объединяет DEPS-файлы и BEMDECL-файлы в результирующий DEPS-файл.
 
 Может понадобиться для формирования `merged`-бандла.
 

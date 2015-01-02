@@ -2,7 +2,7 @@
  * merge-deps
  * ==========
  *
- * Объединяет DEPS-файлы в результирующий.
+ * Объединяет DEPS-файлы и BEMDECL-файлы в результирующий DEPS-файл.
  *
  * Может понадобиться для формирования `merged`-бандла.
  *
@@ -98,14 +98,16 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                     cache.needRebuildFileList('source-file-list', sourceFilenames)
                 ) {
                     return vow.all(sourceDeps.map(function (source, i) {
-                            if (source) { return source.deps; }
+                            if (source) {
+                                return getDeps(source);
+                            }
 
                             var filename = sourceFilenames[i];
 
                             dropRequireCache(require, filename);
                             return asyncRequire(filename)
                                 .then(function (res) {
-                                    return res.deps;
+                                    return getDeps(res);
                                 });
                         }))
                         .then(function (sourceDeps) {
@@ -132,3 +134,11 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             });
     }
 });
+
+function getDeps(source) {
+    if (source.blocks) {
+        return deps.fromBemdecl(source.blocks);
+    }
+
+    return source.deps;
+}

@@ -44,6 +44,17 @@ describe('techs', function () {
                 .then(done, done);
         });
 
+        it('must support BEMDECL', function (done) {
+            var decl1 = [{ name: 'block-1' }],
+                decl2 = [{ name: 'block-2' }],
+                expected = [
+                    { block: 'block-1' },
+                    { block: 'block-2' }
+                ];
+
+            assert([decl1, decl2], expected, done);
+        });
+
         it('must merge block with mod of block', function (done) {
             var decl1 = [{ block: 'block' }],
                 decl2 = [{ block: 'block', mod: 'mod-name', val: 'mod-val' }],
@@ -125,12 +136,14 @@ function assert(sources, expected, done) {
 
     sources.forEach(function (deps, i) {
         var target = i + '.deps.js',
-            dataTarget = 'data-' + target;
+            dataTarget = 'data-' + target,
+            isBemdecl = !!deps && deps.length && deps[0].name;
 
-        dir[target] = 'exports.deps = ' + JSON.stringify(deps) + ';';
+        dir[target] = isBemdecl ? 'exports.blocks = ' + JSON.stringify(deps) + ';' :
+            'exports.deps = ' + JSON.stringify(deps) + ';';
         options.sources.push(target);
 
-        dataBundle.provideTechData(dataTarget, { deps: deps });
+        dataBundle.provideTechData(dataTarget, isBemdecl ? { blocks: deps } : { deps: deps });
         dataOptions.sources.push(dataTarget);
     });
 
