@@ -1,6 +1,7 @@
 var path = require('path'),
     vow = require('vow'),
     mockFs = require('mock-fs'),
+    fileList = require('enb/lib/file-list'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     Tech = require('../../techs/merge-bemdecl');
 
@@ -31,11 +32,13 @@ describe('techs', function () {
             var bundle = new TestNode('bundle'),
                 cache = bundle.getNodeCache('bundle.bemdecl.js');
 
-            cache.cacheFileInfo('bemdecl-file', path.resolve('bundle/bundle.bemdecl.js'));
+            cache.cacheFileInfo('bemdecl-file', path.resolve('bundle', 'bundle.bemdecl.js'));
             cache.cacheFileList('source-file-list', [
-                path.resolve('bundle/bundle-1.bemdecl.js'),
-                path.resolve('bundle/bundle-2.bemdecl.js')
-            ]);
+                path.resolve('bundle', 'bundle-1.bemdecl.js'),
+                path.resolve('bundle', 'bundle-2.bemdecl.js')
+            ].map(function (filename) {
+                return fileList.getFileInfo(filename);
+            }));
 
             return bundle.runTech(Tech, { sources: ['bundle-1.bemdecl.js', 'bundle-2.bemdecl.js'] })
                 .then(function (target) {
@@ -137,39 +140,26 @@ describe('techs', function () {
 });
 
 function assert(sources, expected, done) {
-    var dataBundle = new TestNode('data-bundle'),
-        fsBundle,
+    var bundle,
         dir = {},
-        options = { sources: [] },
-        dataOptions = { sources: [] };
-
-    mockFs({ 'data-bundle': {} });
+        options = { sources: [] };
 
     sources.forEach(function (bemdecl, i) {
-        var target = i + '.bemdecl.js',
-            dataTarget = 'data-' + target;
+        var target = i + '.bemdecl.js';
 
         dir[target] = 'exports.blocks = ' + JSON.stringify(bemdecl) + ';';
         options.sources.push(target);
-
-        dataBundle.provideTechData(dataTarget, { blocks: bemdecl });
-        dataOptions.sources.push(dataTarget);
     });
 
-    mockFs({ 'fs-bundle': dir, 'data-bundle': {} });
-
-    fsBundle = (new TestNode('fs-bundle'));
+    mockFs({ bundle: dir });
+    bundle = (new TestNode('bundle'));
 
     return vow.all([
-            fsBundle.runTechAndGetResults(Tech, options),
-            fsBundle.runTechAndRequire(Tech, options),
-            dataBundle.runTechAndGetResults(Tech, dataOptions),
-            dataBundle.runTechAndRequire(Tech, dataOptions)
+            bundle.runTechAndGetResults(Tech, options),
+            bundle.runTechAndRequire(Tech, options)
         ])
-        .spread(function (data1, target1, data2, target2) {
-            data1['fs-bundle.bemdecl.js'].blocks.must.eql(expected);
-            target1[0].blocks.must.eql(expected);
-            data2['data-bundle.bemdecl.js'].blocks.must.eql(expected);
+        .spread(function (target1, target2) {
+            target1['bundle.bemdecl.js'].blocks.must.eql(expected);
             target2[0].blocks.must.eql(expected);
         })
         .then(done, done);

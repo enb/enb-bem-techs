@@ -1,6 +1,7 @@
 var path = require('path'),
     vow = require('vow'),
     mockFs = require('mock-fs'),
+    fileList = require('enb/lib/file-list'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     Tech = require('../../techs/merge-deps');
 
@@ -31,11 +32,13 @@ describe('techs', function () {
             var bundle = new TestNode('bundle'),
                 cache = bundle.getNodeCache('bundle.deps.js');
 
-            cache.cacheFileInfo('deps-file', path.resolve('bundle/bundle.deps.js'));
+            cache.cacheFileInfo('deps-file', path.resolve('bundle', 'bundle.deps.js'));
             cache.cacheFileList('source-file-list', [
-                path.resolve('bundle/bundle-1.deps.js'),
-                path.resolve('bundle/bundle-2.deps.js')
-            ]);
+                path.resolve('bundle', 'bundle-1.deps.js'),
+                path.resolve('bundle', 'bundle-2.deps.js')
+            ].map(function (filename) {
+                return fileList.getFileInfo(filename);
+            }));
 
             return bundle.runTech(Tech, { sources: ['bundle-1.deps.js', 'bundle-2.deps.js'] })
                 .then(function (target) {
@@ -126,41 +129,29 @@ describe('techs', function () {
 });
 
 function assert(sources, expected, done) {
-    var dataBundle = new TestNode('data-bundle'),
-        fsBundle,
+    var bundle,
         dir = {},
-        options = { sources: [] },
-        dataOptions = { sources: [] };
-
-    mockFs({ 'data-bundle': {} });
+        options = { sources: [] };
 
     sources.forEach(function (deps, i) {
         var target = i + '.deps.js',
-            dataTarget = 'data-' + target,
+
             isBemdecl = !!deps && deps.length && deps[0].name;
 
         dir[target] = isBemdecl ? 'exports.blocks = ' + JSON.stringify(deps) + ';' :
             'exports.deps = ' + JSON.stringify(deps) + ';';
         options.sources.push(target);
-
-        dataBundle.provideTechData(dataTarget, isBemdecl ? { blocks: deps } : { deps: deps });
-        dataOptions.sources.push(dataTarget);
     });
 
-    mockFs({ 'fs-bundle': dir, 'data-bundle': {} });
-
-    fsBundle = (new TestNode('fs-bundle'));
+    mockFs({ bundle: dir });
+    bundle = (new TestNode('bundle'));
 
     return vow.all([
-            fsBundle.runTechAndGetResults(Tech, options),
-            fsBundle.runTechAndRequire(Tech, options),
-            dataBundle.runTechAndGetResults(Tech, dataOptions),
-            dataBundle.runTechAndRequire(Tech, dataOptions)
+            bundle.runTechAndGetResults(Tech, options),
+            bundle.runTechAndRequire(Tech, options)
         ])
-        .spread(function (data1, target1, data2, target2) {
-            data1['fs-bundle.deps.js'].deps.must.eql(expected);
-            target1[0].deps.must.eql(expected);
-            data2['data-bundle.deps.js'].deps.must.eql(expected);
+        .spread(function (target1, target2) {
+            target1['bundle.deps.js'].deps.must.eql(expected);
             target2[0].deps.must.eql(expected);
         })
         .then(done, done);
