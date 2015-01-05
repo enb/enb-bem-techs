@@ -111,18 +111,17 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             target = this._target,
             cache = node.getNodeCache(target),
             bemdeclFilename = node.resolvePath(target),
-            filesFilename = node.resolvePath(this._filesTarget),
             sourceTech = this._sourceTech,
             destTech = this._destTech,
             sourceSuffixes = Array.isArray(this._sourceSuffixes) ? this._sourceSuffixes : [this._sourceSuffixes];
 
         return this.node.requireSources([this._filesTarget])
             .spread(function (files) {
-                if (cache.needRebuildFile('bemdecl-file', bemdeclFilename) ||
-                    cache.needRebuildFile('files-file', filesFilename)
-                ) {
-                    var depsFiles = files.getBySuffix(sourceSuffixes);
+                var depsFiles = files.getBySuffix(sourceSuffixes);
 
+                if (cache.needRebuildFile('bemdecl-file', bemdeclFilename) ||
+                    cache.needRebuildFileList('deps-files', depsFiles)
+                ) {
                     return vow.all(depsFiles.map(function (file) {
                         return vfs.read(file.fullname, 'utf8').then(function (text) {
                             return { file: file, text: text };
@@ -167,7 +166,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                         return vfs.write(bemdeclFilename, str, 'utf-8')
                             .then(function () {
                                 cache.cacheFileInfo('bemdecl-file', bemdeclFilename);
-                                cache.cacheFileInfo('files-file', filesFilename);
+                                cache.cacheFileList('deps-files', depsFiles);
                                 node.resolveTarget(target, { blocks: blocks });
                             });
                     });

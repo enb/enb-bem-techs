@@ -1,6 +1,7 @@
 var path = require('path'),
     vow = require('vow'),
     mockFs = require('mock-fs'),
+    FileList = require('enb/lib/file-list'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     levelsTech = require('../../techs/levels'),
     filesTech = require('../../techs/files'),
@@ -15,23 +16,38 @@ describe('techs', function () {
 
         it('must provide result from cache', function (done) {
             mockFs({
+                blocks: {
+                    block: {
+                        'block.deps.js': stringifyDepsJs({
+                            tech: 'sourceTech',
+                            shouldDeps: {
+                                block: 'other-block'
+                            }
+                        })
+                    }
+                },
                 bundle: {
-                    'bundle.bemdecl.js': 'exports.blocks = ' + JSON.stringify([{ name: 'other-block' }]) + ';'
+                    'bundle.bemdecl.js': 'exports.blocks = ' + JSON.stringify([{ name: 'block' }]) + ';'
                 }
             });
 
             var bundle = new TestNode('bundle'),
+                depsFiles = new FileList(),
                 cache = bundle.getNodeCache('bundle.bemdecl.js'),
                 options = {
                     sourceTech: 'sourceTech'
                 };
 
+            depsFiles.addFiles([FileList.getFileInfo(path.join('blocks', 'block', 'block.deps.js'))]);
+
             cache.cacheFileInfo('bemdecl-file', path.resolve('bundle/bundle.bemdecl.js'));
-            cache.cacheFileInfo('files-file', path.resolve('bundle/bundle.files'));
+            cache.cacheFileList('deps-files', depsFiles.getBySuffix('deps.js'));
+
+            bundle.provideTechData('?.files', new FileList());
 
             return bundle.runTech(bemdeclFromDepsByTechTech, options)
                 .then(function (target) {
-                    target.blocks.must.eql([{ name: 'other-block' }]);
+                    target.blocks.must.eql([]);
                 })
                 .then(done, done);
         });
