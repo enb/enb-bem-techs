@@ -1,5 +1,4 @@
 {
-  "author": "Andrew Abramov <andrewblond@yandex.com>",
   "name": "enb-bem-techs",
   "version": "1.0.0",
   "description": "BEM methodology for ENB",
@@ -13,27 +12,29 @@
     "deps",
     "files"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:enb-bem/enb-bem-techs.git"
-  },
-  "homepage": "https://github.com/enb-bem/enb-bem-techs",
-  "bugs": "https://github.com/enb-bem/enb-bem-techs/issues",
+  "author": "Andrew Abramov <andrewblond@yandex.com>",
   "licenses": [
     {
       "type": "MPL-2.0",
       "url": "https://github.com/enb-bem/enb-bem-techs/blob/master/LICENSE.txt"
     }
   ],
-  "contributors": [
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:enb-bem/enb-bem-techs.git"
+  },
+  "homepage": "https://github.com/enb-bem/enb-bem-techs",
+  "bugs": "https://github.com/enb-bem/enb-bem-techs/issues",
+  "maintainers": [
     {
       "name": "Andrew Abramov",
-      "email": "andrewblond@yandex.com"
-    },
-    {
-      "name": "Marat Dulin",
-      "email": "mdevils@yandex.ru"
+      "email": "andrewblond@yandex.com",
+      "github-username": "andrewblond"
     }
+  ],
+  "contributors": [
+    "Andrew Abramov <andrewblond@yandex.com>",
+    "Marat Dulin <mdevils@yandex.ru>"
   ],
   "engines": {
     "node": ">= 0.10.0"
