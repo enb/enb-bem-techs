@@ -8,8 +8,7 @@ install:
 test_script:
  - "node --version"
  - "npm --version"
- - "npm run techs-test"
- - "npm run unit-test"
+ - "npm run unit"
 
 build: "off"
 

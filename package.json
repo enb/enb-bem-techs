@@ -67,12 +67,13 @@
     "LICENSE.txt"
   ],
   "scripts": {
-    "test": "npm run lint && npm run cover",
+    "test": "npm run lint && npm run unit",
     "lint": "jshint . && jscs -c .jscs.js .",
-    "techs-test": "mocha test/techs",
-    "unit-test": "mocha test/unit",
+    "unit": "mocha test/**/*.test.js",
     "bench": "npm run bench-deps && matcha benchmark/*.js",
     "bench-deps": "cd benchmark/fixtures && bower i",
-    "cover": "istanbul cover _mocha -- test/**/*.test.js"
+    "cover": "istanbul cover _mocha -- test/**/*.test.js",
+    "coveralls": "npm i coveralls && npm run cover && cat ./coverage/lcov.info | coveralls",
+    "travis": "npm run test && npm run coveralls"
   }
 }
