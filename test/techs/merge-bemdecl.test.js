@@ -1,7 +1,6 @@
 var path = require('path'),
     vow = require('vow'),
     mockFs = require('mock-fs'),
-    fileList = require('enb/lib/file-list'),
     TestNode = require('enb/lib/test/mocks/test-node'),
     Tech = require('../../techs/merge-bemdecl');
 
@@ -30,15 +29,13 @@ describe('techs', function () {
             });
 
             var bundle = new TestNode('bundle'),
-                cache = bundle.getNodeCache('bundle.bemdecl.js');
+                cache = bundle.getNodeCache('bundle.bemdecl.js'),
+                sourcePath1 = path.resolve('bundle', 'bundle-1.bemdecl.js'),
+                sourcePath2 = path.resolve('bundle', 'bundle-2.bemdecl.js');
 
             cache.cacheFileInfo('bemdecl-file', path.resolve('bundle', 'bundle.bemdecl.js'));
-            cache.cacheFileList('source-file-list', [
-                path.resolve('bundle', 'bundle-1.bemdecl.js'),
-                path.resolve('bundle', 'bundle-2.bemdecl.js')
-            ].map(function (filename) {
-                return fileList.getFileInfo(filename);
-            }));
+            cache.cacheFileInfo(sourcePath1, sourcePath1);
+            cache.cacheFileInfo(sourcePath2, sourcePath2);
 
             return bundle.runTech(Tech, { sources: ['bundle-1.bemdecl.js', 'bundle-2.bemdecl.js'] })
                 .then(function (target) {
