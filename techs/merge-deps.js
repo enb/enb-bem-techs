@@ -46,7 +46,6 @@ var inherit = require('inherit'),
     vfs = require('enb/lib/fs/async-fs'),
     asyncRequire = require('enb/lib/fs/async-require'),
     dropRequireCache = require('enb/lib/fs/drop-require-cache'),
-    fileList = require('enb/lib/file-list'),
     deps = require('../lib/deps/deps');
 
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
@@ -91,16 +90,21 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             targetFilename = node.resolvePath(target),
             sourceFilenames = sources.map(function (sourceTarget) {
                 return node.resolvePath(sourceTarget);
-            }),
-            sourceFileList = sourceFilenames.map(function (filename) {
-                return fileList.getFileInfo(filename);
             });
 
         return this.node.requireSources(sources)
             .then(function (sourceDeps) {
-                if (cache.needRebuildFile('deps-file', targetFilename) ||
-                    cache.needRebuildFileList('source-file-list', sourceFileList)
-                ) {
+                var rebuildNeeded = cache.needRebuildFile('deps-file', targetFilename);
+
+                if (!rebuildNeeded) {
+                    sourceFilenames.forEach(function (filename) {
+                        if (cache.needRebuildFile(filename, filename)) {
+                            rebuildNeeded = true;
+                        }
+                    });
+                }
+
+                if (rebuildNeeded) {
                     return vow.all(sourceDeps.map(function (source, i) {
                             if (source) {
                                 return getDeps(source);
@@ -121,7 +125,9 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                             return vfs.write(targetFilename, str, 'utf-8')
                                 .then(function () {
                                     cache.cacheFileInfo('deps-file', targetFilename);
-                                    cache.cacheFileList('source-file-list', sourceFileList);
+                                    sourceFilenames.forEach(function (filename) {
+                                        cache.cacheFileInfo(filename, filename);
+                                    });
                                     _this.node.resolveTarget(target, { deps: mergedDeps });
                                 });
                         });
