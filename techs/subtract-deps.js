@@ -27,8 +27,8 @@
  * var techs = require('enb-bem-techs');
  *
  * nodeConfig.addTech([techs.subtractDeps, {
- *     what: 'bundle-1.deps.js',
- *     from: 'bundle-2.deps.js',
+ *     from: 'bundle-1.deps.js',
+ *     what: 'bundle-2.deps.js',
  *     target: 'bundle.deps.js'
  * } ]);
  * ```
