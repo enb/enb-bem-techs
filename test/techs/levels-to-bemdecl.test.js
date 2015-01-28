@@ -35,7 +35,7 @@ describe('techs', function () {
                 },
                 bemdecl = [
                     { name: 'block' },
-                    { name: 'block', mods: [{ name: 'bool-mod' }] }
+                    { name: 'block', mods: [{ name: 'bool-mod', vals: [{ name: true }] }] }
                 ];
 
             assert(scheme, bemdecl, done);
@@ -92,7 +92,9 @@ describe('techs', function () {
                 bemdecl = [
                     { name: 'block' },
                     { name: 'block', elems: [{ name: 'elem-name' }] },
-                    { name: 'block', elems: [{ name: 'elem-name', mods: [{ name: 'bool-mod' }] }] }
+                    { name: 'block', elems: [
+                        { name: 'elem-name', mods: [{ name: 'bool-mod', vals: [{ name: true }] }] }
+                    ] }
                 ];
 
             assert(scheme, bemdecl, done);
