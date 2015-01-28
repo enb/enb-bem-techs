@@ -186,7 +186,7 @@ describe('techs', function () {
                         }
                     },
                     bemdecl = [{ name: 'block' }],
-                    exepted = [ {
+                    exepted = [{
                         name: 'other-block',
                         elems: [{ name: 'elem', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }]
                     }];
@@ -348,7 +348,7 @@ describe('techs', function () {
                         }
                     },
                     bemdecl = [{ name: 'block' }],
-                    exepted = [ {
+                    exepted = [{
                         name: 'other-block',
                         elems: [{ name: 'elem', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }]
                     }];

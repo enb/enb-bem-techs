@@ -112,7 +112,7 @@ describe('unit', function () {
 
         it('must convert shortcuts', function () {
             var input = [
-                    { block: 'block1', elem: 'elem1', mods: { mod1: [ 'val1', 'val2'], mod2: 'val3' } },
+                    { block: 'block1', elem: 'elem1', mods: { mod1: ['val1', 'val2'], mod2: 'val3' } },
                     { block: 'block1', elem: 'elem1', mod: 'mod1', val: 'val2' },
                     { block: 'block1', elem: 'elem1', mod: 'mod2' },
                     { block: 'block1', elem: 'elem1' },
