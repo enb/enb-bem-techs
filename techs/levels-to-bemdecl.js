@@ -122,10 +122,10 @@ function processMods(deps, block, mods, elem) {
             vals.forEach(function (val) {
                 var dep = {
                     block: block,
-                    mod: modName
+                    mod: modName,
+                    val: val === '*' ? true : val
                 };
 
-                val && val !== '*' && (dep.val = val);
                 elem && (dep.elem = elem);
 
                 deps.push(dep);
