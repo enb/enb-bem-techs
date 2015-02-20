@@ -294,6 +294,23 @@ describe('techs', function () {
                 assert(scheme, bemdecl, deps, done);
             });
 
+            it('must add must dep of self elem', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({ mustDeps: [{ elems: ['elem'] }] })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    deps = [
+                        { block: 'block', elem: 'elem' },
+                        { block: 'block' }
+                    ];
+
+                assert(scheme, bemdecl, deps, done);
+            });
+
             it('must add must dep of block boolean mod', function (done) {
                 var scheme = {
                         blocks: {
@@ -944,6 +961,36 @@ describe('techs', function () {
                         err.must.throw();
                     })
                     .then(done, done);
+            });
+
+            it('must resolve shouldDeps after mustDeps', function (done) {
+                var scheme = {
+                        blocks: {
+                            A: {
+                                'A.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ block: 'B' }]
+                                })
+                            },
+                            B: {
+                                'B.deps.js': stringifyDepsJs({
+                                    shouldDeps: [{ block: 'C' }]
+                                })
+                            },
+                            C: {
+                                'C.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ block: 'A' }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'A' }],
+                    deps = [
+                        { block: 'B' },
+                        { block: 'A' },
+                        { block: 'C' }
+                    ];
+
+                assert(scheme, bemdecl, deps, done);
             });
         });
     });

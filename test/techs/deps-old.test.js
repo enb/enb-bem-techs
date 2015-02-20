@@ -294,6 +294,23 @@ describe('techs', function () {
                 assert(scheme, bemdecl, deps, done);
             });
 
+            it('must add must dep of self elem', function (done) {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({ mustDeps: [{ elems: ['elem'] }] })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    deps = [
+                        { block: 'block', elem: 'elem' },
+                        { block: 'block' }
+                    ];
+
+                assert(scheme, bemdecl, deps, done);
+            });
+
             it('must add must dep of block boolean mod', function (done) {
                 var scheme = {
                         blocks: {
@@ -422,7 +439,7 @@ describe('techs', function () {
                 assert(scheme, bemdecl, deps, done);
             });
 
-            it('must throw if loop mustDeps', function (done) {
+            it('must produce warning if loop mustDeps in non-strict mode', function (done) {
                 var scheme = {
                         blocks: {
                             A: {
@@ -443,7 +460,31 @@ describe('techs', function () {
                         { block: 'A' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                assert(scheme, bemdecl, deps, done, { strict: false });
+            });
+
+            it('must throw if loop mustDeps in strict mode', function (done) {
+                var scheme = {
+                        blocks: {
+                            A: {
+                                'A.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ block: 'B' }]
+                                })
+                            },
+                            B: {
+                                'B.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ block: 'A' }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'A' }];
+
+                getResults(scheme, bemdecl, { strict: true })
+                    .fail(function (err) {
+                        err.must.throw();
+                    })
+                    .then(done, done);
             });
 
             it('must remove dep of block', function (done) {
@@ -642,11 +683,41 @@ describe('techs', function () {
 
                 assert(scheme, bemdecl, deps, done);
             });
+
+            it('must resolve shouldDeps after mustDeps', function (done) {
+                var scheme = {
+                        blocks: {
+                            A: {
+                                'A.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ block: 'B' }]
+                                })
+                            },
+                            B: {
+                                'B.deps.js': stringifyDepsJs({
+                                    shouldDeps: [{ block: 'C' }]
+                                })
+                            },
+                            C: {
+                                'C.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ block: 'A' }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'A' }],
+                    deps = [
+                        { block: 'B' },
+                        { block: 'A' },
+                        { block: 'C' }
+                    ];
+
+                assert(scheme, bemdecl, deps, done);
+            });
         });
     });
 });
 
-function getResults(fsScheme, bemdecl) {
+function getResults(fsScheme, bemdecl, techOpts) {
     var levels = Object.keys(fsScheme),
         fsBundle, dataBundle;
 
@@ -668,10 +739,10 @@ function getResults(fsScheme, bemdecl) {
             dataBundle.provideTechData('?.levels', levels);
 
             return vow.all([
-                fsBundle.runTechAndRequire(depsTech),
-                fsBundle.runTechAndGetResults(depsTech),
-                dataBundle.runTechAndRequire(depsTech),
-                dataBundle.runTechAndGetResults(depsTech)
+                fsBundle.runTechAndRequire(depsTech, techOpts),
+                fsBundle.runTechAndGetResults(depsTech, techOpts),
+                dataBundle.runTechAndRequire(depsTech, techOpts),
+                dataBundle.runTechAndGetResults(depsTech, techOpts)
             ]);
         })
         .spread(function (res1, res2, res3, res4) {
@@ -682,8 +753,8 @@ function getResults(fsScheme, bemdecl) {
         });
 }
 
-function assert(fsScheme, bemdecl, deps, done) {
-    getResults(fsScheme, bemdecl, deps)
+function assert(fsScheme, bemdecl, deps, done, techOpts) {
+    getResults(fsScheme, bemdecl, deps, techOpts)
         .then(function (results) {
             results.forEach(function (actualDeps) {
                 actualDeps.must.eql(deps);
