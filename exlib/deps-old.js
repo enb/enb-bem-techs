@@ -20,11 +20,11 @@ module.exports.OldDeps = (function () {
 
         /**
          * Конструктор.
-         * Принимает блоки из bemdecl.
          *
-         * @param {Array} deps
+         * @param {Array} deps блоки из bemdecl
+         * @param {Boolean} strict бросать исключение при циклических mustDeps
          */
-        __constructor: function (deps) {
+        __constructor: function (deps, strict) {
             this.items = {};
             this.itemsByOrder = [];
             this.uniqExpand = {};
@@ -34,6 +34,7 @@ module.exports.OldDeps = (function () {
             this.items[rootItem.buildKey()] = rootItem;
 
             deps && this.parse(deps);
+            this.strict = strict;
         },
 
         /**
@@ -324,19 +325,128 @@ module.exports.OldDeps = (function () {
         forEach: function (fn, uniq, itemsByOrder, ctx) {
             uniq || (uniq = {});
             var _this = this;
-
             (itemsByOrder || this.items[''].shouldDeps).forEach(function (i) {
-                if (i = _this.items[i]) {
-                    var key = i.buildKey();
-                    if (!uniq.hasOwnProperty(key)) {
-                        uniq[key] = true;
-                        var newCtx = ctx || i;
-                        _this.forEach(fn, uniq, i.mustDeps, newCtx);
-                        fn.call(_this, i, newCtx);
-                        _this.forEach(fn, uniq, i.shouldDeps, newCtx);
-                    }
+                var item = _this.items[i];
+                _this._iterateItem(fn, uniq, item, ctx || item, null);
+            });
+        },
+
+        /**
+         * Iterate through item dependencies
+         *
+         * Modification of `forEach` procedure from bem-tools with these goals in mind:
+         *  - To produce same order of deps as original procedure when possible.
+         *  - To fix wrong deps order in certain cases.
+         *  - To detect loops in mustDeps.
+         *
+         * Original procedure was very simple:
+         *  - For each deps node (block/element/modifier), visit its mustDeps recursively,
+         *  then node itself, then shouldDeps.
+         *  - Node can be in one of two states:
+         *    1) not visited
+         *    2) visited
+         *  - Node is skipped if it is already in visited state.
+         *  - Node is marked as visited before traversing mustDeps.
+         *
+         * Unfortunately, this solution has a flaw. There are cases in which it produces wrong deps order.
+         * Consider the following traversal chain:
+         * A --mustDeps--> B --shouldDeps--> C --mustDeps--> A
+         * In this case mustDeps of C will be skipped because A is marked as visited.
+         * As a result C will occur in the resulting deps before A.
+         *
+         * Modified procedure is more complex:
+         *  - Node can be in one of three states:
+         *    1) not visited
+         *    2) visited
+         *    3) traversing mustDeps for this node, node is not yet visited
+         *  - While traversing mustDeps, procedure know the first node in mustDeps chain (mustDeps root).
+         *  - For each node in third state (mustDeps in progress) procedure also maintains a list of mustDeps roots,
+         *  depending on this node.
+         *  - Node C is added to this list for node A if
+         *    - node A encountered during mustDeps traversal
+         *    - node A is in third state
+         *    - node C is current mustDeps root.
+         *  This means that there is a traversal chain
+         *  A --mustDeps--> ... --shouldDeps--> C --mustDeps--> ... --mustDeps--> A
+         *  In this case all nodes starting from C should be visited only after A will be visited.
+         *  To achieve this, C is put into the mustDeps root list for A and nodes from C to A are not marked as visited.
+         *  - After finishing with mustDeps, procedure is looping through collected mustDeps root list for current node
+         *  restarting procedure for each of them.
+         *
+         *  This guarantees correct order of deps.
+         *
+         * @param {Function} fn Function accepts `item` argument
+         * @param {Object.<string,boolean|String[]>} progress Hash with progress status for items. Possible values:
+         *  - undefined: item is not visited
+         *  - true: item is visited
+         *  - String[]: iterating mustDeps for item. Array contains keys for items which depends
+         *  on current item and should be re-iterated after it
+         * @param {Object} item Current item
+         * @param {Object} ctx
+         * @param {Object} [mustDepsRoot] First item in series of mustDeps calls, undefined if item is in shouldDeps
+         * @returns boolean Do we need to rollback current mustDeps chain
+         */
+        _iterateItem: function (fn, progress, item, ctx, mustDepsRoot) {
+            var _this = this;
+            var key = item.buildKey();
+
+            if (progress[key] === true) { return false; } // skip already iterated item
+            if (Array.isArray(progress[key])) { // this item mustDeps iteration in progress
+                if (!mustDepsRoot) { return false; } // skip if this item in shouldDeps
+                switch (progress[key].indexOf(mustDepsRoot)) {
+                    case 0: // loop in mustDeps found, show warning or throw the exception
+                        this._handleCircularMustDeps(key);
+                        return false;
+                    case -1: // remember to re-iterate current mustDeps chain later, rollback
+                        progress[key].push(mustDepsRoot);
                 }
-            })
+                return true;
+            }
+
+            progress[key] = [mustDepsRoot || key];
+            var rollback = item.mustDeps.reduce(function (rollback, i) { // iterate mustDeps
+                var item = _this.items[i];
+                if (item.buildKey() === key) { return rollback; } // skip if item depends on itself
+                return _this._iterateItem(fn, progress, item, ctx, mustDepsRoot || key) || rollback;
+            }, false);
+
+            if (!rollback) {
+                fn.call(this, item, ctx); // iterate item
+                var delayedDeps = progress[key].slice(1);
+                progress[key] = true;
+                delayedDeps.forEach(function (i) { // iterate items which depends on current item
+                    _this._iterateItem(fn, progress, _this.items[i], ctx);
+                });
+            }
+
+            item.shouldDeps.forEach(function (i) { // iterate shouldDeps
+                _this._iterateItem(fn, progress, _this.items[i], ctx);
+            });
+
+            if (rollback) { delete progress[key]; }
+            return rollback;
+        },
+
+        _handleCircularMustDeps: function (loopKey) {
+            var _this = this;
+            function visit(key, stack) {
+                var item = _this.items[key];
+                if (!item) { return; }
+                return item.mustDeps.every(function (i) {
+                    if (i === key) { return true; }
+                    if (i === loopKey) {
+                        var message = 'Circular mustDeps: ' + stack.concat(i).join(' <- ');
+                        if (_this.strict) {
+                            throw new Error(message);
+                        } else {
+                            console.error(message);
+                            return false;
+                        }
+                    }
+                    return visit(i, stack.concat(i));
+                });
+            }
+            visit(loopKey, [loopKey]);
         },
 
         /**
