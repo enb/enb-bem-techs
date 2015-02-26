@@ -45,17 +45,17 @@
   "dependencies": {
     "bem-naming": "0.5.1",
     "inherit": "2.2.2",
-    "js-yaml": "3.2.5",
+    "js-yaml": "3.2.7",
     "vow": "0.4.8"
   },
   "devDependencies": {
     "enb": ">=0.13.0 <1.0.0",
-    "istanbul": "0.3.5",
-    "jscs": "1.10.0",
+    "istanbul": "0.3.6",
+    "jscs": "1.11.3",
     "jshint": "2.6.0",
     "matcha": "0.6.0",
     "mocha": "2.1.0",
-    "mock-fs": "2.3.2",
+    "mock-fs": "2.5.0",
     "must": "0.12.0"
   },
   "main": "index.js",
