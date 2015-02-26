@@ -142,10 +142,10 @@ function requireSourceDeps(data, filename) {
             asyncRequire(filename)
         ))
         .then(function (sourceDeps) {
-            if (sourceDeps.deps) {
-                return deps.toBemdecl(sourceDeps.deps);
+            if (sourceDeps.blocks) {
+                return sourceDeps.blocks;
             }
 
-            return sourceDeps.blocks;
+            return deps.toBemdecl(Array.isArray(sourceDeps) ? sourceDeps : sourceDeps.deps);
         });
 }

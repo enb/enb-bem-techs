@@ -150,5 +150,5 @@ function getDeps(source) {
         return deps.fromBemdecl(source.blocks);
     }
 
-    return source.deps;
+    return Array.isArray(source) ? source : source.deps;
 }

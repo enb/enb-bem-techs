@@ -33,6 +33,23 @@ describe('techs', function () {
                 .then(done, done);
         });
 
+        it('must support deps as array', function (done) {
+            mockFs({
+                bundle: {}
+            });
+
+            var bundle = new TestNode('bundle');
+
+            bundle.provideTechData('bundle-1.deps.js', [{ block: 'block' }]);
+            bundle.provideTechData('bundle-2.deps.js', [{ block: 'block' }]);
+
+            return bundle.runTech(Tech, { from: 'bundle-1.deps.js', what: 'bundle-2.deps.js' })
+                .then(function (target) {
+                    target.deps.must.eql([]);
+                })
+                .then(done, done);
+        });
+
         it('must subtract block from block', function (done) {
             var from = [{ block: 'block' }],
                 what = [{ block: 'block' }],
