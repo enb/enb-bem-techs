@@ -41,6 +41,35 @@ describe('techs', function () {
                 .then(done, done);
         });
 
+        it('must support deps as array', function (done) {
+            mockFs({
+                blocks: {
+                    block: {
+                        'block.ext': ''
+                    }
+                },
+                bundle: {}
+            });
+
+            var bundle = new TestNode('bundle'),
+                deps = [{ block: 'block' }];
+
+            bundle.runTech(levelsTech, { levels: ['blocks'] })
+                .then(function (levels) {
+                    bundle.provideTechData('?.levels', levels);
+                    bundle.provideTechData('?.deps.js', deps);
+
+                    return bundle.runTechAndGetResults(filesTech);
+                })
+                .then(function (result) {
+                    var files = result['bundle.files'],
+                        file = files.getByName('block.ext')[0];
+
+                    file.name.must.be('block.ext');
+                })
+                .then(done, done);
+        });
+
         it('must get block file by deps', function (done) {
             var scheme = {
                     blocks: {

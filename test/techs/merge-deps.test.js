@@ -11,10 +11,43 @@ describe('techs', function () {
         });
 
         it('must provide result from data', function (done) {
-            var sources = [[{ block: 'block' }]],
-                deps = [{ block: 'block' }];
+            mockFs({
+                bundle: {}
+            });
 
-            assert(sources, deps, done);
+            var bundle = new TestNode('bundle');
+
+            bundle.provideTechData('bundle-1.deps.js', { deps: [{ block: 'block-1' }] });
+            bundle.provideTechData('bundle-2.deps.js', { deps: [{ block: 'block-2' }] });
+
+            return bundle.runTech(Tech, { sources: ['bundle-1.deps.js', 'bundle-2.deps.js'] })
+                .then(function (target) {
+                    target.deps.must.eql([
+                        { block: 'block-1' },
+                        { block: 'block-2' }
+                    ]);
+                })
+                .then(done, done);
+        });
+
+        it('must support deps as array', function (done) {
+            mockFs({
+                bundle: {}
+            });
+
+            var bundle = new TestNode('bundle');
+
+            bundle.provideTechData('bundle-1.deps.js', [{ block: 'block-1' }]);
+            bundle.provideTechData('bundle-2.deps.js', [{ block: 'block-2' }]);
+
+            return bundle.runTech(Tech, { sources: ['bundle-1.deps.js', 'bundle-2.deps.js'] })
+                .then(function (target) {
+                    target.deps.must.eql([
+                        { block: 'block-1' },
+                        { block: 'block-2' }
+                    ]);
+                })
+                .then(done, done);
         });
 
         it('must provide result from cache', function (done) {

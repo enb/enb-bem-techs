@@ -160,6 +160,6 @@ function requireSourceDeps(data, filename) {
                 return deps.fromBemdecl(sourceDeps.blocks);
             }
 
-            return sourceDeps.deps;
+            return Array.isArray(sourceDeps) ? sourceDeps : sourceDeps.deps;
         });
 }

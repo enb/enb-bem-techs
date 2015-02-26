@@ -77,6 +77,37 @@ describe('techs', function () {
                     .then(done, done);
             });
 
+            it('must add should dep of block at deps as array format', function (done) {
+                mockFs({
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({ shouldDeps: [{ block: 'other-block' }] })
+                        }
+                    },
+                    bundle: {}
+                });
+
+                var bundle = new TestNode('bundle');
+
+                bundle.provideTechData('?.deps.js', [{ block: 'block' }]);
+
+                bundle.runTech(levelsTech, { levels: ['blocks'] })
+                    .then(function (levels) {
+                        bundle.provideTechData('?.levels', levels);
+
+                        return bundle.runTechAndRequire(depsTech, {
+                            bemdeclFile: '?.deps.js'
+                        });
+                    })
+                    .spread(function (target) {
+                        target.deps.must.eql([
+                            { block: 'block' },
+                            { block: 'other-block' }
+                        ]);
+                    })
+                    .then(done, done);
+            });
+
             it('must add should dep of block', function (done) {
                 var scheme = {
                         blocks: {

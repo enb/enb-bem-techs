@@ -95,7 +95,9 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                             requireDeps(whatDeps, whatFilename)
                         ])
                         .spread(function (from, what) {
-                            var subtractedDeps = deps.subtract(from.deps, what.deps),
+                            var fromDeps = Array.isArray(from) ? from : from.deps,
+                                whatDeps = Array.isArray(what) ? what : what.deps,
+                                subtractedDeps = deps.subtract(fromDeps, whatDeps),
                                 str = 'exports.deps = ' + JSON.stringify(subtractedDeps, null, 4) + ';';
 
                             return vfs.write(targetFilename, str, 'utf-8')
