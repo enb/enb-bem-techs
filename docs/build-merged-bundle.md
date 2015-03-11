@@ -73,7 +73,7 @@ module.exports = function (config) {
             var node = path.join(dir, bundle),
                 target = bundle + '.bemdecl.js';
 
-            nodeConfig.addTech([tech.provideBemdecl, {
+            nodeConfig.addTech([techs.provideBemdecl, {
                 node: node,
                 target: target
             }]);
