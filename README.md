@@ -1,9 +1,9 @@
 enb-bem-techs
 =============
 
-[![NPM version](http://img.shields.io/npm/v/enb-bem-techs.svg?style=flat)](http://www.npmjs.org/package/enb-bem-techs) [![Build Status](http://img.shields.io/travis/enb-bem/enb-bem-techs/master.svg?style=flat&label=tests)](https://travis-ci.org/enb-bem/enb-bem-techs) [![Build status](http://img.shields.io/appveyor/ci/andrewblond/enb-bem-techs.svg?style=flat&label=windows)](https://ci.appveyor.com/project/andrewblond/enb-bem-techs) [![Coverage Status](https://img.shields.io/coveralls/enb-bem/enb-bem-techs.svg?style=flat)](https://coveralls.io/r/enb-bem/enb-bem-techs?branch=master) [![Dependency Status](http://img.shields.io/david/enb-bem/enb-bem-techs.svg?style=flat)](https://david-dm.org/enb-bem/enb-bem-techs)
+[![NPM version](https://img.shields.io/npm/v/enb-bem-techs.svg?style=flat)](http://www.npmjs.org/package/enb-bem-techs) [![Build Status](https://img.shields.io/travis/enb-bem/enb-bem-techs/master.svg?style=flat&label=tests)](https://travis-ci.org/enb-bem/enb-bem-techs) [![Build status](https://img.shields.io/appveyor/ci/andrewblond/enb-bem-techs.svg?style=flat&label=windows)](https://ci.appveyor.com/project/andrewblond/enb-bem-techs) [![Coverage Status](https://img.shields.io/coveralls/enb-bem/enb-bem-techs.svg?style=flat)](https://coveralls.io/r/enb-bem/enb-bem-techs?branch=master) [![Dependency Status](https://img.shields.io/david/enb-bem/enb-bem-techs.svg?style=flat)](https://david-dm.org/enb-bem/enb-bem-techs)
 
-Пакет предоставляет набор базовых [ENB](http://enb-make.info/)-технологий для сборки проектов, в основе которых лежит [БЭМ-методология](http://ru.bem.info/method/).
+Пакет предоставляет набор базовых [ENB](http://enb-make.info/)-технологий для сборки проектов, в основе которых лежит [БЭМ-методология](https://ru.bem.info/method/).
 
 Основная задача базовых технологий — подготовить промежуточный результат для технологий, которые ничего не знают о методологии и о том, как устроен проект.
 
@@ -30,9 +30,9 @@ $ npm install --save-dev enb-bem-techs
 С чего начать?
 --------------
 
-Воспользуйтесь [инструкцией по установке project-stub](http://ru.bem.info/tutorials/project-stub/), чтобы создать БЭМ-проект, настроенный для сборки с помощью [ENB](http://enb-make.info/).
+Воспользуйтесь [инструкцией по установке project-stub](https://ru.bem.info/tutorials/project-stub/), чтобы создать БЭМ-проект, настроенный для сборки с помощью [ENB](http://enb-make.info/).
 
-Для создания проекта, подходящего под ваши задачи, ответьте на вопросы [генератора БЭМ-проектов](http://ru.bem.info/tools/bem/bem-stub/), основанного на [Yeoman](http://yeoman.io/).
+Для создания проекта, подходящего под ваши задачи, ответьте на вопросы [генератора БЭМ-проектов](https://ru.bem.info/tools/bem/bem-stub/), основанного на [Yeoman](http://yeoman.io/).
 
 Пакеты
 ------
@@ -258,7 +258,7 @@ nodeConfig.addTech([techs.deps, {
 
 Дополняет декларацию БЭМ-сущностей на основе информации из технологий зависимостей (`deps.js`) БЭМ-сущностей.
 
-Использует алгоритм, заимствованный из [bem-tools](http://ru.bem.info/tools/bem/bem-tools/).
+Использует алгоритм, заимствованный из [bem-tools](https://ru.bem.info/tools/bem/bem-tools/).
 
 #### Опции
 
