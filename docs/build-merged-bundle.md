@@ -55,7 +55,7 @@ module.exports = function (config) {
 
         if (node !== 'merged') {
             nodeConfig.addTechs([
-                [techs.provide, { target: '?.bemdecl.js' }]
+                [provide, { target: '?.bemdecl.js' }]
             ]);
         }
     });
