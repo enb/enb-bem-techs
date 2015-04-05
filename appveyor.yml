@@ -1,13 +1,13 @@
+version: "{build}"
+
 environment:
-  matrix:
-    - nodejs_version: "0.10"
-    - nodejs_version: "0.12"
-    - nodejs_version: "1.0"
+  nodejs_version: "0.12"
+
+matrix:
+  fast_finish: true
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm -g install npm@2
-  - set PATH=%APPDATA%\npm;%PATH%
   - node --version
   - npm --version
   - npm install
@@ -15,6 +15,4 @@ install:
 test_script:
   - npm run unit
 
-build: "off"
-
-version: "{build}"
+build: off
