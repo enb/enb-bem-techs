@@ -2,9 +2,12 @@ sudo: false
 
 language: node_js
 
-script: "npm run travis"
+matrix:
+  include:
+    - node_js: iojs
+    - node_js: "0.10"
+    - node_js: "0.12"
+      env: COVERALLS=1
 
-node_js:
-  - "0.10"
-  - "0.12"
-  - iojs
+after_success:
+  - if [ "x$COVERALLS" = "x1" ]; then npm run coveralls; fi

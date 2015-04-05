@@ -69,11 +69,10 @@
   "scripts": {
     "test": "npm run lint && npm run unit",
     "lint": "jshint . && jscs -c .jscs.js .",
-    "unit": "mocha test/**/*.test.js",
+    "unit": "mocha -R spec",
     "bench": "npm run bench-deps && matcha benchmark/*.js",
     "bench-deps": "cd benchmark/fixtures && bower i",
-    "cover": "istanbul cover _mocha -- test/**/*.test.js",
-    "coveralls": "npm i coveralls && npm run cover && cat ./coverage/lcov.info | coveralls",
-    "travis": "npm run test && npm run coveralls"
+    "cover": "istanbul cover _mocha",
+    "coveralls": "npm i coveralls && npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls"
   }
 }
