@@ -73,7 +73,6 @@
     "bench": "npm run bench-deps && matcha benchmark/*.js",
     "bench-deps": "cd benchmark/fixtures && bower i",
     "cover": "istanbul cover _mocha -- test/**/*.test.js",
-    "coveralls": "npm i coveralls && npm run cover && cat ./coverage/lcov.info | coveralls",
-    "travis": "npm run test && npm run coveralls"
+    "coveralls": "npm i coveralls && npm run cover && cat ./coverage/lcov.info | coveralls"
   }
 }
