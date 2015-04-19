@@ -70,6 +70,51 @@ describe('techs', function () {
                 .then(done, done);
         });
 
+        it('must keep order of entities', function (done) {
+            mockFs({
+                blocks: {
+                    'block-1': {
+                        'block-1.ext-1': '',
+                        'block-1.ext-2': ''
+                    },
+                    'block-2': {
+                        'block-2.ext-1': '',
+                        'block-2.ext-2': ''
+                    }
+                },
+                bundle: {}
+            });
+
+            var bundle = new TestNode('bundle'),
+                deps = [
+                    { block: 'block-1' },
+                    { block: 'block-2' }
+                ],
+                files = [
+                    'block-1.ext-1',
+                    'block-1.ext-2',
+                    'block-2.ext-1',
+                    'block-2.ext-2'
+                ];
+
+            bundle.runTech(levelsTech, { levels: ['blocks'] })
+                .then(function (levels) {
+                    bundle.provideTechData('?.levels', levels);
+                    bundle.provideTechData('?.deps.js', deps);
+
+                    return bundle.runTechAndGetResults(filesTech);
+                })
+                .then(function (result) {
+                    var FileList = result['bundle.files'],
+                        filenames = FileList.getBySuffix(['ext-1', 'ext-2']).map(function (fileInfo) {
+                            return fileInfo.name;
+                        });
+
+                    filenames.must.eql(files);
+                })
+                .then(done, done);
+        });
+
         it('must get block file by deps', function (done) {
             var scheme = {
                     blocks: {
