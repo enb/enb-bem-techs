@@ -44,6 +44,23 @@ describe('techs', function () {
                 .then(done, done);
         });
 
+        it('must support mods without vals', function (done) {
+            var bemdecl1 = [{
+                    name: 'block-1',
+                    mods: [{ name: 'mod' }]
+                }],
+                bemdecl2 = [{
+                    name: 'block-2'
+                }],
+                exepted = [
+                    { name: 'block-1' },
+                    { name: 'block-1', mods: [{ name: 'mod' }] },
+                    { name: 'block-2' }
+                ];
+
+            assert([bemdecl1, bemdecl2], exepted, done);
+        });
+
         it('must merge block with mod of block', function (done) {
             var bemdecl1 = [{ name: 'block' }],
                 bemdecl2 = [{

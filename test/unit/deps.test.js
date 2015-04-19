@@ -63,8 +63,10 @@ describe('unit', function () {
                     { block: 'block1' },
                     { block: 'block1', mod: 'mod1', val: 'val1' },
                     { block: 'block1', mod: 'mod1', val: 'val2' },
+                    { block: 'block1', mod: 'mod2' },
                     { block: 'block1', elem: 'elem1' },
                     { block: 'block1', elem: 'elem2' },
+                    { block: 'block1', elem: 'elem2', mod: 'val3' },
                     { block: 'block1', elem: 'elem3' },
                     { block: 'block1', elem: 'elem3', mod: 'mod4', val: 'val4' },
                     { block: 'block2' }
