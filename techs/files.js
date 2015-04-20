@@ -106,39 +106,31 @@ module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
             .spread(function (data, levels) {
                 return requireSourceDeps(data, depsFilename)
                     .then(function (sourceDeps) {
-                        var fileList = new FileList(),
-                            dirList = new FileList(),
-                            files = {},
-                            dirs = {};
+                        var hash = {},
+                            fileList = new FileList(),
+                            dirList = new FileList();
 
                         for (var i = 0, l = sourceDeps.length; i < l; i++) {
                             var dep = sourceDeps[i],
                                 entities;
+
                             if (dep.elem) {
                                 entities = levels.getElemEntities(dep.block, dep.elem, dep.mod, dep.val);
                             } else {
                                 entities = levels.getBlockEntities(dep.block, dep.mod, dep.val);
                             }
 
-                            addEntityFiles(entities);
+                            fileList.addFiles(entities.files.filter(filter));
+                            dirList.addFiles(entities.dirs.filter(filter));
                         }
 
-                        fileList.addFiles(Object.keys(files).map(function (filename) {
-                            return files[filename];
-                        }));
+                        function filter(file) {
+                            if (hash[file.fullname]) {
+                                return false;
+                            }
 
-                        dirList.addFiles(Object.keys(dirs).map(function (dirname) {
-                            return dirs[dirname];
-                        }));
-
-                        function addEntityFiles(entities) {
-                            entities.files.forEach(function (file) {
-                                files[file.fullname] = file;
-                            });
-
-                            entities.dirs.forEach(function (dir) {
-                                dirs[dir.fullname] = dir;
-                            });
+                            hash[file.fullname] = true;
+                            return true;
                         }
 
                         _this.node.resolveTarget(filesTarget, fileList);
