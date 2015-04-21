@@ -26,12 +26,11 @@ describe('techs', function () {
                 var bemdecl = [{ name: 'A' }];
 
                 function createTestCase(nodes, must, should) {
-                    it('nodes: ' + nodes + ', mustDeps: ' + must + ', shouldDeps: ' + should, function (done) {
+                    it('nodes: ' + nodes + ', mustDeps: ' + must + ', shouldDeps: ' + should, function () {
                         var graph = DepsGraph.random(nodes, must, should, 'case-' + [nodes, must, should].join('-'));
+
                         if (graph) {
-                            testDepsTechs(graph, bemdecl, done);
-                        } else {
-                            done();
+                            return testDepsTechs(graph, bemdecl);
                         }
                     });
                 }
@@ -76,23 +75,24 @@ function getResults(tech, fsScheme, bemdecl) {
         });
 }
 
-function testDepsTechs(graph, bemdecl, done) {
+function testDepsTechs(graph, bemdecl) {
     var fsScheme = graph.toTestScheme();
-    vow.all([depsTech, oldDepsTech].map(function (tech) {
+
+    return vow.all([depsTech, oldDepsTech].map(function (tech) {
         return getResults(tech, fsScheme, bemdecl)
             .then(function (result) {
                 isCorrect(graph, convertToObjResult(result)).must.be(true);
             });
-    })).then(function () {
-        done();
-    });
+    }));
 }
 
 function convertToObjResult(result) {
     var objResult = {};
+
     result[1].forEach(function (dep, idx) {
         objResult[dep.block] = idx;
     });
+
     return objResult;
 }
 

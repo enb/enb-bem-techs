@@ -30,47 +30,47 @@ describe('techs', function () {
             mockFs.restore();
         });
 
-        it('must provide `?.deps.js` target from file', function (done) {
-            bundle.runTech(Tech, {
+        it('must provide `?.deps.js` target from file', function () {
+            return bundle.runTech(Tech, {
                     node: 'fs-bundle',
-                    source: 'fs-bundle.deps.js' })
+                    source: 'fs-bundle.deps.js'
+                })
                 .then(function (res) {
                     res.deps.must.eql(deps);
-                })
-                .then(done, done);
+                });
         });
 
-        it('must provide `?.deps.js` target from data', function (done) {
-            bundle.runTech(Tech, {
+        it('must provide `?.deps.js` target from data', function () {
+            return bundle.runTech(Tech, {
                     node: 'data-bundle',
-                    source: 'data-bundle.deps.js' })
+                    source: 'data-bundle.deps.js'
+                })
                 .then(function (res) {
                     res.deps.must.eql(deps);
-                })
-                .then(done, done);
+                });
         });
 
-        it('must require `?.deps.js` target from file', function (done) {
-            bundle.runTechAndRequire(Tech, {
+        it('must require `?.deps.js` target from file', function () {
+            return bundle.runTechAndRequire(Tech, {
                     node: 'fs-bundle',
-                    source: 'fs-bundle.deps.js' })
+                    source: 'fs-bundle.deps.js'
+                })
                 .spread(function (res) {
                     res.deps.must.eql(deps);
-                })
-                .then(done, done);
+                });
         });
 
-        it('must require `?.deps.js` target from data', function (done) {
-            bundle.runTechAndRequire(Tech, {
+        it('must require `?.deps.js` target from data', function () {
+            return bundle.runTechAndRequire(Tech, {
                     node: 'data-bundle',
-                    source: 'data-bundle.deps.js' })
+                    source: 'data-bundle.deps.js'
+                })
                 .spread(function (res) {
                     res.deps.must.eql(deps);
-                })
-                .then(done, done);
+                });
         });
 
-        it('must provide result from cache', function (done) {
+        it('must provide result from cache', function () {
             mockFs({
                 'bundle-1': {
                     'bundle-1.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'block' }]) + ';'
@@ -89,8 +89,7 @@ describe('techs', function () {
             return bundle.runTech(Tech, { node: 'bundle-1' })
                 .then(function (target) {
                     target.deps.must.eql([{ block: 'other-block' }]);
-                })
-                .then(done, done);
+                });
         });
     });
 });
