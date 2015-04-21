@@ -56,7 +56,9 @@
     "matcha": "0.6.0",
     "mocha": "2.1.0",
     "mock-fs": "2.5.0",
-    "must": "0.12.0"
+    "must": "0.12.0",
+    "lodash": "3.4.0",
+    "seedrandom": "2.3.11"
   },
   "main": "index.js",
   "files": [

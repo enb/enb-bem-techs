@@ -96,7 +96,8 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             target = this._target,
             targetFilename = node.resolvePath(target),
             cache = node.getNodeCache(target),
-            declFilename = this.node.resolvePath(this._declFile);
+            declFilename = this.node.resolvePath(this._declFile),
+            strictMode = this.getOption('strict', false);
 
         return this.node.requireSources([this._levelsTarget, this._declFile])
             .spread(function (levels, sourceDeps) {
@@ -108,7 +109,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                 ) {
                     return requireSourceDeps(sourceDeps, declFilename)
                         .then(function (sourceDeps) {
-                            return (new OldDeps(sourceDeps).expandByFS({ levels: levels }))
+                            return (new OldDeps(sourceDeps, strictMode).expandByFS({ levels: levels }))
                                 .then(function (resolvedDeps) {
                                     var resultDeps = resolvedDeps.getDeps(),
                                         str = 'exports.deps = ' + JSON.stringify(resultDeps, null, 4) + ';\n';
