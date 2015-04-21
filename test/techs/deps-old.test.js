@@ -272,6 +272,119 @@ describe('techs', function () {
                 return assert(scheme, bemdecl, deps);
             });
 
+            it('must respect context for elem', function () {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    shouldDeps: [
+                                        { elem: 'elem' }
+                                    ]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    deps = [
+                        { block: 'block' },
+                        { block: 'block', elem: 'elem' }
+                    ];
+
+                return assert(scheme, bemdecl, deps);
+            });
+
+            it('must respect context for mod', function () {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    shouldDeps: [
+                                        { mod: 'mod' }
+                                    ]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    deps = [
+                        { block: 'block' },
+                        { block: 'block', mod: 'mod' }
+                    ];
+
+                return assert(scheme, bemdecl, deps);
+            });
+
+            it('must respect context for mods', function () {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    shouldDeps: [
+                                        { mods: { mod: 'val' } }
+                                    ]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    deps = [
+                        { block: 'block' },
+                        { block: 'block', mod: 'mod' },
+                        { block: 'block', mod: 'mod', val: 'val' }
+                    ];
+
+                return assert(scheme, bemdecl, deps);
+            });
+
+            it('must respect context for elem mods', function () {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                __elem: {
+                                    'block__elem.deps.js': stringifyDepsJs({
+                                        shouldDeps: [
+                                            { mods: { mod: 'val' } }
+                                        ]
+                                    })
+                                }
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block', elems: [{ name: 'elem' }] }],
+                    deps = [
+                        { block: 'block' },
+                        { block: 'block', elem: 'elem' },
+                        { block: 'block', elem: 'elem', mod: 'mod' },
+                        { block: 'block', elem: 'elem', mod: 'mod', val: 'val' }
+                    ];
+
+                return assert(scheme, bemdecl, deps);
+            });
+
+            it('must respect context for elem mod', function () {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                __elem: {
+                                    'block__elem.deps.js': stringifyDepsJs({
+                                        shouldDeps: [
+                                            { mod: 'mod' }
+                                        ]
+                                    })
+                                }
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block', elems: [{ name: 'elem' }] }],
+                    deps = [
+                        { block: 'block' },
+                        { block: 'block', elem: 'elem' },
+                        { block: 'block', elem: 'elem', mod: 'mod' }
+                    ];
+
+                return assert(scheme, bemdecl, deps);
+            });
+
             it('must add loop shouldDeps', function () {
                 var scheme = {
                         blocks: {
