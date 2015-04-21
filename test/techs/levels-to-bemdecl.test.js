@@ -10,7 +10,7 @@ describe('techs', function () {
             mockFs.restore();
         });
 
-        it('must detect block', function (done) {
+        it('must detect block', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -20,10 +20,10 @@ describe('techs', function () {
                 },
                 bemdecl = [{ name: 'block' }];
 
-            assert(scheme, bemdecl, done);
+            return assert(scheme, bemdecl);
         });
 
-        it('must detect boolean mod of block', function (done) {
+        it('must detect boolean mod of block', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -38,10 +38,10 @@ describe('techs', function () {
                     { name: 'block', mods: [{ name: 'bool-mod', vals: [{ name: true }] }] }
                 ];
 
-            assert(scheme, bemdecl, done);
+            return assert(scheme, bemdecl);
         });
 
-        it('must detect mod of block', function (done) {
+        it('must detect mod of block', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -56,10 +56,10 @@ describe('techs', function () {
                     { name: 'block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }
                 ];
 
-            assert(scheme, bemdecl, done);
+            return assert(scheme, bemdecl);
         });
 
-        it('must detect elem', function (done) {
+        it('must detect elem', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -74,10 +74,10 @@ describe('techs', function () {
                     { name: 'block', elems: [{ name: 'elem-name' }] }
                 ];
 
-            assert(scheme, bemdecl, done);
+            return assert(scheme, bemdecl);
         });
 
-        it('must detect boolean mod of elem', function (done) {
+        it('must detect boolean mod of elem', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -97,10 +97,10 @@ describe('techs', function () {
                     ] }
                 ];
 
-            assert(scheme, bemdecl, done);
+            return assert(scheme, bemdecl);
         });
 
-        it('must detect mod of elem', function (done) {
+        it('must detect mod of elem', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -121,12 +121,12 @@ describe('techs', function () {
                     }] }
                 ];
 
-            assert(scheme, bemdecl, done);
+            return assert(scheme, bemdecl);
         });
     });
 });
 
-function assert(fsScheme, expected, done) {
+function assert(fsScheme, expected) {
     var levels = Object.keys(fsScheme),
         dataBundle = new TestNode('data-bundle'),
         fsBundle;
@@ -139,7 +139,7 @@ function assert(fsScheme, expected, done) {
     dataBundle = new TestNode('data-bundle');
     fsBundle = new TestNode('fs-bundle');
 
-    fsBundle.runTech(levelsTech, { levels: levels })
+    return fsBundle.runTech(levelsTech, { levels: levels })
         .then(function (levels) {
             fsBundle.provideTechData('?.levels', levels);
             dataBundle.provideTechData('?.levels', levels);
@@ -156,6 +156,5 @@ function assert(fsScheme, expected, done) {
             target1[0].blocks.must.eql(expected);
             data2['data-bundle.bemdecl.js'].blocks.must.eql(expected);
             target2[0].blocks.must.eql(expected);
-        })
-        .then(done, done);
+        });
 }

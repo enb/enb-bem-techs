@@ -5,56 +5,56 @@ var path = require('path'),
     Tech = require('../../techs/bemjson-to-bemdecl');
 
 describe('techs', function () {
-    describe('bemdecl-from-bemjson', function () {
+    describe('bemjson-to-bemdecl', function () {
         afterEach(function () {
             mockFs.restore();
         });
 
-        it('must detect block', function (done) {
+        it('must detect block', function () {
             var bemjson = { block: 'block' },
                 bemdecl = [{ name: 'block' }];
 
-            assert(bemjson, bemdecl, done);
+            return assert(bemjson, bemdecl);
         });
 
-        it('must detect boolean mod of block', function (done) {
+        it('must detect boolean mod of block', function () {
             var bemjson = { block: 'block', mods: { mod: true } },
                 bemdecl = [
                     { name: 'block' },
                     { name: 'block', mods: [{ name: 'mod', vals: [{ name: true }] }] }
                 ];
 
-            assert(bemjson, bemdecl, done);
+            return assert(bemjson, bemdecl);
         });
 
-        it('must detect mod of block', function (done) {
+        it('must detect mod of block', function () {
             var bemjson = { block: 'block', mods: { 'mod-name': 'mod-val' } },
                 bemdecl = [
                     { name: 'block' },
                     { name: 'block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }
                 ];
 
-            assert(bemjson, bemdecl, done);
+            return assert(bemjson, bemdecl);
         });
 
-        it('must detect elem of block', function (done) {
+        it('must detect elem of block', function () {
             var bemjson = { block: 'block', elem: 'elem' },
                 bemdecl = [{ name: 'block', elems: [{ name: 'elem' }] }];
 
-            assert(bemjson, bemdecl, done);
+            return assert(bemjson, bemdecl);
         });
 
-        it('must detect boolean mod of elem', function (done) {
+        it('must detect boolean mod of elem', function () {
             var bemjson = { block: 'block', elem: 'elem', elemMods: { mod: true } },
                 bemdecl = [
                     { name: 'block', elems: [{ name: 'elem' }] },
                     { name: 'block', elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }] }
                 ];
 
-            assert(bemjson, bemdecl, done);
+            return assert(bemjson, bemdecl);
         });
 
-        it('must detect boolean mod of elem', function (done) {
+        it('must detect boolean mod of elem', function () {
             var bemjson = { block: 'block', elem: 'elem', elemMods: { 'mod-name': 'mod-val' } },
                 bemdecl = [
                     { name: 'block', elems: [{ name: 'elem' }] },
@@ -63,17 +63,17 @@ describe('techs', function () {
                     }] }
                 ];
 
-            assert(bemjson, bemdecl, done);
+            return assert(bemjson, bemdecl);
         });
 
-        it('must detect block in custom field', function (done) {
+        it('must detect block in custom field', function () {
             var bemjson = { custom: { block: 'block' } },
                 bemdecl = [{ name: 'block' }];
 
-            assert(bemjson, bemdecl, done);
+            return assert(bemjson, bemdecl);
         });
 
-        it('must detect blocks in deep custom field', function (done) {
+        it('must detect blocks in deep custom field', function () {
             var bemjson = {
                     custom: {
                         one: { block: 'block-1' },
@@ -85,31 +85,31 @@ describe('techs', function () {
                     { name: 'block-2' }
                 ];
 
-            assert(bemjson, bemdecl, done);
+            return assert(bemjson, bemdecl);
         });
 
-        it('must not detect block in attrs', function (done) {
+        it('must not detect block in attrs', function () {
             var bemjson = { attrs: { block: 'block' } },
                 bemdecl = [];
 
-            assert(bemjson, bemdecl, done);
+            return assert(bemjson, bemdecl);
         });
 
-        it('must not detect block in js', function (done) {
+        it('must not detect block in js', function () {
             var bemjson = { js: { block: 'block' } },
                 bemdecl = [];
 
-            assert(bemjson, bemdecl, done);
+            return assert(bemjson, bemdecl);
         });
 
-        it('must not fail when entity equals undefined', function (done) {
+        it('must not fail when entity equals undefined', function () {
             var bemjson = [undefined],
                 bemdecl = [];
 
-            assert(bemjson, bemdecl, done);
+            return assert(bemjson, bemdecl);
         });
 
-        it('must detect nested block', function (done) {
+        it('must detect nested block', function () {
             var bemjson = {
                     block: 'block-1',
                     content: [
@@ -121,10 +121,10 @@ describe('techs', function () {
                     { name: 'block-2' }
                 ];
 
-            assert(bemjson, bemdecl, done);
+            return assert(bemjson, bemdecl);
         });
 
-        it('must detect nested elem', function (done) {
+        it('must detect nested elem', function () {
             var bemjson = {
                     block: 'block',
                     content: [
@@ -136,10 +136,10 @@ describe('techs', function () {
                     { name: 'block', elems: [{ name: 'elem' }] }
                 ];
 
-            assert(bemjson, bemdecl, done);
+            return assert(bemjson, bemdecl);
         });
 
-        it('must detect duplicate block', function (done) {
+        it('must detect duplicate block', function () {
             var bemjson = [
                     { block: 'block' },
                     { block: 'block' }
@@ -148,10 +148,10 @@ describe('techs', function () {
                     { name: 'block' }
                 ];
 
-            assert(bemjson, bemdecl, done);
+            return assert(bemjson, bemdecl);
         });
 
-        it('must detect duplicate block', function (done) {
+        it('must detect duplicate block', function () {
             var bemjson = [
                     { block: 'block', elem: 'elem' },
                     { block: 'block', elem: 'elem' }
@@ -160,10 +160,10 @@ describe('techs', function () {
                     { name: 'block', elems: [{ name: 'elem' }] }
                 ];
 
-            assert(bemjson, bemdecl, done);
+            return assert(bemjson, bemdecl);
         });
 
-        it('must detect duplicate mod of block', function (done) {
+        it('must detect duplicate mod of block', function () {
             var bemjson = [
                     { block: 'block', mods: { 'mod-name': 'mod-val' } },
                     { block: 'block', mods: { 'mod-name': 'mod-val' } }
@@ -173,10 +173,10 @@ describe('techs', function () {
                     { name: 'block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }
                 ];
 
-            assert(bemjson, bemdecl, done);
+            return assert(bemjson, bemdecl);
         });
 
-        it('must provide result from cache', function (done) {
+        it('must provide result from cache', function () {
             var bemjson = [
                     { block: 'block' }
                 ],
@@ -200,13 +200,12 @@ describe('techs', function () {
             return bundle.runTechAndRequire(Tech)
                 .then(function (target) {
                     target[0].blocks.must.eql(bemdecl);
-                })
-                .then(done, done);
+                });
         });
     });
 });
 
-function assert(bemjson, bemdecl, done) {
+function assert(bemjson, bemdecl) {
     mockFs({
         bundle: {
             'bundle.bemjson.js': '(' + JSON.stringify(bemjson) + ')'
@@ -222,6 +221,5 @@ function assert(bemjson, bemdecl, done) {
         .spread(function (data, target) {
             data['bundle.bemdecl.js'].blocks.must.eql(bemdecl);
             target[0].blocks.must.eql(bemdecl);
-        })
-        .then(done, done);
+        });
 }

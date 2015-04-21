@@ -10,7 +10,7 @@ describe('techs', function () {
             mockFs.restore();
         });
 
-        it('must provide result from cache', function (done) {
+        it('must provide result from cache', function () {
             mockFs({
                 bundle: {
                     'bundle.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'other-block' }]) + ';',
@@ -29,11 +29,10 @@ describe('techs', function () {
             return bundle.runTech(Tech, { from: 'bundle-1.deps.js', what: 'bundle-2.deps.js' })
                 .then(function (target) {
                     target.deps.must.eql([{ block: 'other-block' }]);
-                })
-                .then(done, done);
+                });
         });
 
-        it('must support deps as array', function (done) {
+        it('must support deps as array', function () {
             mockFs({
                 bundle: {}
             });
@@ -46,85 +45,84 @@ describe('techs', function () {
             return bundle.runTech(Tech, { from: 'bundle-1.deps.js', what: 'bundle-2.deps.js' })
                 .then(function (target) {
                     target.deps.must.eql([]);
-                })
-                .then(done, done);
+                });
         });
 
-        it('must subtract block from block', function (done) {
+        it('must subtract block from block', function () {
             var from = [{ block: 'block' }],
                 what = [{ block: 'block' }],
                 expected = [];
 
-            assert(from, what, expected, done);
+            return assert(from, what, expected);
         });
 
-        it('must subtract elem from block', function (done) {
+        it('must subtract elem from block', function () {
             var from = [{ block: 'block' }],
                 what = [{ block: 'block', elem: 'elem' }],
                 expected = [{ block: 'block' }];
 
-            assert(from, what, expected, done);
+            return assert(from, what, expected);
         });
 
-        it('must subtract mod of block from block', function (done) {
+        it('must subtract mod of block from block', function () {
             var from = [{ block: 'block' }],
                 what = [{ block: 'block', mod: 'mod-name', val: 'mod-val' }],
                 expected = [{ block: 'block' }];
 
-            assert(from, what, expected, done);
+            return assert(from, what, expected);
         });
 
-        it('must subtract elem from elem', function (done) {
+        it('must subtract elem from elem', function () {
             var from = [{ block: 'block', elem: 'elem' }],
                 what = [{ block: 'block', elem: 'elem' }],
                 expected = [];
 
-            assert(from, what, expected, done);
+            return assert(from, what, expected);
         });
 
-        it('must subtract mod of elem from elem', function (done) {
+        it('must subtract mod of elem from elem', function () {
             var from = [{ block: 'block', elem: 'elem' }],
                 what = [{ block: 'block', elem: 'elem', mod: 'mod-name', val: 'mod-val' }],
                 expected = [{ block: 'block', elem: 'elem' }];
 
-            assert(from, what, expected, done);
+            return assert(from, what, expected);
         });
 
-        it('must subtract nonexistent item from set', function (done) {
+        it('must subtract nonexistent item from set', function () {
             var from = [{ block: '1' }, { block: '2' }, { block: '3' }],
                 what = [{ block: 'O_o' }],
                 expected = [{ block: '1' }, { block: '2' }, { block: '3' }];
 
-            assert(from, what, expected, done);
+            return assert(from, what, expected);
         });
 
-        it('must subtract empty set from nonempty set', function (done) {
+        it('must subtract empty set from nonempty set', function () {
             var from = [{ block: '1' }, { block: '2' }, { block: '3' }],
                 what = [],
                 expected = [{ block: '1' }, { block: '2' }, { block: '3' }];
 
-            assert(from, what, expected, done);
+            return assert(from, what, expected);
         });
 
-        it('must subtract set from empty set', function (done) {
+        it('must subtract set from empty set', function () {
             var from = [],
                 what = [{ block: '1' }, { block: '2' }, { block: '3' }],
                 expected = [];
 
-            assert(from, what, expected, done);
+            return assert(from, what, expected);
         });
 
-        it('must subtract disjoint set', function (done) {
+        it('must subtract disjoint set', function () {
             var from = [{ block: '1' }, { block: '2' }, { block: '3' }],
                 what = [{ block: '2' }],
                 expected = [{ block: '1' }, { block: '3' }];
 
-            assert(from, what, expected, done);
+            return assert(from, what, expected);
         });
     });
 });
 
-function assert(from, what, expected, done) {
+function assert(from, what, expected) {
     mockFs({
         'fs-bundle': {
             'from.deps.js': 'exports.deps = ' + JSON.stringify(from) + ';',
@@ -151,6 +149,5 @@ function assert(from, what, expected, done) {
             target1[0].deps.must.eql(expected);
             data2['data-bundle.deps.js'].deps.must.eql(expected);
             target2[0].deps.must.eql(expected);
-        })
-        .then(done, done);
+        });
 }

@@ -10,7 +10,7 @@ describe('techs', function () {
             mockFs.restore();
         });
 
-        it('must get block file by bemdecl', function (done) {
+        it('must get block file by bemdecl', function () {
             mockFs({
                 blocks: {
                     block: {
@@ -23,7 +23,7 @@ describe('techs', function () {
             var bundle = new TestNode('bundle'),
                 bemdecl = { blocks: [{ name: 'block' }] };
 
-            bundle.runTech(levelsTech, { levels: ['blocks'] })
+            return bundle.runTech(levelsTech, { levels: ['blocks'] })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.bemdecl.js', bemdecl);
@@ -37,11 +37,10 @@ describe('techs', function () {
                         file = files.getByName('block.ext')[0];
 
                     file.name.must.be('block.ext');
-                })
-                .then(done, done);
+                });
         });
 
-        it('must support deps as array', function (done) {
+        it('must support deps as array', function () {
             mockFs({
                 blocks: {
                     block: {
@@ -54,7 +53,7 @@ describe('techs', function () {
             var bundle = new TestNode('bundle'),
                 deps = [{ block: 'block' }];
 
-            bundle.runTech(levelsTech, { levels: ['blocks'] })
+            return bundle.runTech(levelsTech, { levels: ['blocks'] })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', deps);
@@ -66,11 +65,10 @@ describe('techs', function () {
                         file = files.getByName('block.ext')[0];
 
                     file.name.must.be('block.ext');
-                })
-                .then(done, done);
+                });
         });
 
-        it('must keep order of entities', function (done) {
+        it('must keep order of entities', function () {
             mockFs({
                 blocks: {
                     'block-1': {
@@ -97,7 +95,7 @@ describe('techs', function () {
                     'block-2.ext-2'
                 ];
 
-            bundle.runTech(levelsTech, { levels: ['blocks'] })
+            return bundle.runTech(levelsTech, { levels: ['blocks'] })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', deps);
@@ -111,11 +109,10 @@ describe('techs', function () {
                         });
 
                     filenames.must.eql(files);
-                })
-                .then(done, done);
+                });
         });
 
-        it('must get block file by deps', function (done) {
+        it('must get block file by deps', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -126,10 +123,10 @@ describe('techs', function () {
                 deps = [{ block: 'block' }],
                 files = ['blocks/block/block.ext'];
 
-            hasFiles(scheme, deps, files, done);
+            return hasFiles(scheme, deps, files);
         });
 
-        it('must get boolean mod of block file by deps', function (done) {
+        it('must get boolean mod of block file by deps', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -142,10 +139,10 @@ describe('techs', function () {
                 deps = [{ block: 'block', mod: 'bool-mod', val: true }],
                 files = ['blocks/block/_bool-mod/block_bool-mod.ext'];
 
-            hasFiles(scheme, deps, files, done);
+            return hasFiles(scheme, deps, files);
         });
 
-        it('must get block mod file by deps', function (done) {
+        it('must get block mod file by deps', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -162,10 +159,10 @@ describe('techs', function () {
                 }],
                 files = ['blocks/block/_mod-name/block_mod-name_mod-val.ext'];
 
-            hasFiles(scheme, deps, files, done);
+            return hasFiles(scheme, deps, files);
         });
 
-        it('must get elem file by deps', function (done) {
+        it('must get elem file by deps', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -178,10 +175,10 @@ describe('techs', function () {
                 deps = [{ block: 'block', elem: 'elem-name' }],
                 files = ['blocks/block/__elem-name/block__elem-name.ext'];
 
-            hasFiles(scheme, deps, files, done);
+            return hasFiles(scheme, deps, files);
         });
 
-        it('must get boolean mod of elem file by deps', function (done) {
+        it('must get boolean mod of elem file by deps', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -196,10 +193,10 @@ describe('techs', function () {
                 deps = [{ block: 'block', elem: 'elem-name', mod: 'bool-mod', val: true }],
                 files = ['blocks/block/__elem-name/_bool-mod/block__elem-name_bool-mod.ext'];
 
-            hasFiles(scheme, deps, files, done);
+            return hasFiles(scheme, deps, files);
         });
 
-        it('must get elem mod file by deps', function (done) {
+        it('must get elem mod file by deps', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -214,10 +211,10 @@ describe('techs', function () {
                 deps = [{ block: 'block', elem: 'elem-name', mod: 'mod-name', val: 'mod-val' }],
                 files = ['blocks/block/__elem-name/_mod-name/block__elem-name_mod-name_mod-val.ext'];
 
-            hasFiles(scheme, deps, files, done);
+            return hasFiles(scheme, deps, files);
         });
 
-        it('must get block dir by deps', function (done) {
+        it('must get block dir by deps', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -228,10 +225,10 @@ describe('techs', function () {
                 deps = [{ block: 'block' }],
                 files = ['blocks/block/block.ext'];
 
-            hasDirs(scheme, deps, files, done);
+            return hasDirs(scheme, deps, files);
         });
 
-        it('must get boolean mod of block dir by deps', function (done) {
+        it('must get boolean mod of block dir by deps', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -244,10 +241,10 @@ describe('techs', function () {
                 deps = [{ block: 'block', mod: 'bool-mod', val: true }],
                 dirs = ['blocks/block/_bool-mod/block_bool-mod.ext'];
 
-            hasDirs(scheme, deps, dirs, done);
+            return hasDirs(scheme, deps, dirs);
         });
 
-        it('must get block mod dir by deps', function (done) {
+        it('must get block mod dir by deps', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -264,10 +261,10 @@ describe('techs', function () {
                 }],
                 dirs = ['blocks/block/_mod-name/block_mod-name_mod-val.ext'];
 
-            hasDirs(scheme, deps, dirs, done);
+            return hasDirs(scheme, deps, dirs);
         });
 
-        it('must get elem dir by deps', function (done) {
+        it('must get elem dir by deps', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -280,10 +277,10 @@ describe('techs', function () {
                 deps = [{ block: 'block', elem: 'elem-name' }],
                 dirs = ['blocks/block/__elem-name/block__elem-name.ext'];
 
-            hasDirs(scheme, deps, dirs, done);
+            return hasDirs(scheme, deps, dirs);
         });
 
-        it('must get boolean mod of elem dir by deps', function (done) {
+        it('must get boolean mod of elem dir by deps', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -298,10 +295,10 @@ describe('techs', function () {
                 deps = [{ block: 'block', elem: 'elem-name', mod: 'bool-mod', val: true }],
                 dirs = ['blocks/block/__elem-name/_bool-mod/block__elem-name_bool-mod.ext'];
 
-            hasDirs(scheme, deps, dirs, done);
+            return hasDirs(scheme, deps, dirs);
         });
 
-        it('must get elem mod dir by deps', function (done) {
+        it('must get elem mod dir by deps', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -316,10 +313,10 @@ describe('techs', function () {
                 deps = [{ block: 'block', elem: 'elem-name', mod: 'mod-name', val: 'mod-val' }],
                 dirs = ['blocks/block/__elem-name/_mod-name/block__elem-name_mod-name_mod-val.ext'];
 
-            hasDirs(scheme, deps, dirs, done);
+            return hasDirs(scheme, deps, dirs);
         });
 
-        it('must get boolean mod & key-val mod by deps', function (done) {
+        it('must get boolean mod & key-val mod by deps', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -339,10 +336,10 @@ describe('techs', function () {
                     'blocks/block/_mod-name/block_mod-name_mod-val.ext'
                 ];
 
-            hasFiles(scheme, deps, files, done);
+            return hasFiles(scheme, deps, files);
         });
 
-        it('must get files from levels', function (done) {
+        it('must get files from levels', function () {
             var scheme = {
                     'level-1': {
                         block: {
@@ -361,7 +358,7 @@ describe('techs', function () {
                     'level-2/block/block.ext'
                 ];
 
-            hasFiles(scheme, deps, files, done);
+            return hasFiles(scheme, deps, files);
         });
     });
 });
@@ -387,7 +384,7 @@ function getEntityFiles(fsScheme, deps, filetype) {
         });
 }
 
-function has(fsScheme, deps, filenames, filetype, done) {
+function has(fsScheme, deps, filenames, filetype) {
     return getEntityFiles(fsScheme, deps, filetype)
         .then(function (files) {
             files.items.must.have.length(filenames.length);
@@ -397,14 +394,13 @@ function has(fsScheme, deps, filenames, filetype, done) {
 
                 files.items[i].fullname.must.be(fullname);
             });
-        })
-        .then(done, done);
+        });
 }
 
-function hasFiles(fsScheme, deps, filenames, done) {
-    has(fsScheme, deps, filenames, 'files', done);
+function hasFiles(fsScheme, deps, filenames) {
+    return has(fsScheme, deps, filenames, 'files');
 }
 
-function hasDirs(fsScheme, deps, filenames, done) {
-    has(fsScheme, deps, filenames, 'dirs', done);
+function hasDirs(fsScheme, deps, filenames) {
+    return has(fsScheme, deps, filenames, 'dirs');
 }

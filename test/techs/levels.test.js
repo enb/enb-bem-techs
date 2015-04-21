@@ -10,7 +10,7 @@ describe('techs', function () {
             mockFs.restore();
         });
 
-        it('must detect block file in level', function (done) {
+        it('must detect block file in level', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -20,10 +20,10 @@ describe('techs', function () {
                 },
                 files = ['blocks/block/block.ext'];
 
-            hasFiles(scheme, files, done);
+            return hasFiles(scheme, files);
         });
 
-        it('must detect block dir in level', function (done) {
+        it('must detect block dir in level', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -33,10 +33,10 @@ describe('techs', function () {
                 },
                 dirs = ['blocks/block/block.ext'];
 
-            hasDirs(scheme, dirs, done);
+            return hasDirs(scheme, dirs);
         });
 
-        it('must detect boolean mod file of block in level', function (done) {
+        it('must detect boolean mod file of block in level', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -48,10 +48,10 @@ describe('techs', function () {
                 },
                 files = ['blocks/block/_bool-mod/block_bool-mod.ext'];
 
-            hasFiles(scheme, files, done);
+            return hasFiles(scheme, files);
         });
 
-        it('must detect boolean mod dir of block in level', function (done) {
+        it('must detect boolean mod dir of block in level', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -63,10 +63,10 @@ describe('techs', function () {
                 },
                 dirs = ['blocks/block/_bool-mod/block_bool-mod.ext'];
 
-            hasDirs(scheme, dirs, done);
+            return hasDirs(scheme, dirs);
         });
 
-        it('must detect mod file of block in level', function (done) {
+        it('must detect mod file of block in level', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -78,10 +78,10 @@ describe('techs', function () {
                 },
                 files = ['blocks/block/_mod-name/block_mod-name_mod-val.ext'];
 
-            hasFiles(scheme, files, done);
+            return hasFiles(scheme, files);
         });
 
-        it('must detect mod dir of block in level', function (done) {
+        it('must detect mod dir of block in level', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -93,10 +93,10 @@ describe('techs', function () {
                 },
                 dirs = ['blocks/block/_mod-name/block_mod-name_mod-val.ext'];
 
-            hasDirs(scheme, dirs, done);
+            return hasDirs(scheme, dirs);
         });
 
-        it('must detect elem file of block in level', function (done) {
+        it('must detect elem file of block in level', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -108,10 +108,10 @@ describe('techs', function () {
                 },
                 files = ['blocks/block/__elem-name/block__elem-name.ext'];
 
-            hasFiles(scheme, files, done);
+            return hasFiles(scheme, files);
         });
 
-        it('must detect elem dir of block in level', function (done) {
+        it('must detect elem dir of block in level', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -123,10 +123,10 @@ describe('techs', function () {
                 },
                 dirs = ['blocks/block/__elem-name/block__elem-name.ext'];
 
-            hasDirs(scheme, dirs, done);
+            return hasDirs(scheme, dirs);
         });
 
-        it('must detect boolean mod file of elem in level', function (done) {
+        it('must detect boolean mod file of elem in level', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -140,10 +140,10 @@ describe('techs', function () {
                 },
                 files = ['blocks/block/__elem-name/_bool-mod/block__elem-name_bool-mod.ext'];
 
-            hasFiles(scheme, files, done);
+            return hasFiles(scheme, files);
         });
 
-        it('must detect boolean mod dir of elem in level', function (done) {
+        it('must detect boolean mod dir of elem in level', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -157,10 +157,10 @@ describe('techs', function () {
                 },
                 dirs = ['blocks/block/__elem-name/_bool-mod/block__elem-name_bool-mod.ext'];
 
-            hasDirs(scheme, dirs, done);
+            return hasDirs(scheme, dirs);
         });
 
-        it('must detect mod file of elem in level', function (done) {
+        it('must detect mod file of elem in level', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -174,10 +174,10 @@ describe('techs', function () {
                 },
                 files = ['blocks/block/__elem-name/_mod-name/block__elem-name_mod-name_mod-val.ext'];
 
-            hasFiles(scheme, files, done);
+            return hasFiles(scheme, files);
         });
 
-        it('must detect mod dir of elem in level', function (done) {
+        it('must detect mod dir of elem in level', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -191,10 +191,10 @@ describe('techs', function () {
                 },
                 dirs = ['blocks/block/__elem-name/_mod-name/block__elem-name_mod-name_mod-val.ext'];
 
-            hasDirs(scheme, dirs, done);
+            return hasDirs(scheme, dirs);
         });
 
-        it('must detect block files in levels', function (done) {
+        it('must detect block files in levels', function () {
             var scheme = {
                     'level-1': {
                         block: {
@@ -212,10 +212,10 @@ describe('techs', function () {
                     'level-2/block/block.ext'
                 ];
 
-            hasFiles(scheme, files, done);
+            return hasFiles(scheme, files);
         });
 
-        it('must detect block dirs in levels', function (done) {
+        it('must detect block dirs in levels', function () {
             var scheme = {
                     'level-1': {
                         block: {
@@ -233,10 +233,10 @@ describe('techs', function () {
                     'level-2/block/block.ext'
                 ];
 
-            hasDirs(scheme, dirs, done);
+            return hasDirs(scheme, dirs);
         });
 
-        it('must handle full paths', function (done) {
+        it('must handle full paths', function () {
             mockFs({
                 blocks: {
                     block: {
@@ -249,14 +249,13 @@ describe('techs', function () {
             var bundle = new TestNode('bundle'),
                 levelDirname = path.resolve('blocks');
 
-            bundle.runTech(Tech, { levels: [levelDirname] })
+            return bundle.runTech(Tech, { levels: [levelDirname] })
                 .then(function (levels) {
                     var files = getEntityFiles(levels, 'block', 'files');
 
                     files[0].name.must.be('block.ext');
                     files.must.have.length(1);
-                })
-                .then(done, done);
+                });
         });
     });
 });
@@ -283,8 +282,8 @@ function getEntityFiles(levels, entity, filetype) {
     }
 }
 
-function has(fsScheme, filenames, filetype, done) {
-    getLevels(fsScheme)
+function has(fsScheme, filenames, filetype) {
+    return getLevels(fsScheme)
         .then(function (levels) {
             filenames.forEach(function (filename, i) {
                 var basename = path.basename(filename).split('.')[0],
@@ -294,14 +293,13 @@ function has(fsScheme, filenames, filetype, done) {
                 files.must.have.length(filenames.length);
                 files[i].fullname.must.be(fullname);
             });
-        })
-        .then(done, done);
+        });
 }
 
-function hasFiles(fsScheme, filenames, done) {
-    has(fsScheme, filenames, 'files', done);
+function hasFiles(fsScheme, filenames) {
+    return has(fsScheme, filenames, 'files');
 }
 
-function hasDirs(fsScheme, filenames, done) {
-    has(fsScheme, filenames, 'dirs', done);
+function hasDirs(fsScheme, filenames) {
+    return has(fsScheme, filenames, 'dirs');
 }

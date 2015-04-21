@@ -10,14 +10,14 @@ describe('techs', function () {
             mockFs.restore();
         });
 
-        it('must provide result', function (done) {
+        it('must provide result', function () {
             var sources = [[{ name: 'block' }]],
                 bemdecl = [{ name: 'block' }];
 
-            assert(sources, bemdecl, done);
+            return assert(sources, bemdecl);
         });
 
-        it('must provide result from cache', function (done) {
+        it('must provide result from cache', function () {
             mockFs({
                 bundle: {
                     'bundle.bemdecl.js': 'exports.blocks = ' + JSON.stringify([
@@ -40,11 +40,10 @@ describe('techs', function () {
             return bundle.runTech(Tech, { sources: ['bundle-1.bemdecl.js', 'bundle-2.bemdecl.js'] })
                 .then(function (target) {
                     target.blocks.must.eql([{ name: 'other-block' }]);
-                })
-                .then(done, done);
+                });
         });
 
-        it('must support mods without vals', function (done) {
+        it('must support mods without vals', function () {
             var bemdecl1 = [{
                     name: 'block-1',
                     mods: [{ name: 'mod' }]
@@ -58,10 +57,10 @@ describe('techs', function () {
                     { name: 'block-2' }
                 ];
 
-            assert([bemdecl1, bemdecl2], exepted, done);
+            return assert([bemdecl1, bemdecl2], exepted);
         });
 
-        it('must merge block with mod of block', function (done) {
+        it('must merge block with mod of block', function () {
             var bemdecl1 = [{ name: 'block' }],
                 bemdecl2 = [{
                     name: 'block',
@@ -72,10 +71,10 @@ describe('techs', function () {
                     { name: 'block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }
                 ];
 
-            assert([bemdecl1, bemdecl2], exepted, done);
+            return assert([bemdecl1, bemdecl2], exepted);
         });
 
-        it('must merge block with elem', function (done) {
+        it('must merge block with elem', function () {
             var bemdecl1 = [{ name: 'block' }],
                 bemdecl2 = [{
                     name: 'block',
@@ -86,10 +85,10 @@ describe('techs', function () {
                     { name: 'block', elems: [{ name: 'elem' }] }
                 ];
 
-            assert([bemdecl1, bemdecl2], exepted, done);
+            return assert([bemdecl1, bemdecl2], exepted);
         });
 
-        it('must merge elem with mod of elem', function (done) {
+        it('must merge elem with mod of elem', function () {
             var bemdecl1 = [{
                     name: 'block',
                     elems: [{ name: 'elem' }]
@@ -106,10 +105,10 @@ describe('techs', function () {
                     ] }] }
                 ];
 
-            assert([bemdecl1, bemdecl2], exepted, done);
+            return assert([bemdecl1, bemdecl2], exepted);
         });
 
-        it('must merge elems of block', function (done) {
+        it('must merge elems of block', function () {
             var bemdecl1 = [{
                     name: 'block',
                     elems: [{ name: 'elem-1' }]
@@ -124,36 +123,36 @@ describe('techs', function () {
                     { name: 'block', elems: [{ name: 'elem-2' }] }
                 ];
 
-            assert([bemdecl1, bemdecl2], exepted, done);
+            return assert([bemdecl1, bemdecl2], exepted);
         });
 
-        it('must merge set with empty set', function (done) {
+        it('must merge set with empty set', function () {
             var bemdecl1 = [],
                 bemdecl2 = [{ name: '1' }, { name: '2' }, { name: '3' }],
                 exepted = [{ name: '1' }, { name: '2' }, { name: '3' }];
 
-            assert([bemdecl1, bemdecl2], exepted, done);
+            return assert([bemdecl1, bemdecl2], exepted);
         });
 
-        it('must merge intersecting sets', function (done) {
+        it('must merge intersecting sets', function () {
             var bemdecl1 = [{ name: '1' }, { name: '2' }, { name: '3' }],
                 bemdecl2 = [{ name: '2' }],
                 exepted = [{ name: '1' }, { name: '2' }, { name: '3' }];
 
-            assert([bemdecl1, bemdecl2], exepted, done);
+            return assert([bemdecl1, bemdecl2], exepted);
         });
 
-        it('must merge disjoint sets', function (done) {
+        it('must merge disjoint sets', function () {
             var bemdecl1 = [{ name: '1' }, { name: '2' }, { name: '3' }],
                 bemdecl2 = [{ name: 'O_o' }],
                 exepted = [{ name: '1' }, { name: '2' }, { name: '3' }, { name: 'O_o' }];
 
-            assert([bemdecl1, bemdecl2], exepted, done);
+            return assert([bemdecl1, bemdecl2], exepted);
         });
     });
 });
 
-function assert(sources, expected, done) {
+function assert(sources, expected) {
     var bundle,
         dir = {},
         options = { sources: [] };
@@ -175,6 +174,5 @@ function assert(sources, expected, done) {
         .spread(function (target1, target2) {
             target1['bundle.bemdecl.js'].blocks.must.eql(expected);
             target2[0].blocks.must.eql(expected);
-        })
-        .then(done, done);
+        });
 }

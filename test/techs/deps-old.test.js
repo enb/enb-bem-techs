@@ -11,7 +11,7 @@ describe('techs', function () {
             mockFs.restore();
         });
 
-        it('must provide result from cache', function (done) {
+        it('must provide result from cache', function () {
             var bemdecl = [{ name: 'block' }],
                 deps = [{ block: 'block' }, { block: 'other-block' }];
 
@@ -30,7 +30,7 @@ describe('techs', function () {
             cache.cacheFileInfo('deps-file', path.resolve('bundle/bundle.deps.js'));
             cache.cacheFileList('deps-file-list', []);
 
-            bundle.runTech(levelsTech, { levels: ['blocks'] })
+            return bundle.runTech(levelsTech, { levels: ['blocks'] })
                 .then(function (levels) {
                     bundle.provideTechData('?.levels', levels);
 
@@ -41,12 +41,11 @@ describe('techs', function () {
                         { block: 'block' },
                         { block: 'other-block' }
                     ]);
-                })
-                .then(done, done);
+                });
         });
 
         describe('deps.js format', function () {
-            it('must add should dep of block at deps as array format', function (done) {
+            it('must add should dep of block at deps as array format', function () {
                 mockFs({
                     blocks: {
                         block: {
@@ -60,7 +59,7 @@ describe('techs', function () {
 
                 bundle.provideTechData('?.deps.js', [{ block: 'block' }]);
 
-                bundle.runTech(levelsTech, { levels: ['blocks'] })
+                return bundle.runTech(levelsTech, { levels: ['blocks'] })
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
@@ -73,11 +72,10 @@ describe('techs', function () {
                             { block: 'block' },
                             { block: 'other-block' }
                         ]);
-                    })
-                    .then(done, done);
+                    });
             });
 
-            it('must add should dep of block at deps format', function (done) {
+            it('must add should dep of block at deps format', function () {
                 mockFs({
                     blocks: {
                         block: {
@@ -91,7 +89,7 @@ describe('techs', function () {
 
                 bundle.provideTechData('?.deps.js', { deps: [{ block: 'block' }] });
 
-                bundle.runTech(levelsTech, { levels: ['blocks'] })
+                return bundle.runTech(levelsTech, { levels: ['blocks'] })
                     .then(function (levels) {
                         bundle.provideTechData('?.levels', levels);
 
@@ -104,11 +102,10 @@ describe('techs', function () {
                             { block: 'block' },
                             { block: 'other-block' }
                         ]);
-                    })
-                    .then(done, done);
+                    });
             });
 
-            it('must add should dep of block', function (done) {
+            it('must add should dep of block', function () {
                 var scheme = {
                         blocks: {
                             block: {
@@ -122,10 +119,10 @@ describe('techs', function () {
                         { block: 'other-block' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must add should dep of block boolean mod', function (done) {
+            it('must add should dep of block boolean mod', function () {
                 var scheme = {
                         blocks: {
                             block: {
@@ -143,10 +140,10 @@ describe('techs', function () {
                         { block: 'other-block', mod: 'mod', val: true }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must add should dep of block mod', function (done) {
+            it('must add should dep of block mod', function () {
                 var scheme = {
                         blocks: {
                             block: {
@@ -164,10 +161,10 @@ describe('techs', function () {
                         { block: 'other-block', mod: 'mod-name', val: 'mod-val' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must add should dep of elem', function (done) {
+            it('must add should dep of elem', function () {
                 var scheme = {
                         blocks: {
                             block: {
@@ -183,10 +180,10 @@ describe('techs', function () {
                         { block: 'other-block', elem: 'elem' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must add should dep of elems', function (done) {
+            it('must add should dep of elems', function () {
                 var scheme = {
                         blocks: {
                             block: {
@@ -204,10 +201,10 @@ describe('techs', function () {
                         { block: 'other-block', elem: 'elem-2' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must add should dep of elem bool mod', function (done) {
+            it('must add should dep of elem bool mod', function () {
                 var scheme = {
                         blocks: {
                             block: {
@@ -225,10 +222,10 @@ describe('techs', function () {
                         { block: 'other-block', elem: 'elem', mod: 'mod', val: true }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must add should dep of elem mod', function (done) {
+            it('must add should dep of elem mod', function () {
                 var scheme = {
                         blocks: {
                             block: {
@@ -250,10 +247,10 @@ describe('techs', function () {
                         { block: 'other-block', elem: 'elem', mod: 'mod-name', val: 'mod-val' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must add loop shouldDeps', function (done) {
+            it('must add loop shouldDeps', function () {
                 var scheme = {
                         blocks: {
                             A: {
@@ -274,10 +271,10 @@ describe('techs', function () {
                         { block: 'B' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must add must dep of block', function (done) {
+            it('must add must dep of block', function () {
                 var scheme = {
                         blocks: {
                             block: {
@@ -291,10 +288,10 @@ describe('techs', function () {
                         { block: 'block' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must add must dep of self elem', function (done) {
+            it('must add must dep of self elem', function () {
                 var scheme = {
                         blocks: {
                             block: {
@@ -308,10 +305,10 @@ describe('techs', function () {
                         { block: 'block' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must add must dep of block boolean mod', function (done) {
+            it('must add must dep of block boolean mod', function () {
                 var scheme = {
                         blocks: {
                             block: {
@@ -329,10 +326,10 @@ describe('techs', function () {
                         { block: 'block' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must add must dep of block mod', function (done) {
+            it('must add must dep of block mod', function () {
                 var scheme = {
                         blocks: {
                             block: {
@@ -350,10 +347,10 @@ describe('techs', function () {
                         { block: 'block' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must add must dep of elem', function (done) {
+            it('must add must dep of elem', function () {
                 var scheme = {
                         blocks: {
                             block: {
@@ -369,10 +366,10 @@ describe('techs', function () {
                         { block: 'block' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must add must dep of elems', function (done) {
+            it('must add must dep of elems', function () {
                 var scheme = {
                         blocks: {
                             block: {
@@ -390,10 +387,10 @@ describe('techs', function () {
                         { block: 'block' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must add must dep of elem bool mod', function (done) {
+            it('must add must dep of elem bool mod', function () {
                 var scheme = {
                         blocks: {
                             block: {
@@ -411,10 +408,10 @@ describe('techs', function () {
                         { block: 'block' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must add must dep of elem mod', function (done) {
+            it('must add must dep of elem mod', function () {
                 var scheme = {
                         blocks: {
                             block: {
@@ -436,10 +433,10 @@ describe('techs', function () {
                         { block: 'block' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must produce warning if loop mustDeps in non-strict mode', function (done) {
+            it('must produce warning if loop mustDeps in non-strict mode', function () {
                 var scheme = {
                         blocks: {
                             A: {
@@ -460,10 +457,10 @@ describe('techs', function () {
                         { block: 'A' }
                     ];
 
-                assert(scheme, bemdecl, deps, done, { strict: false });
+                return assert(scheme, bemdecl, deps, { strict: false });
             });
 
-            it('must throw if loop mustDeps in strict mode', function (done) {
+            it('must throw if loop mustDeps in strict mode', function () {
                 var scheme = {
                         blocks: {
                             A: {
@@ -480,14 +477,13 @@ describe('techs', function () {
                     },
                     bemdecl = [{ name: 'A' }];
 
-                getResults(scheme, bemdecl, { strict: true })
+                return getResults(scheme, bemdecl, { strict: true })
                     .fail(function (err) {
                         err.must.throw();
-                    })
-                    .then(done, done);
+                    });
             });
 
-            it('must remove dep of block', function (done) {
+            it('must remove dep of block', function () {
                 var scheme = {
                         'level-1': {
                             block: {
@@ -503,10 +499,10 @@ describe('techs', function () {
                     bemdecl = [{ name: 'block' }],
                     deps = [{ block: 'block' }];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must remove dep of block boolean mod', function (done) {
+            it('must remove dep of block boolean mod', function () {
                 var scheme = {
                         'level-1': {
                             block: {
@@ -526,10 +522,10 @@ describe('techs', function () {
                     bemdecl = [{ name: 'block' }],
                     deps = [{ block: 'block' }];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must remove dep of block mod', function (done) {
+            it('must remove dep of block mod', function () {
                 var scheme = {
                         'level-1': {
                             block: {
@@ -549,10 +545,10 @@ describe('techs', function () {
                     bemdecl = [{ name: 'block' }],
                     deps = [{ block: 'block' }];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must remove dep of elem', function (done) {
+            it('must remove dep of elem', function () {
                 var scheme = {
                         'level-1': {
                             block: {
@@ -572,10 +568,10 @@ describe('techs', function () {
                     bemdecl = [{ name: 'block' }],
                     deps = [{ block: 'block' }];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must remove dep of elems', function (done) {
+            it('must remove dep of elems', function () {
                 var scheme = {
                         'level-1': {
                             block: {
@@ -595,10 +591,10 @@ describe('techs', function () {
                     bemdecl = [{ name: 'block' }],
                     deps = [{ block: 'block' }];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must remove dep of elem bool mod', function (done) {
+            it('must remove dep of elem bool mod', function () {
                 var scheme = {
                         'level-1': {
                             block: {
@@ -618,10 +614,10 @@ describe('techs', function () {
                     bemdecl = [{ name: 'block' }],
                     deps = [{ block: 'block' }];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must remove dep of elem mod', function (done) {
+            it('must remove dep of elem mod', function () {
                 var scheme = {
                         'level-1': {
                             block: {
@@ -651,10 +647,10 @@ describe('techs', function () {
                         { block: 'block' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must break shouldDeps loop', function (done) {
+            it('must break shouldDeps loop', function () {
                 var scheme = {
                         'level-1': {
                             A: {
@@ -681,10 +677,10 @@ describe('techs', function () {
                         { block: 'A' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
 
-            it('must resolve shouldDeps after mustDeps', function (done) {
+            it('must resolve shouldDeps after mustDeps', function () {
                 var scheme = {
                         blocks: {
                             A: {
@@ -711,7 +707,7 @@ describe('techs', function () {
                         { block: 'C' }
                     ];
 
-                assert(scheme, bemdecl, deps, done);
+                return assert(scheme, bemdecl, deps);
             });
         });
     });
@@ -753,14 +749,13 @@ function getResults(fsScheme, bemdecl, techOpts) {
         });
 }
 
-function assert(fsScheme, bemdecl, deps, done, techOpts) {
-    getResults(fsScheme, bemdecl, deps, techOpts)
+function assert(fsScheme, bemdecl, deps, techOpts) {
+    return getResults(fsScheme, bemdecl, deps, techOpts)
         .then(function (results) {
             results.forEach(function (actualDeps) {
                 actualDeps.must.eql(deps);
             });
-        })
-        .then(done, done);
+        });
 }
 
 function stringifyDepsJs(bemjson) {
