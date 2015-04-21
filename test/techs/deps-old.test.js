@@ -250,6 +250,28 @@ describe('techs', function () {
                 return assert(scheme, bemdecl, deps);
             });
 
+            it('must support elem as array', function () {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    shouldDeps: [{
+                                        block: 'other-block',
+                                        elem: ['elem']
+                                    }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    deps = [
+                        { block: 'block' },
+                        { block: 'other-block', elem: 'elem' }
+                    ];
+
+                return assert(scheme, bemdecl, deps);
+            });
+
             it('must add loop shouldDeps', function () {
                 var scheme = {
                         blocks: {
