@@ -6,37 +6,35 @@ var vow = require('vow'),
     oldDepsTech = require('../../techs/deps-old'),
     DepsGraph = require('../../lib/deps/deps-graph');
 
-describe('techs', function () {
-    describe('deps-old', function () {
-        afterEach(function () {
-            mockFs.restore();
-        });
+describe('deps', function () {
+    afterEach(function () {
+        mockFs.restore();
+    });
 
-        describe('property-based test: techs return deps in correct order for random graphs',
-            function () {
-                [5, 10, 20, 50].forEach(function (nodes) {
-                    for (var edges = 5; edges <= 100; edges += 5) {
-                        for (var rate = 0; rate <= 100; rate += 5) {
-                            var mustEdges = Math.floor(edges * rate / 100);
-                            createTestCase(nodes, mustEdges, edges - mustEdges);
-                        }
+    describe('deps in correct order for random graphs',
+        function () {
+            [5, 10, 20, 50].forEach(function (nodes) {
+                for (var edges = 5; edges <= 100; edges += 5) {
+                    for (var rate = 0; rate <= 100; rate += 5) {
+                        var mustEdges = Math.floor(edges * rate / 100);
+                        createTestCase(nodes, mustEdges, edges - mustEdges);
+                    }
+                }
+            });
+
+            var bemdecl = [{ name: 'A' }];
+
+            function createTestCase(nodes, must, should) {
+                it('nodes: ' + nodes + ', mustDeps: ' + must + ', shouldDeps: ' + should, function () {
+                    var graph = DepsGraph.random(nodes, must, should, 'case-' + [nodes, must, should].join('-'));
+
+                    if (graph) {
+                        return testDepsTechs(graph, bemdecl);
                     }
                 });
-
-                var bemdecl = [{ name: 'A' }];
-
-                function createTestCase(nodes, must, should) {
-                    it('nodes: ' + nodes + ', mustDeps: ' + must + ', shouldDeps: ' + should, function () {
-                        var graph = DepsGraph.random(nodes, must, should, 'case-' + [nodes, must, should].join('-'));
-
-                        if (graph) {
-                            return testDepsTechs(graph, bemdecl);
-                        }
-                    });
-                }
             }
-        );
-    });
+        }
+    );
 });
 
 function getResults(tech, fsScheme, bemdecl) {
