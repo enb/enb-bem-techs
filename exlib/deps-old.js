@@ -118,7 +118,12 @@ module.exports.OldDeps = (function () {
 
                         var depsItem = new OldDepsItem(item, ctx);
 
-                        fn.call(_this, depsItem); // _this.add(rootItem, 'shouldDeps', depsItem);
+                        if (Array.isArray(item.elem)) {
+                            //add only elems and not block
+                            forEachItem('elem', item.elem, depsItem);
+                        } else {
+                            fn.call(_this, depsItem); // _this.add(rootItem, 'shouldDeps', depsItem);
+                        }
 
                         _this.parse(
                             item.mustDeps,
