@@ -385,6 +385,36 @@ describe('techs', function () {
                 return assert(scheme, bemdecl, deps);
             });
 
+            it('must support boolean mods as array', function () {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    shouldDeps: [
+                                        { block: 'block', mods: ['mod-1', 'mod-2'] },
+                                        { block: 'block', elem: 'elem', mods: ['mod-1', 'mod-2'] }
+                                    ]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    deps = [
+                        { block: 'block' },
+                        { block: 'block', mod: 'mod-1' },
+                        { block: 'block', mod: 'mod-2' },
+                        { block: 'block', elem: 'elem' },
+                        { block: 'block', elem: 'elem', mod: 'mod-1' },
+                        { block: 'block', elem: 'elem', mod: 'mod-2' },
+                        { block: 'block', mod: 'mod-1', val: true },
+                        { block: 'block', mod: 'mod-2', val: true },
+                        { block: 'block', elem: 'elem', mod: 'mod-1', val: true },
+                        { block: 'block', elem: 'elem', mod: 'mod-2', val: true }
+                    ];
+
+                return assert(scheme, bemdecl, deps);
+            });
+
             it('must add loop shouldDeps', function () {
                 var scheme = {
                         blocks: {
