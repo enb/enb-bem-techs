@@ -589,13 +589,13 @@ var techs = require('enb-bem-techs');
 config.node('bundle-3', function (nodeConfig) {
     nodeConfig.addTechs([
         // Копируем DEPS-файл из ноды `bundle-1` в `bundle-3`
-        [techs.provideBemdecl, {
+        [techs.provideDeps, {
             node: 'bundles/bundle-1',
             target: 'bundle-1.deps.js'
         }],
 
         // Копируем DEPS-файл из ноды `bundle-2` в `bundle-3`
-        [techs.provideBemdecl, {
+        [techs.provideDeps, {
             node: 'bundles/bundle-2',
             target: 'bundle-2.deps.js'
         }]
