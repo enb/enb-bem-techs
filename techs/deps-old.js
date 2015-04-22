@@ -24,6 +24,12 @@
  * Тип: `String`. По умолчанию: `?.levels`.
  * Таргет с интроспекцией уровней (результат сканирования `levels` технологией).
  *
+ * `strict`
+ *
+ * Тип: `Boolean`. По умолчанию: `false`.
+ * Включает строгий режим раскрытия зависимостей: если будет найдена хотя бы одна циклическая зависимость
+ * `mustDeps` (A <- B <- A), то сборка прекратится с ошибкой.
+ *
  * Пример:
  *
  * Раскрытие зависимостей по BEMDECL-файлу.
@@ -85,6 +91,8 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
         this._levelsTarget = this.node.unmaskTargetName(
             this.getOption('levelsTarget', this.node.getTargetName('levels')));
+
+        this._strict = this.getOption('strict');
     },
 
     getTargets: function () {
@@ -97,7 +105,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             targetFilename = node.resolvePath(target),
             cache = node.getNodeCache(target),
             declFilename = this.node.resolvePath(this._declFile),
-            strictMode = this.getOption('strict', false);
+            strictMode = this._strict;
 
         return this.node.requireSources([this._levelsTarget, this._declFile])
             .spread(function (levels, sourceDeps) {
