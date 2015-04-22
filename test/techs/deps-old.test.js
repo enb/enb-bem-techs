@@ -623,7 +623,7 @@ describe('techs', function () {
                         messages.filter(function (obj) {
                             return obj.message === 'circular mustDeps';
                         }).must.not.empty();
-                    })
+                    });
             });
 
             it('must throw if loop mustDeps in strict mode', function () {
