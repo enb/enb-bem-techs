@@ -85,6 +85,8 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
         this._levelsTarget = this.node.unmaskTargetName(
             this.getOption('levelsTarget', this.node.getTargetName('levels')));
+
+        this._strict = this.getOption('strict');
     },
 
     getTargets: function () {
@@ -97,7 +99,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             targetFilename = node.resolvePath(target),
             cache = node.getNodeCache(target),
             declFilename = this.node.resolvePath(this._declFile),
-            strictMode = this.getOption('strict', false);
+            strictMode = this._strict;
 
         return this.node.requireSources([this._levelsTarget, this._declFile])
             .spread(function (levels, sourceDeps) {
