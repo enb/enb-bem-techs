@@ -35,6 +35,7 @@ module.exports.OldDeps = (function () {
 
             deps && this.parse(deps);
             this.strict = strict;
+            this._mustDepsLoops = [];
         },
 
         /**
@@ -440,11 +441,11 @@ module.exports.OldDeps = (function () {
                 return item.mustDeps.every(function (i) {
                     if (i === key) { return true; }
                     if (i === loopKey) {
-                        var message = 'Circular mustDeps: ' + stack.concat(i).join(' <- ');
                         if (_this.strict) {
+                            var message = 'Circular mustDeps: ' + stack.concat(i).join(' <- ');
                             throw new Error(message);
                         } else {
-                            console.error(message);
+                            _this._mustDepsLoops.push(stack.concat(i));
                             return false;
                         }
                     }
@@ -531,8 +532,18 @@ module.exports.OldDeps = (function () {
         getDeps: function () {
             var serializedData = this.serialize();
             return (serializedData && serializedData[''] && serializedData['']['']) || [];
-        }
+        },
 
+        /**
+         * Возвращает информацию о циклических зависимостях.
+         *
+         * @returns {{mustDeps: Array}}
+         */
+        getLoops: function () {
+            return {
+                mustDeps: this._mustDepsLoops
+            };
+        }
     });
 
     /**

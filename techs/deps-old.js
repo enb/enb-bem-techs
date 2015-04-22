@@ -104,10 +104,11 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
             target = this._target,
             targetFilename = node.resolvePath(target),
             cache = node.getNodeCache(target),
+            logger = node.getLogger(),
             declFilename = this.node.resolvePath(this._declFile),
             strictMode = this._strict;
 
-        return this.node.requireSources([this._levelsTarget, this._declFile])
+        return node.requireSources([this._levelsTarget, this._declFile])
             .spread(function (levels, sourceDeps) {
                 var depFiles = levels.getFilesBySuffix('deps.js');
 
@@ -120,7 +121,12 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                             return (new OldDeps(sourceDeps, strictMode).expandByFS({ levels: levels }))
                                 .then(function (resolvedDeps) {
                                     var resultDeps = resolvedDeps.getDeps(),
+                                        loops = resolvedDeps.getLoops(),
                                         str = 'exports.deps = ' + JSON.stringify(resultDeps, null, 4) + ';\n';
+
+                                    loops.mustDeps.forEach(function (loop) {
+                                        logger.logWarningAction('circular mustDeps', target, loop.join(' <- '));
+                                    });
 
                                     return vfs.write(targetFilename, str, 'utf8')
                                         .then(function () {
