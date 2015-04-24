@@ -437,22 +437,22 @@ module.exports.OldDeps = (function () {
             var _this = this;
             function visit(key, stack) {
                 var item = _this.items[key];
-                if (!item) { return; }
+                if (!item) { return true; }
                 return item.mustDeps.every(function (i) {
-                    if (i === key) { return true; }
+                    if (stack.indexOf(i) > -1) { return true; }
                     if (i === loopKey) {
+                        var loop = [i].concat(stack).concat(i);
                         if (_this.strict) {
-                            var message = 'Circular mustDeps: ' + stack.concat(i).join(' <- ');
-                            throw new Error(message);
+                            throw new Error('Circular mustDeps: ' + loop.join(' <- '));
                         } else {
-                            _this._mustDepsLoops.push(stack.concat(i));
+                            _this._mustDepsLoops.push(loop);
                             return false;
                         }
                     }
                     return visit(i, stack.concat(i));
                 });
             }
-            visit(loopKey, [loopKey]);
+            visit(loopKey, []);
         },
 
         /**
