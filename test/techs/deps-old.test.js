@@ -607,13 +607,19 @@ describe('techs', function () {
                             },
                             B: {
                                 'B.deps.js': stringifyDepsJs({
-                                    mustDeps: [{ block: 'A' }]
+                                    mustDeps: [{ block: 'C' }, { block: 'A' }]
+                                })
+                            },
+                            C: {
+                                'C.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ block: 'B' }]
                                 })
                             }
                         }
                     },
                     bemdecl = [{ name: 'A' }],
                     deps = [
+                        { block: 'C' },
                         { block: 'B' },
                         { block: 'A' }
                     ];
@@ -636,7 +642,12 @@ describe('techs', function () {
                             },
                             B: {
                                 'B.deps.js': stringifyDepsJs({
-                                    mustDeps: [{ block: 'A' }]
+                                    mustDeps: [{ block: 'C' }, { block: 'A' }]
+                                })
+                            },
+                            C: {
+                                'C.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ block: 'B' }]
                                 })
                             }
                         }
