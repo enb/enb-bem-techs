@@ -164,6 +164,26 @@ describe('techs', function () {
                 return assert(scheme, bemdecl, deps);
             });
 
+            it('must add should dep of self mod', function () {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    shouldDeps: [{ mods: { 'mod-name': 'mod-val' } }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    deps = [
+                        { block: 'block' },
+                        { block: 'block', mod: 'mod-name' },
+                        { block: 'block', mod: 'mod-name', val: 'mod-val' }
+                    ];
+
+                return assert(scheme, bemdecl, deps);
+            });
+
             it('must add should dep of elem', function () {
                 var scheme = {
                         blocks: {
@@ -245,6 +265,31 @@ describe('techs', function () {
                         { block: 'other-block', elem: 'elem' },
                         { block: 'other-block', elem: 'elem', mod: 'mod-name' },
                         { block: 'other-block', elem: 'elem', mod: 'mod-name', val: 'mod-val' }
+                    ];
+
+                return assert(scheme, bemdecl, deps);
+            });
+
+            it('must add should dep of self mod to elem', function () {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                __elem: {
+                                    'block__elem.deps.js': stringifyDepsJs({
+                                        shouldDeps: [{
+                                            mods: { 'mod-name': 'mod-val' }
+                                        }]
+                                    })
+                                }
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block', elems: [{ name: 'elem' }] }],
+                    deps = [
+                        { block: 'block' },
+                        { block: 'block', elem: 'elem' },
+                        { block: 'block', elem: 'elem', mod: 'mod-name' },
+                        { block: 'block', elem: 'elem', mod: 'mod-name', val: 'mod-val' }
                     ];
 
                 return assert(scheme, bemdecl, deps);
@@ -494,6 +539,26 @@ describe('techs', function () {
                 return assert(scheme, bemdecl, deps);
             });
 
+            it('must add must dep of self mod', function () {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                'block.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ mods: { 'mod-name': 'mod-val' } }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block' }],
+                    deps = [
+                        { block: 'block', mod: 'mod-name' },
+                        { block: 'block', mod: 'mod-name', val: 'mod-val' },
+                        { block: 'block' }
+                    ];
+
+                return assert(scheme, bemdecl, deps);
+            });
+
             it('must add must dep of block mod', function () {
                 var scheme = {
                         blocks: {
@@ -596,6 +661,31 @@ describe('techs', function () {
                         { block: 'other-block', elem: 'elem', mod: 'mod-name' },
                         { block: 'other-block', elem: 'elem', mod: 'mod-name', val: 'mod-val' },
                         { block: 'block' }
+                    ];
+
+                return assert(scheme, bemdecl, deps);
+            });
+
+            it('must add must dep of self mod to elem', function () {
+                var scheme = {
+                        blocks: {
+                            block: {
+                                __elem: {
+                                    'block__elem.deps.js': stringifyDepsJs({
+                                        mustDeps: [{
+                                            mods: { 'mod-name': 'mod-val' }
+                                        }]
+                                    })
+                                }
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'block', elems: [{ name: 'elem' }] }],
+                    deps = [
+                        { block: 'block' },
+                        { block: 'block', elem: 'elem', mod: 'mod-name' },
+                        { block: 'block', elem: 'elem', mod: 'mod-name', val: 'mod-val' },
+                        { block: 'block', elem: 'elem' }
                     ];
 
                 return assert(scheme, bemdecl, deps);
