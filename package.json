@@ -45,20 +45,20 @@
   "dependencies": {
     "bem-naming": "0.5.1",
     "inherit": "2.2.2",
-    "js-yaml": "3.2.7",
+    "js-yaml": "3.3.0",
     "vow": "0.4.9"
   },
   "devDependencies": {
     "enb": ">=0.13.0 <1.0.0",
     "istanbul": "0.3.13",
-    "jscs": "1.12.0",
+    "jscs": "1.13.1",
     "jshint": "2.7.0",
     "matcha": "0.6.0",
     "mocha": "2.2.4",
-    "mock-fs": "2.5.0",
+    "mock-fs": "2.6.0",
     "must": "0.12.0",
-    "lodash": "3.7.0",
-    "seedrandom": "2.3.11"
+    "lodash": "3.8.0",
+    "seedrandom": "2.4.0"
   },
   "main": "index.js",
   "files": [
