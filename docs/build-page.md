@@ -89,7 +89,7 @@ module.exports = function(config) {
         ]);
 
         // Объявляем таргеты, которые хотим собрать.
-        nodeConfig.addTargets(['?.css', '?.js']);
+        nodeConfig.addTargets(['?.css', '?.js', '?.html']);
     });
 };
 ```
