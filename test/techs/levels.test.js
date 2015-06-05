@@ -1,7 +1,7 @@
 var path = require('path'),
     mockFs = require('mock-fs'),
     naming = require('bem-naming'),
-    TestNode = require('enb/lib/test/mocks/test-node'),
+    TestNode = require('mock-enb/lib/mock-node'),
     Tech = require('../../techs/levels');
 
 describe('techs', function () {

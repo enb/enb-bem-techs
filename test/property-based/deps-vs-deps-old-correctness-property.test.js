@@ -1,6 +1,6 @@
 var vow = require('vow'),
     mockFs = require('mock-fs'),
-    TestNode = require('enb/lib/test/mocks/test-node'),
+    TestNode = require('mock-enb/lib/mock-node'),
     levelsTech = require('../../techs/levels'),
     depsTech = require('../../techs/deps'),
     oldDepsTech = require('../../techs/deps-old'),
