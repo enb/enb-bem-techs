@@ -654,10 +654,42 @@ describe('techs', function () {
                     },
                     bemdecl = [{ name: 'A' }];
 
-                return getResults(scheme, bemdecl, { strict: true })
-                    .fail(function (err) {
-                        err.must.throw();
-                    });
+                return assertError(scheme, bemdecl, { strict: true });
+            });
+
+            it('must detect complex mustDeps loop', function () {
+                var scheme = {
+                        blocks: {
+                            A: {
+                                'A.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ block: 'B' }]
+                                })
+                            },
+                            B: {
+                                'B.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ block: 'C' }, { block: 'D' }]
+                                })
+                            },
+                            C: {
+                                'C.deps.js': stringifyDepsJs({
+                                    shouldDeps: [{ block: 'E' }]
+                                })
+                            },
+                            D: {
+                                'D.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ block: 'E' }]
+                                })
+                            },
+                            E: {
+                                'E.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ block: 'B' }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'A' }];
+
+                return assertError(scheme, bemdecl, { strict: true });
             });
 
             it('must remove dep of block', function () {
@@ -930,13 +962,23 @@ function getResults(fsScheme, bemdecl, techOpts) {
 }
 
 function assert(fsScheme, bemdecl, deps, techOpts) {
-    return getResults(fsScheme, bemdecl, deps, techOpts)
+    return getResults(fsScheme, bemdecl, techOpts)
         .then(function (res) {
             res.deps.forEach(function (actualDeps) {
                 actualDeps.must.eql(deps);
             });
-
             return res.messages;
+        }, function (err) {
+            err.must.not.be.truthy();
+        });
+}
+
+function assertError(fsScheme, bemdecl, techOpts) {
+    return getResults(fsScheme, bemdecl, techOpts)
+        .then(function (res) {
+            res.must.not.be.truthy();
+        }, function (err) {
+            err.must.be.an.instanceof(Error);
         });
 }
 
