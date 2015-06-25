@@ -85,7 +85,7 @@ module.exports = function(oldDeps, fn) {
                 loops.push(cutLoop(earlyKey));
                 this.visit(earlyKey, nodes[earlyKey].args);
             }
-            return loops;
+            return loops.reverse();
         }
     };
 
@@ -108,11 +108,11 @@ module.exports = function(oldDeps, fn) {
             return parentRefs.some(function(key) {
                 if (visited[key]) { return false; }
                 visited[key] = true;
-                stack.push(key);
                 if (key === loopKey) {
                     loopRefs = parentRefs;
                     return true;
                 }
+                stack.push(key);
                 if (lookup(key)) {
                     return true;
                 } else {

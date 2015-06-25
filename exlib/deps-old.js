@@ -358,7 +358,7 @@ module.exports.OldDeps = (function () {
             (itemsByOrder || this.items[''].shouldDeps).forEach(function (key) {
                 _this._iterateItem(md, uniq, key, ctx || _this.items[key]);
             });
-            this._handleCircularMustDeps(md);
+            this._mustDepsLoops = md.getLoops();
         },
 
         /**
@@ -385,19 +385,6 @@ module.exports.OldDeps = (function () {
             item.shouldDeps.forEach(function (childKey) { // iterate shouldDeps
                 _this._iterateItem(md, uniq, childKey, ctx);
             });
-        },
-
-        _handleCircularMustDeps: function (md) {
-            var loops = md.getLoops();
-            if (loops.length === 0) { return }
-            if (this.strict) {
-                throw new Error('Circular mustDeps: \n' +
-                    loops.map(function (loop) {
-                        return loop.join(' <- ');
-                    }).join('\n'));
-            } else {
-                this._mustDepsLoops = loops;
-            }
         },
 
         /**
@@ -476,6 +463,20 @@ module.exports.OldDeps = (function () {
          */
         getDeps: function () {
             var serializedData = this.serialize();
+            var loops = this._mustDepsLoops;
+            if (loops.length && !this.strict) {
+                // В non-strict режиме, чтобы сохранить обратную совместимость,
+                // нужно разрезать связи вызывающие циклы и повторно запустить алгоритм
+                var items = this.items;
+                loops.forEach(function (loop) {
+                    var from = loop[loop.length - 1],
+                        to = loop[0],
+                        mustDeps = items[from].mustDeps;
+                    mustDeps.splice(mustDeps.indexOf(to), 1);
+                });
+                serializedData = this.serialize();
+                this._mustDepsLoops = loops; // восстанавливаем список циклов для вывода их в лог
+            }
             return (serializedData && serializedData[''] && serializedData['']['']) || [];
         },
 

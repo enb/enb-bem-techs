@@ -121,12 +121,18 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                             return (new OldDeps(sourceDeps, strictMode).expandByFS({ levels: levels }))
                                 .then(function (resolvedDeps) {
                                     var resultDeps = resolvedDeps.getDeps(),
-                                        loops = resolvedDeps.getLoops(),
+                                        loopPaths = resolvedDeps.getLoops().mustDeps.map(function (loop) {
+                                            return loop.concat(loop[0]).join(' <- ');
+                                        }),
                                         str = 'exports.deps = ' + JSON.stringify(resultDeps, null, 4) + ';\n';
 
-                                    loops.mustDeps.forEach(function (loop) {
-                                        logger.logWarningAction('circular mustDeps', target, loop.join(' <- '));
-                                    });
+                                    if (strictMode) {
+                                        throw new Error('Circular mustDeps: \n' + loopPaths.join('\n'));
+                                    } else {
+                                        loopPaths.forEach(function (loopPath) {
+                                            logger.logWarningAction('circular mustDeps', target, loopPath);
+                                        });
+                                    }
 
                                     return vfs.write(targetFilename, str, 'utf8')
                                         .then(function () {
