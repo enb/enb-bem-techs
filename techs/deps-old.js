@@ -126,7 +126,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                                         }),
                                         str = 'exports.deps = ' + JSON.stringify(resultDeps, null, 4) + ';\n';
 
-                                    if (strictMode) {
+                                    if (strictMode && loopPaths.length > 0) {
                                         throw new Error('Circular mustDeps: \n' + loopPaths.join('\n'));
                                     } else {
                                         loopPaths.forEach(function (loopPath) {

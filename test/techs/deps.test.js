@@ -1321,16 +1321,19 @@ function assert(fsScheme, bemdecl, deps) {
                 actualDeps.must.eql(deps);
             });
         }, function (err) {
-            err.must.not.be.truthy();
+            throw err;
         });
 }
 
 function assertError(fsScheme, bemdecl, techOpts) {
     return getResults(fsScheme, bemdecl, techOpts)
-        .then(function (res) {
-            res.must.not.be.truthy();
+        .then(function () {
+            // test should always throw error
+            (true).must.not.be.truthy();
         }, function (err) {
             err.must.be.an.instanceof(Error);
+            // error message should only address loops in mustDeps
+            err.message.must.contain('Unresolved deps:');
         });
 }
 

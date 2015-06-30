@@ -625,10 +625,12 @@ describe('techs', function () {
                     ];
 
                 return assert(scheme, bemdecl, deps, { strict: false })
-                    .then(function (messages) {
-                        messages.filter(function (obj) {
+                    .then(function (res) {
+                        // warnings should only address loops in mustDeps
+                        res.messages.must.not.be.empty();
+                        res.messages.filter(function (obj) {
                             return obj.message === 'circular mustDeps';
-                        }).must.not.empty();
+                        }).length.must.equal(res.messages.length);
                     });
             });
 
@@ -951,34 +953,36 @@ function getResults(fsScheme, bemdecl, techOpts) {
             ]);
         })
         .spread(function (res1, res2, res3, res4) {
-            return {
-                deps: [
-                    res1[0].deps, res2['fs-bundle.deps.js'].deps,
-                    res3[0].deps, res4['data-bundle.deps.js'].deps
-                ],
-                messages: dataBundle.getLogger()._messages
-            };
+            var result = [
+                res1[0].deps, res2['fs-bundle.deps.js'].deps,
+                res3[0].deps, res4['data-bundle.deps.js'].deps
+            ];
+            result.messages = dataBundle.getLogger()._messages;
+            return result;
         });
 }
 
 function assert(fsScheme, bemdecl, deps, techOpts) {
     return getResults(fsScheme, bemdecl, techOpts)
         .then(function (res) {
-            res.deps.forEach(function (actualDeps) {
+            res.forEach(function (actualDeps) {
                 actualDeps.must.eql(deps);
             });
-            return res.messages;
+            return res;
         }, function (err) {
-            err.must.not.be.truthy();
+            throw err;
         });
 }
 
 function assertError(fsScheme, bemdecl, techOpts) {
     return getResults(fsScheme, bemdecl, techOpts)
-        .then(function (res) {
-            res.must.not.be.truthy();
+        .then(function () {
+            // test should always throw error
+            (true).must.not.be.truthy();
         }, function (err) {
             err.must.be.an.instanceof(Error);
+            // error message should only address loops in mustDeps
+            err.message.must.contain('Circular mustDeps:');
         });
 }
 

@@ -7,7 +7,8 @@
  */
 module.exports = function(oldDeps, fn) {
     var nodes = {},      // collection of nodes, visited nodes are replaced with `true`
-        nextDelayed = 1; // incremental id for delayed nodes
+        nextDelayed = 1, // incremental id for delayed nodes
+        loops;
 
     return {
         /**
@@ -70,22 +71,33 @@ module.exports = function(oldDeps, fn) {
          * @returns {string[][]}
          */
         getLoops: function() {
-            var loops = [];
+            if (loops) { return loops; }
+            loops = [];
+            var keys = Object.keys(nodes);
             while(true) {
-                var earlyKey = '';
-                Object.keys(nodes).forEach(function(key) {
-                    var node = nodes[key];
-                    if (node === true) {
-                        delete nodes[key];
-                    } else if (!earlyKey || node.delayed < nodes[earlyKey].delayed) {
-                        earlyKey = key;
-                    }
+                keys = keys.filter(function(key) {
+                    return nodes[key] !== true;
+                }).sort(function(a, b) { // sort by descending id
+                    return nodes[b].delayed - nodes[a].delayed;
                 });
-                if (!earlyKey) { break }
-                loops.push(cutLoop(earlyKey));
-                this.visit(earlyKey, nodes[earlyKey].args);
+                if (keys.length === 0) { break; }
+                var earlyKey = keys[keys.length - 1];
+                while(true) {
+                    var loop = findLoop(earlyKey);
+                    if (!loop) {
+                        keys.pop();
+                        break;
+                    }
+                    loops.push(loop);
+                    var loopRefs = nodes[loop[0]].backRefs;
+                    loopRefs.splice(loopRefs.indexOf(earlyKey), 1);
+                    if (--nodes[earlyKey].refCount === 0) {
+                        this.visit(earlyKey, nodes[earlyKey].args);
+                        break;
+                    }
+                }
             }
-            return loops.reverse();
+            return loops;
         }
     };
 
@@ -98,31 +110,24 @@ module.exports = function(oldDeps, fn) {
         });
     }
 
-    function cutLoop(loopKey) {
-        var stack = [loopKey],
-            visited = {},
-            loopRefs = null;
-        lookup(loopKey);
+    function findLoop(loopKey) {
+        var visited = {},
+            stack = null;
         function lookup(parentKey) {
-            var parentRefs = nodes[parentKey].backRefs;
-            return parentRefs.some(function(key) {
+            return nodes[parentKey].backRefs.some(function(key) {
                 if (visited[key]) { return false; }
                 visited[key] = true;
                 if (key === loopKey) {
-                    loopRefs = parentRefs;
+                    stack = [];
                     return true;
                 }
+                if (!lookup(key)) { return false; }
                 stack.push(key);
-                if (lookup(key)) {
-                    return true;
-                } else {
-                    stack.pop();
-                    return false;
-                }
+                return true;
             });
         }
-        loopRefs.splice(loopRefs.indexOf(loopKey), 1);
-        nodes[loopKey].refCount--;
-        return stack.reverse();
+        if (!lookup(loopKey)) { return null; }
+        stack.push(loopKey);
+        return stack;
     }
 };

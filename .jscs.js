@@ -3,6 +3,7 @@ module.exports = {
         'node_modules',
         'exlib',
         'benchmark/fixtures',
+        'test/property-based/deps-snapshot.js',
         'coverage',
         'docs'
     ],
