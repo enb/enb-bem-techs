@@ -11,7 +11,7 @@ var vow = require('vow'),
     needGatherDeps = process.env.GATHER_DEPS,
     snapshot = needGatherDeps ? {} : require('./deps-snapshot');
 
-describe('deps', function () {
+describe('deps vs deps-old: random graphs', function () {
     afterEach(function () {
         mockFs.restore();
     });
