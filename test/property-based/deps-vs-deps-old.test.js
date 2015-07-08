@@ -1,5 +1,6 @@
 var vow = require('vow'),
     fs = require('fs'),
+    path = require('path'),
     mockFs = require('mock-fs'),
     TestNode = require('mock-enb/lib/mock-node'),
     levelsTech = require('../../techs/levels'),
@@ -69,9 +70,9 @@ describe('deps vs deps-old: random graphs', function () {
 
     after(function (done) {
         if (needGatherDeps) {
-            fs.writeFile(__dirname + '/deps-snapshot.js',
-                'module.exports = ' + JSON.stringify(snapshot, null, 4) + ';',
-                done);
+            var filename = path.join(__dirname, 'deps-snapshot.json');
+
+            fs.writeFile(filename, JSON.stringify(snapshot, null, 4), done);
         } else {
             done();
         }
