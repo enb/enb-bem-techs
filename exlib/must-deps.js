@@ -8,7 +8,7 @@
 module.exports = function(oldDeps, fn) {
     var nodes = {},      // collection of nodes, visited nodes are replaced with `true`
         nextDelayed = 1, // incremental id for delayed nodes
-        loops = [];      // collection of detected loops
+        loops;
 
     return {
         /**
@@ -20,12 +20,6 @@ module.exports = function(oldDeps, fn) {
             var to = getNode(toKey);
             if (to === true) { return }
             var from = getNode(fromKey);
-            if (!from.rootRef) { from.rootRef = fromKey; }
-            if (from.rootRef === to.rootRef && !to.delayed) {
-                addLoop(toKey, fromKey); // connecting to node from same mustDeps chain means loop in mustDeps
-                return;
-            }
-            if (!to.rootRef) { to.rootRef = from.rootRef; }
             to.backRefs.push(fromKey);
             from.refCount++;
         },
@@ -77,6 +71,32 @@ module.exports = function(oldDeps, fn) {
          * @returns {string[][]}
          */
         getLoops: function() {
+            if (loops) { return loops; }
+            loops = [];
+            var keys = Object.keys(nodes);
+            while(true) {
+                keys = keys.filter(function(key) {
+                    return nodes[key] !== true;
+                }).sort(function(a, b) { // sort by descending id
+                    return nodes[b].delayed - nodes[a].delayed;
+                });
+                if (keys.length === 0) { break; }
+                var earlyKey = keys[keys.length - 1];
+                while(true) {
+                    var loop = findLoop(earlyKey);
+                    if (!loop) {
+                        keys.pop();
+                        break;
+                    }
+                    loops.push(loop);
+                    var loopRefs = nodes[loop[0]].backRefs;
+                    loopRefs.splice(loopRefs.indexOf(earlyKey), 1);
+                    if (--nodes[earlyKey].refCount === 0) {
+                        this.visit(earlyKey, nodes[earlyKey].args);
+                        break;
+                    }
+                }
+            }
             return loops;
         }
     };
@@ -85,23 +105,29 @@ module.exports = function(oldDeps, fn) {
         return nodes[key] || (nodes[key] = {
             backRefs: [], // list of nodes depending on this one
             refCount: 0,  // number of nodes this nodes depends on
-            rootRef: '',  // first node in current mustDeps chain (used for loops detection)
             delayed: 0,   // id for delayed nodes
             args: null    // argument list for delayed nodes
         });
     }
 
-    function addLoop(fromKey, toKey) {
-        lookup(toKey, [toKey]);
-        function lookup(key, stack) {
-            if (key === fromKey) {
-                loops.push(stack.reverse().concat(fromKey));
-                return false;
-            }
-            return nodes[key].backRefs.every(function(backKey) {
-                if (nodes[backKey].rootRef !== nodes[fromKey].rootRef || stack.indexOf(backKey) > -1) { return true; }
-                return lookup(backKey, stack.concat(backKey));
+    function findLoop(loopKey) {
+        var visited = {},
+            stack = null;
+        function lookup(parentKey) {
+            return nodes[parentKey].backRefs.some(function(key) {
+                if (visited[key]) { return false; }
+                visited[key] = true;
+                if (key === loopKey) {
+                    stack = [];
+                    return true;
+                }
+                if (!lookup(key)) { return false; }
+                stack.push(key);
+                return true;
             });
         }
+        if (!lookup(loopKey)) { return null; }
+        stack.push(loopKey);
+        return stack;
     }
 };

@@ -625,10 +625,12 @@ describe('techs', function () {
                     ];
 
                 return assert(scheme, bemdecl, deps, { strict: false })
-                    .then(function (messages) {
-                        messages.filter(function (obj) {
+                    .then(function (res) {
+                        // warnings should only address loops in mustDeps
+                        res.messages.must.not.be.empty();
+                        res.messages.filter(function (obj) {
                             return obj.message === 'circular mustDeps';
-                        }).must.not.empty();
+                        }).length.must.equal(res.messages.length);
                     });
             });
 
@@ -654,10 +656,42 @@ describe('techs', function () {
                     },
                     bemdecl = [{ name: 'A' }];
 
-                return getResults(scheme, bemdecl, { strict: true })
-                    .fail(function (err) {
-                        err.must.throw();
-                    });
+                return assertError(scheme, bemdecl, { strict: true });
+            });
+
+            it('must detect complex mustDeps loop', function () {
+                var scheme = {
+                        blocks: {
+                            A: {
+                                'A.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ block: 'B' }]
+                                })
+                            },
+                            B: {
+                                'B.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ block: 'C' }, { block: 'D' }]
+                                })
+                            },
+                            C: {
+                                'C.deps.js': stringifyDepsJs({
+                                    shouldDeps: [{ block: 'E' }]
+                                })
+                            },
+                            D: {
+                                'D.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ block: 'E' }]
+                                })
+                            },
+                            E: {
+                                'E.deps.js': stringifyDepsJs({
+                                    mustDeps: [{ block: 'B' }]
+                                })
+                            }
+                        }
+                    },
+                    bemdecl = [{ name: 'A' }];
+
+                return assertError(scheme, bemdecl, { strict: true });
             });
 
             it('must remove dep of block', function () {
@@ -919,24 +953,36 @@ function getResults(fsScheme, bemdecl, techOpts) {
             ]);
         })
         .spread(function (res1, res2, res3, res4) {
-            return {
-                deps: [
-                    res1[0].deps, res2['fs-bundle.deps.js'].deps,
-                    res3[0].deps, res4['data-bundle.deps.js'].deps
-                ],
-                messages: dataBundle.getLogger()._messages
-            };
+            var result = [
+                res1[0].deps, res2['fs-bundle.deps.js'].deps,
+                res3[0].deps, res4['data-bundle.deps.js'].deps
+            ];
+            result.messages = dataBundle.getLogger()._messages;
+            return result;
         });
 }
 
 function assert(fsScheme, bemdecl, deps, techOpts) {
-    return getResults(fsScheme, bemdecl, deps, techOpts)
+    return getResults(fsScheme, bemdecl, techOpts)
         .then(function (res) {
-            res.deps.forEach(function (actualDeps) {
+            res.forEach(function (actualDeps) {
                 actualDeps.must.eql(deps);
             });
+            return res;
+        }, function (err) {
+            throw err;
+        });
+}
 
-            return res.messages;
+function assertError(fsScheme, bemdecl, techOpts) {
+    return getResults(fsScheme, bemdecl, techOpts)
+        .then(function () {
+            // test should always throw error
+            (true).must.not.be.truthy();
+        }, function (err) {
+            err.must.be.an.instanceof(Error);
+            // error message should only address loops in mustDeps
+            err.message.must.contain('Circular mustDeps:');
         });
 }
 

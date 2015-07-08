@@ -1,43 +1,75 @@
 var vow = require('vow'),
+    fs = require('fs'),
     mockFs = require('mock-fs'),
     TestNode = require('mock-enb/lib/mock-node'),
     levelsTech = require('../../techs/levels'),
-    depsTech = require('../../techs/deps'),
-    oldDepsTech = require('../../techs/deps-old'),
-    DepsGraph = require('../../lib/deps/deps-graph');
+    depsTechs = {
+        deps: require('../../techs/deps'),
+        'deps-old': require('../../techs/deps-old')
+    },
+    DepsGraph = require('../../lib/deps/deps-graph'),
+    needGatherDeps = process.env.GATHER_DEPS,
+    snapshot = needGatherDeps ? {} : require('./deps-snapshot');
 
 describe('deps', function () {
     afterEach(function () {
         mockFs.restore();
     });
 
-    describe('deps in correct order for random graphs',
+    describe('deps in correct order for random graphs ' +
+        '(n — max number of nodes, m — number of mustDeps, s — number of shouldDeps, l — loops in mustDeps allowed)',
         function () {
-            [5, 10, 20, 50].forEach(function (nodes) {
-                for (var edges = 5; edges <= 100; edges += 5) {
-                    for (var rate = 0; rate <= 100; rate += 5) {
-                        var mustEdges = Math.floor(edges * rate / 100);
-                        createTestCase(nodes, mustEdges, edges - mustEdges);
-                    }
-                }
+            [5, 10, 15, 20, 60].forEach(function (nodeNum) {
+                [5, 10, 20, 50, 75, 90].forEach(function (edgeRate) {
+                    [0, 5, 10, 20, 50, 75, 90, 100].forEach(function (mustRate) {
+                        [false, true].forEach(function (allowLoops) {
+                            var edgeNum = Math.floor((nodeNum * (nodeNum - 1) / 2) * edgeRate / 100),
+                                mustEdgeNum = Math.floor(edgeNum * mustRate / 100);
+                            createTestCase(nodeNum, mustEdgeNum, edgeNum - mustEdgeNum, allowLoops);
+                        });
+                    });
+                });
             });
 
             var bemdecl = [{ name: 'A' }];
 
-            function createTestCase(nodes, must, should) {
-                it('nodes: ' + nodes + ', mustDeps: ' + must + ', shouldDeps: ' + should, function () {
-                    var graph = DepsGraph.random(nodes, must, should, 'case-' + [nodes, must, should].join('-'));
+            function createTestCase(nodes, must, should, allowLoops) {
+                var id = ['case', 'n' + nodes, 'm' + must, 's' + should + (allowLoops ? '-l' : '')].join('-');
+                describe('id: ' + id, function () {
+                    var graph;
+                    before(function () {
+                        graph = DepsGraph.random(nodes, must, should, id, allowLoops);
+                    });
 
-                    if (graph) {
-                        return testDepsTechs(graph, bemdecl);
-                    }
+                    [
+                        { name: 'deps', opts: {} },
+                        { name: 'deps-old', opts: {} },
+                        { name: 'deps-old', opts: { strict: true } }
+                    ].forEach(function (tech) {
+                        var techKey = tech.name + (tech.opts.strict ? ' strict' : '');
+                        it('tech: ' + techKey, function () {
+                            if (graph) {
+                                return testDepsTechs(techKey, tech.name, tech.opts, graph, allowLoops, bemdecl, id);
+                            }
+                        });
+                    });
                 });
             }
         }
     );
+
+    after(function (done) {
+        if (needGatherDeps) {
+            fs.writeFile(__dirname + '/deps-snapshot.js',
+                'module.exports = ' + JSON.stringify(snapshot, null, 4) + ';',
+                done);
+        } else {
+            done();
+        }
+    });
 });
 
-function getResults(tech, fsScheme, bemdecl) {
+function getResults(tech, fsScheme, bemdecl, techOpts) {
     var levels = Object.keys(fsScheme),
         fsBundle, dataBundle;
 
@@ -59,53 +91,92 @@ function getResults(tech, fsScheme, bemdecl) {
             dataBundle.provideTechData('?.levels', levels);
 
             return vow.all([
-                fsBundle.runTechAndRequire(tech),
-                fsBundle.runTechAndGetResults(tech),
-                dataBundle.runTechAndRequire(tech),
-                dataBundle.runTechAndGetResults(tech)
+                fsBundle.runTechAndRequire(tech, techOpts),
+                fsBundle.runTechAndGetResults(tech, techOpts),
+                dataBundle.runTechAndRequire(tech, techOpts),
+                dataBundle.runTechAndGetResults(tech, techOpts)
             ]);
         })
         .spread(function (res1, res2, res3, res4) {
-            return [
+            var result = [
                 res1[0].deps, res2['fs-bundle.deps.js'].deps,
                 res3[0].deps, res4['data-bundle.deps.js'].deps
             ];
+            result.messages = dataBundle.getLogger()._messages;
+            return result;
         });
 }
 
-function testDepsTechs(graph, bemdecl) {
-    var fsScheme = graph.toTestScheme();
+function testDepsTechs(techKey, techName, techOpts, graph, allowLoops, bemdecl, id) {
+    var fsScheme = graph.toTestScheme(),
+        snapshotTech = snapshot[techKey] || (snapshot[techKey] = {});
+    return getResults(depsTechs[techName], fsScheme, bemdecl, techOpts)
+        .then(function (result) {
+            var depsIndices = {},
+                depsList = result[1].map(function (dep, idx) {
+                    depsIndices[dep.block] = idx;
+                    return dep.block;
+                });
 
-    return vow.all([depsTech, oldDepsTech].map(function (tech) {
-        return getResults(tech, fsScheme, bemdecl)
-            .then(function (result) {
-                isCorrect(graph, convertToObjResult(result)).must.be(true);
-            });
-    }));
+            if (needGatherDeps) {
+                if (techKey === 'deps-old' && allowLoops) {
+                    if (!checkCorrectness(graph, depsIndices)) {
+                        // warnings should only address loops in mustDeps
+                        result.messages.must.not.be.empty();
+                        result.messages.filter(function (obj) {
+                            return obj.message === 'circular mustDeps';
+                        }).length.must.equal(result.messages.length);
+                    }
+                } else {
+                    checkCorrectness(graph, depsIndices).must.be(true);
+                }
+
+                snapshotTech[id] = depsList.join(',');
+            } else {
+                // compare with reference deps snapshot
+                // set GATHER_DEPS env variable to update snapshot
+                depsList.must.eql(snapshotTech[id].split(','));
+            }
+
+            return result;
+        }, function (err) {
+            // handle circular mustDeps exception
+            if (!allowLoops || techKey === 'deps-old') {
+                // error is unexpected for graph without mustDeps loops or for deps-old in non-strict mode
+                throw err;
+            }
+            // error message should only address loops in mustDeps
+            err.message.must.contain(techKey === 'deps' ? 'Unresolved deps:' : 'Circular mustDeps:');
+            if (needGatherDeps) {
+                snapshotTech[id] = null;
+            } else {
+                // snapshot must contain null
+                snapshotTech.must.have.property(id, null);
+            }
+        });
 }
 
-function convertToObjResult(result) {
-    var objResult = {};
-
-    result[1].forEach(function (dep, idx) {
-        objResult[dep.block] = idx;
-    });
-
-    return objResult;
-}
-
-function isCorrect(graph, result) {
-    return Object.keys(graph.must).every(function (id) {
+function checkCorrectness(graph, depsIndices) {
+    var correctMustOrder = true;
+    Object.keys(graph.must).forEach(function (id) {
         var name = DepsGraph.idToName(id);
-        return result.hasOwnProperty(name) && Object.keys(graph.must[id]).every(function (mustId) {
+        depsIndices.must.have.property(name);
+        Object.keys(graph.must[id]).forEach(function (mustId) {
             var mustName = DepsGraph.idToName(mustId);
-            return result.hasOwnProperty(mustName) && result[mustName] < result[name];
-        });
-    }) && Object.keys(graph.should).every(function (id) {
-        var name = DepsGraph.idToName(id);
-        return result.hasOwnProperty(name) && Object.keys(graph.should[id]).every(function (shouldId) {
-            var shouldName = DepsGraph.idToName(shouldId);
-            return result.hasOwnProperty(shouldName);
+            depsIndices.must.have.property(mustName);
+            if (depsIndices[mustName] > depsIndices[name]) {
+                // entity should not precede its mustDeps
+                correctMustOrder = false;
+            }
         });
     });
+    Object.keys(graph.should).forEach(function (id) {
+        var name = DepsGraph.idToName(id);
+        depsIndices.must.have.property(name);
+        Object.keys(graph.should[id]).forEach(function (shouldId) {
+            var shouldName = DepsGraph.idToName(shouldId);
+            depsIndices.must.have.property(shouldName);
+        });
+    });
+    return correctMustOrder;
 }
