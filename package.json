@@ -12,7 +12,7 @@
     "deps",
     "files"
   ],
-  "author": "Andrew Abramov <andrewblond@yandex.com>",
+  "author": "Andrew Abramov <mail@blond.im>",
   "licenses": [
     {
       "type": "MPL-2.0",
@@ -28,12 +28,12 @@
   "maintainers": [
     {
       "name": "Andrew Abramov",
-      "email": "andrewblond@yandex.com",
+      "email": "mail@blond.im",
       "github-username": "blond"
     }
   ],
   "contributors": [
-    "Andrew Abramov <andrewblond@yandex.com>",
+    "Andrew Abramov <mail@blond.im>",
     "Marat Dulin <mdevils@yandex.ru>"
   ],
   "engines": {
