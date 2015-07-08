@@ -106,9 +106,12 @@ module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
             .spread(function (data, levels) {
                 return requireSourceDeps(data, depsFilename)
                     .then(function (sourceDeps) {
-                        var hash = {},
-                            fileList = new FileList(),
-                            dirList = new FileList();
+                        var fileList = new FileList(),
+                            dirList = new FileList(),
+                            levelPaths = levels.items.map(function (level) {
+                                return level.getPath();
+                            }),
+                            hash = {};
 
                         for (var i = 0, l = sourceDeps.length; i < l; i++) {
                             var dep = sourceDeps[i],
@@ -120,8 +123,22 @@ module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
                                 entities = levels.getBlockEntities(dep.block, dep.mod, dep.val);
                             }
 
-                            fileList.addFiles(entities.files.filter(filter));
-                            dirList.addFiles(entities.dirs.filter(filter));
+                            slice(entities.files.filter(filter)).forEach(fileList.addFiles.bind(fileList));
+                            slice(entities.dirs.filter(filter)).forEach(dirList.addFiles.bind(dirList));
+                        }
+
+                        function slice(files) {
+                            var slices = levelPaths.map(function () { return []; });
+
+                            files.forEach(function iterate(file) {
+                                levelPaths.forEach(function (levelPath, index) {
+                                    if (file.fullname.indexOf(levelPath) === 0) {
+                                        slices[index].push(file);
+                                    }
+                                });
+                            });
+
+                            return slices;
                         }
 
                         function filter(file) {
