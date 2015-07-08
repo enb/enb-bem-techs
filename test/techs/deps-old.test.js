@@ -629,7 +629,7 @@ describe('techs', function () {
                         // warnings should only address loops in mustDeps
                         res.messages.must.not.be.empty();
                         res.messages.filter(function (obj) {
-                            return obj.message === 'circular mustDeps';
+                            return obj.action === '[circular mustDeps]';
                         }).length.must.equal(res.messages.length);
                     });
             });

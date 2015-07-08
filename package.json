@@ -45,21 +45,21 @@
   "dependencies": {
     "bem-naming": "0.5.1",
     "inherit": "2.2.2",
-    "js-yaml": "3.3.0",
-    "vow": "0.4.9"
+    "js-yaml": "3.3.1",
+    "vow": "0.4.10"
   },
   "devDependencies": {
     "enb": ">=0.13.0 <1.0.0",
-    "istanbul": "0.3.13",
+    "istanbul": "0.3.17",
     "jscs": "1.13.1",
-    "jshint": "2.7.0",
-    "lodash": "3.8.0",
+    "jshint": "2.8.0",
+    "lodash": "3.10.0",
     "matcha": "0.6.0",
-    "mocha": "2.2.4",
-    "mock-enb": "0.0.1",
-    "mock-fs": "2.6.0",
+    "mocha": "2.2.5",
+    "mock-enb": "0.0.2",
+    "mock-fs": "3.0.0",
     "must": "0.12.0",
-    "seedrandom": "2.4.0"
+    "seedrandom": "2.4.2"
   },
   "main": "index.js",
   "files": [
