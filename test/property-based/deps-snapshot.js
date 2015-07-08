@@ -799,7 +799,7 @@ module.exports = {
         "case-n60-m1593-s0": "BH,BG,BF,BE,BD,BC,BB,BA,AZ,AY,AX,AW,AV,AU,AT,AR,AS,AQ,AP,AO,AN,AM,AL,AK,AJ,AI,AH,AG,AF,AE,AD,AC,AB,AA,Z,Y,X,W,V,U,T,S,R,Q,P,O,N,L,M,K,J,I,H,G,F,E,D,B,C,A",
         "case-n60-m1593-s0-l": "BH,BG,BC,BF,BB,AW,BE,BD,AV,AY,BA,AU,AX,AZ,AT,AQ,AS,AR,AP,AL,AK,AO,AM,AI,AH,AG,AN,AD,AJ,AC,Z,AF,AB,AE,AA,U,Y,W,X,V,S,R,Q,T,O,P,K,N,L,H,G,J,M,I,D,B,E,F,C,A"
     },
-    "deps-old strict": {
+    "deps-old --strict": {
         "case-n5-m0-s0": "A",
         "case-n5-m0-s0-l": "A",
         "case-n5-m0-s1": "A,E",
