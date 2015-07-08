@@ -8,421 +8,419 @@ var path = require('path'),
     depsTech = require('../../techs/deps'),
     bemdeclFromDepsByTechTech = require('../../techs/deps-by-tech-to-bemdecl');
 
-describe('techs', function () {
-    describe('deps', function () {
-        afterEach(function () {
-            mockFs.restore();
+describe('techs: deps', function () {
+    afterEach(function () {
+        mockFs.restore();
+    });
+
+    it('must provide result from cache', function () {
+        mockFs({
+            blocks: {
+                block: {
+                    'block.deps.js': stringifyDepsJs({
+                        tech: 'sourceTech',
+                        shouldDeps: {
+                            block: 'other-block'
+                        }
+                    })
+                }
+            },
+            bundle: {
+                'bundle.bemdecl.js': 'exports.blocks = ' + JSON.stringify([{ name: 'block' }]) + ';'
+            }
         });
 
-        it('must provide result from cache', function () {
-            mockFs({
-                blocks: {
-                    block: {
-                        'block.deps.js': stringifyDepsJs({
-                            tech: 'sourceTech',
-                            shouldDeps: {
-                                block: 'other-block'
-                            }
-                        })
+        var bundle = new TestNode('bundle'),
+            depsFiles = new FileList(),
+            cache = bundle.getNodeCache('bundle.bemdecl.js'),
+            options = {
+                sourceTech: 'sourceTech'
+            };
+
+        depsFiles.addFiles([FileList.getFileInfo(path.join('blocks', 'block', 'block.deps.js'))]);
+
+        cache.cacheFileInfo('bemdecl-file', path.resolve('bundle/bundle.bemdecl.js'));
+        cache.cacheFileList('deps-files', depsFiles.getBySuffix('deps.js'));
+
+        bundle.provideTechData('?.files', new FileList());
+
+        return bundle.runTech(bemdeclFromDepsByTechTech, options)
+            .then(function (target) {
+                target.blocks.must.eql([]);
+            });
+    });
+
+    describe('deps.js format', function () {
+        it('must add should dep of block', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                shouldDeps: [{ block: 'other-block' }]
+                            })
+                        }
                     }
                 },
-                bundle: {
-                    'bundle.bemdecl.js': 'exports.blocks = ' + JSON.stringify([{ name: 'block' }]) + ';'
-                }
-            });
+                bemdecl = [{ name: 'block' }],
+                exepted = [{ name: 'other-block' }];
 
-            var bundle = new TestNode('bundle'),
-                depsFiles = new FileList(),
-                cache = bundle.getNodeCache('bundle.bemdecl.js'),
-                options = {
-                    sourceTech: 'sourceTech'
-                };
-
-            depsFiles.addFiles([FileList.getFileInfo(path.join('blocks', 'block', 'block.deps.js'))]);
-
-            cache.cacheFileInfo('bemdecl-file', path.resolve('bundle/bundle.bemdecl.js'));
-            cache.cacheFileList('deps-files', depsFiles.getBySuffix('deps.js'));
-
-            bundle.provideTechData('?.files', new FileList());
-
-            return bundle.runTech(bemdeclFromDepsByTechTech, options)
-                .then(function (target) {
-                    target.blocks.must.eql([]);
-                });
+            return assert(scheme, bemdecl, exepted);
         });
 
-        describe('deps.js format', function () {
-            it('must add should dep of block', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    shouldDeps: [{ block: 'other-block' }]
-                                })
-                            }
+        it('must add should dep of block boolean mod', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                shouldDeps: [{ block: 'other-block', mods: { mod: true } }]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    exepted = [{ name: 'other-block' }];
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [{ name: 'other-block', mods: [{ name: 'mod', vals: [{ name: true }] }] }];
 
-                return assert(scheme, bemdecl, exepted);
-            });
+            return assert(scheme, bemdecl, exepted);
+        });
 
-            it('must add should dep of block boolean mod', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    shouldDeps: [{ block: 'other-block', mods: { mod: true } }]
-                                })
-                            }
+        it('must add should dep of block mod', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                shouldDeps: [{
+                                    block: 'other-block',
+                                    mods: { 'mod-name': 'mod-val' }
+                                }]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    exepted = [{ name: 'other-block', mods: [{ name: 'mod', vals: [{ name: true }] }] }];
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [{ name: 'other-block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }];
 
-                return assert(scheme, bemdecl, exepted);
-            });
+            return assert(scheme, bemdecl, exepted);
+        });
 
-            it('must add should dep of block mod', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    shouldDeps: [{
-                                        block: 'other-block',
-                                        mods: { 'mod-name': 'mod-val' }
-                                    }]
-                                })
-                            }
+        it('must add should dep of elem', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                shouldDeps: [{ block: 'other-block', elem: 'elem' }]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    exepted = [{ name: 'other-block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }];
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [{ name: 'other-block', elems: [{ name: 'elem' }] }];
 
-                return assert(scheme, bemdecl, exepted);
-            });
+            return assert(scheme, bemdecl, exepted);
+        });
 
-            it('must add should dep of elem', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    shouldDeps: [{ block: 'other-block', elem: 'elem' }]
-                                })
-                            }
+        it('must add should dep of elems', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                shouldDeps: [
+                                    { block: 'other-block', elems: ['elem-1', 'elem-2'] }
+                                ]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    exepted = [{ name: 'other-block', elems: [{ name: 'elem' }] }];
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [
+                    { name: 'other-block' },
+                    { name: 'other-block', elems: [{ name: 'elem-1' }] },
+                    { name: 'other-block', elems: [{ name: 'elem-2' }] }
+                ];
 
-                return assert(scheme, bemdecl, exepted);
-            });
+            return assert(scheme, bemdecl, exepted);
+        });
 
-            it('must add should dep of elems', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    shouldDeps: [
-                                        { block: 'other-block', elems: ['elem-1', 'elem-2'] }
-                                    ]
-                                })
-                            }
+        it('must add should dep of elem bool mod', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                shouldDeps: [{
+                                    block: 'other-block',
+                                    elem: 'elem', mods: { mod: true }
+                                }]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    exepted = [
-                        { name: 'other-block' },
-                        { name: 'other-block', elems: [{ name: 'elem-1' }] },
-                        { name: 'other-block', elems: [{ name: 'elem-2' }] }
-                    ];
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [{
+                    name: 'other-block',
+                    elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }]
+                }];
 
-                return assert(scheme, bemdecl, exepted);
-            });
+            return assert(scheme, bemdecl, exepted);
+        });
 
-            it('must add should dep of elem bool mod', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    shouldDeps: [{
-                                        block: 'other-block',
-                                        elem: 'elem', mods: { mod: true }
-                                    }]
-                                })
-                            }
+        it('must add should dep of elem mod', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                shouldDeps: [{
+                                    block: 'other-block',
+                                    elem: 'elem',
+                                    mods: { 'mod-name': 'mod-val' }
+                                }]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    exepted = [{
-                        name: 'other-block',
-                        elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }]
-                    }];
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [{
+                    name: 'other-block',
+                    elems: [{ name: 'elem', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }]
+                }];
 
-                return assert(scheme, bemdecl, exepted);
-            });
+            return assert(scheme, bemdecl, exepted);
+        });
 
-            it('must add should dep of elem mod', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    shouldDeps: [{
-                                        block: 'other-block',
-                                        elem: 'elem',
-                                        mods: { 'mod-name': 'mod-val' }
-                                    }]
-                                })
-                            }
+        it('must add loop shouldDeps', function () {
+            var scheme = {
+                    blocks: {
+                        A: {
+                            'A.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                shouldDeps: [{ block: 'B' }]
+                            })
+                        },
+                        B: {
+                            'B.deps.js': stringifyDepsJs({
+                                shouldDeps: [{ block: 'A' }]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    exepted = [{
-                        name: 'other-block',
-                        elems: [{ name: 'elem', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }]
-                    }];
+                    }
+                },
+                bemdecl = [{ name: 'A' }],
+                exepted = [
+                    // { name: 'A' },
+                    { name: 'B' }
+                ];
 
-                return assert(scheme, bemdecl, exepted);
-            });
+            return assert(scheme, bemdecl, exepted);
+        });
 
-            it('must add loop shouldDeps', function () {
-                var scheme = {
-                        blocks: {
-                            A: {
-                                'A.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    shouldDeps: [{ block: 'B' }]
-                                })
-                            },
-                            B: {
-                                'B.deps.js': stringifyDepsJs({
-                                    shouldDeps: [{ block: 'A' }]
-                                })
-                            }
+        it('must add must dep of block', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                mustDeps: [{ block: 'other-block' }]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'A' }],
-                    exepted = [
-                        // { name: 'A' },
-                        { name: 'B' }
-                    ];
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [{ name: 'other-block' }];
 
-                return assert(scheme, bemdecl, exepted);
-            });
+            return assert(scheme, bemdecl, exepted);
+        });
 
-            it('must add must dep of block', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    mustDeps: [{ block: 'other-block' }]
-                                })
-                            }
+        it('must add must dep of block boolean mod', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                mustDeps: [{ block: 'other-block', mods: { mod: true } }]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    exepted = [{ name: 'other-block' }];
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [{ name: 'other-block', mods: [{ name: 'mod', vals: [{ name: true }] }] }];
 
-                return assert(scheme, bemdecl, exepted);
-            });
+            return assert(scheme, bemdecl, exepted);
+        });
 
-            it('must add must dep of block boolean mod', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    mustDeps: [{ block: 'other-block', mods: { mod: true } }]
-                                })
-                            }
+        it('must add must dep of block mod', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                mustDeps: [
+                                    { block: 'other-block', mods: { 'mod-name': 'mod-val' } }
+                                ]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    exepted = [{ name: 'other-block', mods: [{ name: 'mod', vals: [{ name: true }] }] }];
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [{ name: 'other-block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }];
 
-                return assert(scheme, bemdecl, exepted);
-            });
+            return assert(scheme, bemdecl, exepted);
+        });
 
-            it('must add must dep of block mod', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    mustDeps: [
-                                        { block: 'other-block', mods: { 'mod-name': 'mod-val' } }
-                                    ]
-                                })
-                            }
+        it('must add must dep of elem', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                mustDeps: [{ block: 'other-block', elem: 'elem' }]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    exepted = [{ name: 'other-block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }];
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [{ name: 'other-block', elems: [{ name: 'elem' }] }];
 
-                return assert(scheme, bemdecl, exepted);
-            });
+            return assert(scheme, bemdecl, exepted);
+        });
 
-            it('must add must dep of elem', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    mustDeps: [{ block: 'other-block', elem: 'elem' }]
-                                })
-                            }
+        it('must add must dep of elems', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                mustDeps: [{ block: 'other-block', elems: ['elem-1', 'elem-2'] }]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    exepted = [{ name: 'other-block', elems: [{ name: 'elem' }] }];
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [
+                    { name: 'other-block' },
+                    { name: 'other-block', elems: [{ name: 'elem-1' }] },
+                    { name: 'other-block', elems: [{ name: 'elem-2' }] }
+                ];
 
-                return assert(scheme, bemdecl, exepted);
-            });
+            return assert(scheme, bemdecl, exepted);
+        });
 
-            it('must add must dep of elems', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    mustDeps: [{ block: 'other-block', elems: ['elem-1', 'elem-2'] }]
-                                })
-                            }
+        it('must add must dep of elem bool mod', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                mustDeps: [
+                                    { block: 'other-block', elem: 'elem', mods: { mod: true } }
+                                ]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    exepted = [
-                        { name: 'other-block' },
-                        { name: 'other-block', elems: [{ name: 'elem-1' }] },
-                        { name: 'other-block', elems: [{ name: 'elem-2' }] }
-                    ];
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [{
+                    name: 'other-block',
+                    elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }]
+                }];
 
-                return assert(scheme, bemdecl, exepted);
-            });
+            return assert(scheme, bemdecl, exepted);
+        });
 
-            it('must add must dep of elem bool mod', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    mustDeps: [
-                                        { block: 'other-block', elem: 'elem', mods: { mod: true } }
-                                    ]
-                                })
-                            }
+        it('must add must dep of elem mod', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                mustDeps: [{
+                                    block: 'other-block',
+                                    elem: 'elem',
+                                    mods: { 'mod-name': 'mod-val' }
+                                }]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    exepted = [{
-                        name: 'other-block',
-                        elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }]
-                    }];
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [{
+                    name: 'other-block',
+                    elems: [{ name: 'elem', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }]
+                }];
 
-                return assert(scheme, bemdecl, exepted);
-            });
+            return assert(scheme, bemdecl, exepted);
+        });
 
-            it('must add must dep of elem mod', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    mustDeps: [{
-                                        block: 'other-block',
-                                        elem: 'elem',
-                                        mods: { 'mod-name': 'mod-val' }
-                                    }]
-                                })
-                            }
+        it('must add loop shouldDeps', function () {
+            var scheme = {
+                    blocks: {
+                        A: {
+                            'A.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                mustDeps: [{ block: 'B' }]
+                            })
+                        },
+                        B: {
+                            'B.deps.js': stringifyDepsJs({
+                                mustDeps: [{ block: 'A' }]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    exepted = [{
-                        name: 'other-block',
-                        elems: [{ name: 'elem', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }]
-                    }];
+                    }
+                },
+                bemdecl = [{ name: 'A' }],
+                exepted = [
+                    // { name: 'A' },
+                    { name: 'B' }
+                ];
 
-                return assert(scheme, bemdecl, exepted);
-            });
+            return assert(scheme, bemdecl, exepted);
+        });
 
-            it('must add loop shouldDeps', function () {
-                var scheme = {
-                        blocks: {
-                            A: {
-                                'A.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    mustDeps: [{ block: 'B' }]
-                                })
-                            },
-                            B: {
-                                'B.deps.js': stringifyDepsJs({
-                                    mustDeps: [{ block: 'A' }]
-                                })
-                            }
+        it('must add blocks only with `tech`', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                mustDeps: [
+                                    { block: 'block-with-destTech', tech: 'destTech' },
+                                    { block: 'other-block' }
+                                ]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'A' }],
-                    exepted = [
-                        // { name: 'A' },
-                        { name: 'B' }
-                    ];
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [
+                    { name: 'block-with-destTech' }
+                ];
 
-                return assert(scheme, bemdecl, exepted);
+            return assert(scheme, bemdecl, exepted, {
+                sourceTech: 'sourceTech',
+                destTech: 'destTech'
             });
+        });
 
-            it('must add blocks only with `tech`', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    mustDeps: [
-                                        { block: 'block-with-destTech', tech: 'destTech' },
-                                        { block: 'other-block' }
-                                    ]
-                                })
-                            }
+        it('must add block with `tech` if `destTech` option not specified', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                mustDeps: [{ block: 'block-with-destTech', tech: 'destTech' }]
+                            })
                         }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    exepted = [
-                        { name: 'block-with-destTech' }
-                    ];
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [
+                    { name: 'block-with-destTech' }
+                ];
 
-                return assert(scheme, bemdecl, exepted, {
-                    sourceTech: 'sourceTech',
-                    destTech: 'destTech'
-                });
-            });
-
-            it('must add block with `tech` if `destTech` option not specified', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({
-                                    tech: 'sourceTech',
-                                    mustDeps: [{ block: 'block-with-destTech', tech: 'destTech' }]
-                                })
-                            }
-                        }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    exepted = [
-                        { name: 'block-with-destTech' }
-                    ];
-
-                return assert(scheme, bemdecl, exepted);
-            });
+            return assert(scheme, bemdecl, exepted);
         });
     });
 });

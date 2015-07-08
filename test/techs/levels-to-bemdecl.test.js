@@ -4,125 +4,123 @@ var vow = require('vow'),
     levelsTech = require('../../techs/levels'),
     levelsToBemdeclTech = require('../../techs/levels-to-bemdecl');
 
-describe('techs', function () {
-    describe('levels-to-bemdecl', function () {
-        afterEach(function () {
-            mockFs.restore();
-        });
+describe('techs: levels-to-bemdecl', function () {
+    afterEach(function () {
+        mockFs.restore();
+    });
 
-        it('must detect block', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            'block.ext': ''
+    it('must detect block', function () {
+        var scheme = {
+                blocks: {
+                    block: {
+                        'block.ext': ''
+                    }
+                }
+            },
+            bemdecl = [{ name: 'block' }];
+
+        return assert(scheme, bemdecl);
+    });
+
+    it('must detect boolean mod of block', function () {
+        var scheme = {
+                blocks: {
+                    block: {
+                        '_bool-mod': {
+                            'block_bool-mod.ext': ''
                         }
                     }
-                },
-                bemdecl = [{ name: 'block' }];
+                }
+            },
+            bemdecl = [
+                { name: 'block' },
+                { name: 'block', mods: [{ name: 'bool-mod', vals: [{ name: true }] }] }
+            ];
 
-            return assert(scheme, bemdecl);
-        });
+        return assert(scheme, bemdecl);
+    });
 
-        it('must detect boolean mod of block', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
+    it('must detect mod of block', function () {
+        var scheme = {
+                blocks: {
+                    block: {
+                        '_mod-name': {
+                            'block_mod-name_mod-val.ext': ''
+                        }
+                    }
+                }
+            },
+            bemdecl = [
+                { name: 'block' },
+                { name: 'block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }
+            ];
+
+        return assert(scheme, bemdecl);
+    });
+
+    it('must detect elem', function () {
+        var scheme = {
+                blocks: {
+                    block: {
+                        '__elem-name': {
+                            'block__elem-name.ext': ''
+                        }
+                    }
+                }
+            },
+            bemdecl = [
+                { name: 'block' },
+                { name: 'block', elems: [{ name: 'elem-name' }] }
+            ];
+
+        return assert(scheme, bemdecl);
+    });
+
+    it('must detect boolean mod of elem', function () {
+        var scheme = {
+                blocks: {
+                    block: {
+                        '__elem-name': {
                             '_bool-mod': {
-                                'block_bool-mod.ext': ''
+                                'block__elem-name_bool-mod.ext': ''
                             }
                         }
                     }
-                },
-                bemdecl = [
-                    { name: 'block' },
-                    { name: 'block', mods: [{ name: 'bool-mod', vals: [{ name: true }] }] }
-                ];
+                }
+            },
+            bemdecl = [
+                { name: 'block' },
+                { name: 'block', elems: [{ name: 'elem-name' }] },
+                { name: 'block', elems: [
+                    { name: 'elem-name', mods: [{ name: 'bool-mod', vals: [{ name: true }] }] }
+                ] }
+            ];
 
-            return assert(scheme, bemdecl);
-        });
+        return assert(scheme, bemdecl);
+    });
 
-        it('must detect mod of block', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
+    it('must detect mod of elem', function () {
+        var scheme = {
+                blocks: {
+                    block: {
+                        '__elem-name': {
                             '_mod-name': {
-                                'block_mod-name_mod-val.ext': ''
+                                'block__elem-name_mod-name_mod-val.ext': ''
                             }
                         }
                     }
-                },
-                bemdecl = [
-                    { name: 'block' },
-                    { name: 'block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }
-                ];
+                }
+            },
+            bemdecl = [
+                { name: 'block' },
+                { name: 'block', elems: [{ name: 'elem-name' }] },
+                { name: 'block', elems: [{
+                    name: 'elem-name',
+                    mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }]
+                }] }
+            ];
 
-            return assert(scheme, bemdecl);
-        });
-
-        it('must detect elem', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            '__elem-name': {
-                                'block__elem-name.ext': ''
-                            }
-                        }
-                    }
-                },
-                bemdecl = [
-                    { name: 'block' },
-                    { name: 'block', elems: [{ name: 'elem-name' }] }
-                ];
-
-            return assert(scheme, bemdecl);
-        });
-
-        it('must detect boolean mod of elem', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            '__elem-name': {
-                                '_bool-mod': {
-                                    'block__elem-name_bool-mod.ext': ''
-                                }
-                            }
-                        }
-                    }
-                },
-                bemdecl = [
-                    { name: 'block' },
-                    { name: 'block', elems: [{ name: 'elem-name' }] },
-                    { name: 'block', elems: [
-                        { name: 'elem-name', mods: [{ name: 'bool-mod', vals: [{ name: true }] }] }
-                    ] }
-                ];
-
-            return assert(scheme, bemdecl);
-        });
-
-        it('must detect mod of elem', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            '__elem-name': {
-                                '_mod-name': {
-                                    'block__elem-name_mod-name_mod-val.ext': ''
-                                }
-                            }
-                        }
-                    }
-                },
-                bemdecl = [
-                    { name: 'block' },
-                    { name: 'block', elems: [{ name: 'elem-name' }] },
-                    { name: 'block', elems: [{
-                        name: 'elem-name',
-                        mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }]
-                    }] }
-                ];
-
-            return assert(scheme, bemdecl);
-        });
+        return assert(scheme, bemdecl);
     });
 });
 
