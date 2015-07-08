@@ -3,14 +3,14 @@ var vow = require('vow'),
     path = require('path'),
     mockFs = require('mock-fs'),
     TestNode = require('mock-enb/lib/mock-node'),
-    levelsTech = require('../../techs/levels'),
+    levelsTech = require('../../../techs/levels'),
     depsTechs = {
-        deps: require('../../techs/deps'),
-        'deps-old': require('../../techs/deps-old')
+        deps: require('../../../techs/deps'),
+        'deps-old': require('../../../techs/deps-old')
     },
-    DepsGraph = require('../../lib/deps/deps-graph'),
+    DepsGraph = require('../../../lib/deps/deps-graph'),
     needGatherDeps = process.env.GATHER_DEPS,
-    snapshot = needGatherDeps ? {} : require('./deps-snapshot'),
+    snapshot = needGatherDeps ? {} : require('./snapshot'),
     EOL = require('os').EOL;
 
 describe('deps vs deps-old: random graphs', function () {
@@ -70,7 +70,7 @@ describe('deps vs deps-old: random graphs', function () {
 
     after(function (done) {
         if (needGatherDeps) {
-            var filename = path.join(__dirname, 'deps-snapshot.json');
+            var filename = path.join(__dirname, 'snapshot.json');
 
             fs.writeFile(filename, JSON.stringify(snapshot, null, 4), done);
         } else {
