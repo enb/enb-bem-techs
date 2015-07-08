@@ -4,121 +4,119 @@ var path = require('path'),
     TestNode = require('mock-enb/lib/mock-node'),
     Tech = require('../../techs/subtract-deps');
 
-describe('techs', function () {
-    describe('subtract-deps', function () {
-        afterEach(function () {
-            mockFs.restore();
+describe('techs: subtract-deps', function () {
+    afterEach(function () {
+        mockFs.restore();
+    });
+
+    it('must provide result from cache', function () {
+        mockFs({
+            bundle: {
+                'bundle.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'other-block' }]) + ';',
+                'bundle-1.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'block-1' }]) + ';',
+                'bundle-2.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'block-1' }]) + ';'
+            }
         });
 
-        it('must provide result from cache', function () {
-            mockFs({
-                bundle: {
-                    'bundle.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'other-block' }]) + ';',
-                    'bundle-1.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'block-1' }]) + ';',
-                    'bundle-2.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'block-1' }]) + ';'
-                }
+        var bundle = new TestNode('bundle'),
+            cache = bundle.getNodeCache('bundle.deps.js');
+
+        cache.cacheFileInfo('deps-file', path.resolve('bundle/bundle.deps.js'));
+        cache.cacheFileInfo('deps-from-file', path.resolve('bundle/bundle-1.deps.js'));
+        cache.cacheFileInfo('deps-what-file', path.resolve('bundle/bundle-2.deps.js'));
+
+        return bundle.runTech(Tech, { from: 'bundle-1.deps.js', what: 'bundle-2.deps.js' })
+            .then(function (target) {
+                target.deps.must.eql([{ block: 'other-block' }]);
             });
+    });
 
-            var bundle = new TestNode('bundle'),
-                cache = bundle.getNodeCache('bundle.deps.js');
-
-            cache.cacheFileInfo('deps-file', path.resolve('bundle/bundle.deps.js'));
-            cache.cacheFileInfo('deps-from-file', path.resolve('bundle/bundle-1.deps.js'));
-            cache.cacheFileInfo('deps-what-file', path.resolve('bundle/bundle-2.deps.js'));
-
-            return bundle.runTech(Tech, { from: 'bundle-1.deps.js', what: 'bundle-2.deps.js' })
-                .then(function (target) {
-                    target.deps.must.eql([{ block: 'other-block' }]);
-                });
+    it('must support deps as array', function () {
+        mockFs({
+            bundle: {}
         });
 
-        it('must support deps as array', function () {
-            mockFs({
-                bundle: {}
+        var bundle = new TestNode('bundle');
+
+        bundle.provideTechData('bundle-1.deps.js', [{ block: 'block' }]);
+        bundle.provideTechData('bundle-2.deps.js', [{ block: 'block' }]);
+
+        return bundle.runTech(Tech, { from: 'bundle-1.deps.js', what: 'bundle-2.deps.js' })
+            .then(function (target) {
+                target.deps.must.eql([]);
             });
+    });
 
-            var bundle = new TestNode('bundle');
+    it('must subtract block from block', function () {
+        var from = [{ block: 'block' }],
+            what = [{ block: 'block' }],
+            expected = [];
 
-            bundle.provideTechData('bundle-1.deps.js', [{ block: 'block' }]);
-            bundle.provideTechData('bundle-2.deps.js', [{ block: 'block' }]);
+        return assert(from, what, expected);
+    });
 
-            return bundle.runTech(Tech, { from: 'bundle-1.deps.js', what: 'bundle-2.deps.js' })
-                .then(function (target) {
-                    target.deps.must.eql([]);
-                });
-        });
+    it('must subtract elem from block', function () {
+        var from = [{ block: 'block' }],
+            what = [{ block: 'block', elem: 'elem' }],
+            expected = [{ block: 'block' }];
 
-        it('must subtract block from block', function () {
-            var from = [{ block: 'block' }],
-                what = [{ block: 'block' }],
-                expected = [];
+        return assert(from, what, expected);
+    });
 
-            return assert(from, what, expected);
-        });
+    it('must subtract mod of block from block', function () {
+        var from = [{ block: 'block' }],
+            what = [{ block: 'block', mod: 'mod-name', val: 'mod-val' }],
+            expected = [{ block: 'block' }];
 
-        it('must subtract elem from block', function () {
-            var from = [{ block: 'block' }],
-                what = [{ block: 'block', elem: 'elem' }],
-                expected = [{ block: 'block' }];
+        return assert(from, what, expected);
+    });
 
-            return assert(from, what, expected);
-        });
+    it('must subtract elem from elem', function () {
+        var from = [{ block: 'block', elem: 'elem' }],
+            what = [{ block: 'block', elem: 'elem' }],
+            expected = [];
 
-        it('must subtract mod of block from block', function () {
-            var from = [{ block: 'block' }],
-                what = [{ block: 'block', mod: 'mod-name', val: 'mod-val' }],
-                expected = [{ block: 'block' }];
+        return assert(from, what, expected);
+    });
 
-            return assert(from, what, expected);
-        });
+    it('must subtract mod of elem from elem', function () {
+        var from = [{ block: 'block', elem: 'elem' }],
+            what = [{ block: 'block', elem: 'elem', mod: 'mod-name', val: 'mod-val' }],
+            expected = [{ block: 'block', elem: 'elem' }];
 
-        it('must subtract elem from elem', function () {
-            var from = [{ block: 'block', elem: 'elem' }],
-                what = [{ block: 'block', elem: 'elem' }],
-                expected = [];
+        return assert(from, what, expected);
+    });
 
-            return assert(from, what, expected);
-        });
+    it('must subtract nonexistent item from set', function () {
+        var from = [{ block: '1' }, { block: '2' }, { block: '3' }],
+            what = [{ block: 'O_o' }],
+            expected = [{ block: '1' }, { block: '2' }, { block: '3' }];
 
-        it('must subtract mod of elem from elem', function () {
-            var from = [{ block: 'block', elem: 'elem' }],
-                what = [{ block: 'block', elem: 'elem', mod: 'mod-name', val: 'mod-val' }],
-                expected = [{ block: 'block', elem: 'elem' }];
+        return assert(from, what, expected);
+    });
 
-            return assert(from, what, expected);
-        });
+    it('must subtract empty set from nonempty set', function () {
+        var from = [{ block: '1' }, { block: '2' }, { block: '3' }],
+            what = [],
+            expected = [{ block: '1' }, { block: '2' }, { block: '3' }];
 
-        it('must subtract nonexistent item from set', function () {
-            var from = [{ block: '1' }, { block: '2' }, { block: '3' }],
-                what = [{ block: 'O_o' }],
-                expected = [{ block: '1' }, { block: '2' }, { block: '3' }];
+        return assert(from, what, expected);
+    });
 
-            return assert(from, what, expected);
-        });
+    it('must subtract set from empty set', function () {
+        var from = [],
+            what = [{ block: '1' }, { block: '2' }, { block: '3' }],
+            expected = [];
 
-        it('must subtract empty set from nonempty set', function () {
-            var from = [{ block: '1' }, { block: '2' }, { block: '3' }],
-                what = [],
-                expected = [{ block: '1' }, { block: '2' }, { block: '3' }];
+        return assert(from, what, expected);
+    });
 
-            return assert(from, what, expected);
-        });
+    it('must subtract disjoint set', function () {
+        var from = [{ block: '1' }, { block: '2' }, { block: '3' }],
+            what = [{ block: '2' }],
+            expected = [{ block: '1' }, { block: '3' }];
 
-        it('must subtract set from empty set', function () {
-            var from = [],
-                what = [{ block: '1' }, { block: '2' }, { block: '3' }],
-                expected = [];
-
-            return assert(from, what, expected);
-        });
-
-        it('must subtract disjoint set', function () {
-            var from = [{ block: '1' }, { block: '2' }, { block: '3' }],
-                what = [{ block: '2' }],
-                expected = [{ block: '1' }, { block: '3' }];
-
-            return assert(from, what, expected);
-        });
+        return assert(from, what, expected);
     });
 });
 

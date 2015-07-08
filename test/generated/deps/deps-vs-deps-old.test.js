@@ -1,68 +1,78 @@
 var vow = require('vow'),
     fs = require('fs'),
+    path = require('path'),
     mockFs = require('mock-fs'),
     TestNode = require('mock-enb/lib/mock-node'),
-    levelsTech = require('../../techs/levels'),
+    levelsTech = require('../../../techs/levels'),
     depsTechs = {
-        deps: require('../../techs/deps'),
-        'deps-old': require('../../techs/deps-old')
+        deps: require('../../../techs/deps'),
+        'deps-old': require('../../../techs/deps-old')
     },
-    DepsGraph = require('../../lib/deps/deps-graph'),
+    DepsGraph = require('../../../lib/deps/deps-graph'),
     needGatherDeps = process.env.GATHER_DEPS,
-    snapshot = needGatherDeps ? {} : require('./deps-snapshot');
+    snapshot = needGatherDeps ? {} : require('./snapshot'),
+    EOL = require('os').EOL;
 
-describe('deps', function () {
+describe('deps vs deps-old: random graphs', function () {
+    before(function () {
+        var message = [
+            'n — max number of nodes',
+            'm — number of mustDeps',
+            's — number of shouldDeps',
+            'l — loops in mustDeps allowed'
+        ].map(function (line) {
+            return '  ' + line;
+        }).join(EOL);
+
+        console.log(EOL + message + EOL);
+    });
+
     afterEach(function () {
         mockFs.restore();
     });
 
-    describe('deps in correct order for random graphs ' +
-        '(n — max number of nodes, m — number of mustDeps, s — number of shouldDeps, l — loops in mustDeps allowed)',
-        function () {
-            [5, 10, 15, 20, 60].forEach(function (nodeNum) {
-                [5, 10, 20, 50, 75, 90].forEach(function (edgeRate) {
-                    [0, 5, 10, 20, 50, 75, 90, 100].forEach(function (mustRate) {
-                        [false, true].forEach(function (allowLoops) {
-                            var edgeNum = Math.floor((nodeNum * (nodeNum - 1) / 2) * edgeRate / 100),
-                                mustEdgeNum = Math.floor(edgeNum * mustRate / 100);
-                            createTestCase(nodeNum, mustEdgeNum, edgeNum - mustEdgeNum, allowLoops);
-                        });
-                    });
+    [5, 10, 15, 20, 60].forEach(function (nodeNum) {
+        [5, 10, 20, 50, 75, 90].forEach(function (edgeRate) {
+            [0, 5, 10, 20, 50, 75, 90, 100].forEach(function (mustRate) {
+                [false, true].forEach(function (allowLoops) {
+                    var edgeNum = Math.floor((nodeNum * (nodeNum - 1) / 2) * edgeRate / 100),
+                        mustEdgeNum = Math.floor(edgeNum * mustRate / 100);
+                    createTestCase(nodeNum, mustEdgeNum, edgeNum - mustEdgeNum, allowLoops);
                 });
             });
+        });
+    });
 
-            var bemdecl = [{ name: 'A' }];
+    var bemdecl = [{ name: 'A' }];
 
-            function createTestCase(nodes, must, should, allowLoops) {
-                var id = ['case', 'n' + nodes, 'm' + must, 's' + should + (allowLoops ? '-l' : '')].join('-');
-                describe('id: ' + id, function () {
-                    var graph;
-                    before(function () {
-                        graph = DepsGraph.random(nodes, must, should, id, allowLoops);
-                    });
+    function createTestCase(nodes, must, should, allowLoops) {
+        var id = ['case', 'n' + nodes, 'm' + must, 's' + should + (allowLoops ? '-l' : '')].join('-');
+        describe(id, function () {
+            var graph;
+            before(function () {
+                graph = DepsGraph.random(nodes, must, should, id, allowLoops);
+            });
 
-                    [
-                        { name: 'deps', opts: {} },
-                        { name: 'deps-old', opts: {} },
-                        { name: 'deps-old', opts: { strict: true } }
-                    ].forEach(function (tech) {
-                        var techKey = tech.name + (tech.opts.strict ? ' strict' : '');
-                        it('tech: ' + techKey, function () {
-                            if (graph) {
-                                return testDepsTechs(techKey, tech.name, tech.opts, graph, allowLoops, bemdecl, id);
-                            }
-                        });
-                    });
+            [
+                { name: 'deps', opts: {} },
+                { name: 'deps-old', opts: {} },
+                { name: 'deps-old', opts: { strict: true } }
+            ].forEach(function (tech) {
+                var techKey = tech.name + (tech.opts.strict ? ' --strict' : '');
+                it(techKey, function () {
+                    if (graph) {
+                        return testDepsTechs(techKey, tech.name, tech.opts, graph, allowLoops, bemdecl, id);
+                    }
                 });
-            }
-        }
-    );
+            });
+        });
+    }
 
     after(function (done) {
         if (needGatherDeps) {
-            fs.writeFile(__dirname + '/deps-snapshot.js',
-                'module.exports = ' + JSON.stringify(snapshot, null, 4) + ';',
-                done);
+            var filename = path.join(__dirname, 'snapshot.json');
+
+            fs.writeFile(filename, JSON.stringify(snapshot, null, 4), done);
         } else {
             done();
         }
