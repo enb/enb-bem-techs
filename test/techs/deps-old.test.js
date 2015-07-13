@@ -921,7 +921,7 @@ describe('techs: deps-old', function () {
         });
 
         describe('short aliases for shouldDeps', function () {
-            it('notation as shouldDeps: (["block name"])', function () {
+            it('should support notation with blocks as array of strings', function () {
                 var scheme = {
                         blocks: {
                             block: {
@@ -938,24 +938,7 @@ describe('techs: deps-old', function () {
                 return assert(scheme, bemdecl, deps);
             });
 
-            it('notation as shouldDeps: ("block name")', function () {
-                var scheme = {
-                        blocks: {
-                            block: {
-                                'block.deps.js': stringifyDepsJs({ shouldDeps: ('other-block') })
-                            }
-                        }
-                    },
-                    bemdecl = [{ name: 'block' }],
-                    deps = [
-                        { block: 'block' },
-                        { block: 'other-block' }
-                    ];
-
-                return assert(scheme, bemdecl, deps);
-            });
-
-            it('notation as shouldDeps: "block name"', function () {
+            it('should support notation with a block as a string', function () {
                 var scheme = {
                         blocks: {
                             block: {
