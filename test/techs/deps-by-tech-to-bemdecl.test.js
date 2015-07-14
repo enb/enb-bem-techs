@@ -422,6 +422,41 @@ describe('techs: deps', function () {
 
             return assert(scheme, bemdecl, exepted);
         });
+
+        it('must skip empty dependency files', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': ''
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [];
+
+            return assert(scheme, bemdecl, exepted);
+        });
+
+        it('must skip dependency files with commented code', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': [
+                                '/*',
+                                stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    shouldDeps: [{ block: 'other-block' }]
+                                }),
+                                '*/'
+                            ].join('')
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [];
+
+            return assert(scheme, bemdecl, exepted);
+        });
     });
 });
 
