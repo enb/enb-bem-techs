@@ -37,7 +37,8 @@ module.exports = function(oldDeps, fn) {
          * @param {Object[]} args
          */
         visit: function(key, args) {
-            var node = getNode(key);
+            var node = getNode(key),
+                nodesToVisit = [];
 
             if (node.refCount > 0) { // node have unvisited dependencies, mark as delayed and exit
                 node.delayed = nextDelayed++;
@@ -45,19 +46,19 @@ module.exports = function(oldDeps, fn) {
                 return;
             }
 
-            var nodesToVisit = [];
             while(true) {  // visit current node and all delayed nodes depending on it
                 nodes[key] = true;
                 fn.apply(oldDeps, args);
                 node.backRefs.forEach(function(key) { // decrement refCoun on all nodes depending on current
                     var node = nodes[key];
-                    if (--node.refCount === 0 && node.delayed) {
+                    node.refCount--;
+                    if (node.refCount === 0 && node.delayed) {
                         nodesToVisit.push(key); // time to visit delayed node
                     }
                 });
                 if (nodesToVisit.length === 0) { break }
-                nodesToVisit.sort(function(a, b) { // sort by descending id
-                    return nodes[b].delayed - nodes[a].delayed;
+                nodesToVisit.sort(function(first, second) { // sort by descending id
+                    return nodes[second].delayed - nodes[first].delayed;
                 });
                 key = nodesToVisit.pop(); // pick node with smallest delayed id
                 node = nodes[key];
@@ -71,14 +72,18 @@ module.exports = function(oldDeps, fn) {
          * @returns {string[][]}
          */
         getLoops: function() {
-            if (loops) { return loops; }
+            if (loops) {
+                return loops;
+            }
+
             loops = [];
             var keys = Object.keys(nodes);
+
             while(true) {
                 keys = keys.filter(function(key) {
                     return nodes[key] !== true;
-                }).sort(function(a, b) { // sort by descending id
-                    return nodes[b].delayed - nodes[a].delayed;
+                }).sort(function(first, second) { // sort by descending id
+                    return nodes[second].delayed - nodes[first].delayed;
                 });
                 if (keys.length === 0) { break; }
                 var earlyKey = keys[keys.length - 1];
@@ -91,7 +96,8 @@ module.exports = function(oldDeps, fn) {
                     loops.push(loop);
                     var loopRefs = nodes[loop[0]].backRefs;
                     loopRefs.splice(loopRefs.indexOf(earlyKey), 1);
-                    if (--nodes[earlyKey].refCount === 0) {
+                    nodes[earlyKey].refCount--;
+                    if (nodes[earlyKey].refCount === 0) {
                         this.visit(earlyKey, nodes[earlyKey].args);
                         break;
                     }

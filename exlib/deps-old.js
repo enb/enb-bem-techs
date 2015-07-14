@@ -147,14 +147,14 @@ module.exports.OldDeps = (function () {
                         var mods = item.mods;
                         if (mods && !Array.isArray(mods)) { // Object
                             var modsArr = [];
-                            for (var m in mods) {
-                                if (!mods.hasOwnProperty(m)) {
+                            for (var modName in mods) {
+                                if (!mods.hasOwnProperty(modName)) {
                                     continue;
                                 }
-                                modsArr.push({ mod: m });
-                                var mod = { mod: m };
-                                var v = mods[m];
-                                Array.isArray(v) ? (mod.vals = v) : (mod.val = v);
+                                modsArr.push({ mod: modName });
+                                var mod = { mod: modName };
+                                var modVals = mods[modName];
+                                Array.isArray(modVals) ? (mod.vals = modVals) : (mod.val = modVals);
                                 modsArr.push(mod);
                             }
                             mods = modsArr;
@@ -272,12 +272,12 @@ module.exports.OldDeps = (function () {
          * @returns {OldDeps}
          */
         subtract: function (deps) {
-            var items1 = this.items;
-            var items2 = deps.items;
+            var fromItems = this.items,
+                itemsToSubstract = deps.items;
 
-            for (var k in items2) {
-                if (k && items2.hasOwnProperty(k)) {
-                    delete items1[k];
+            for (var key in itemsToSubstract) {
+                if (key && itemsToSubstract.hasOwnProperty(key)) {
+                    delete fromItems[key];
                 }
             }
             return this;
@@ -290,13 +290,13 @@ module.exports.OldDeps = (function () {
          * @returns {OldDeps}
          */
         intersect: function (deps) {
-            var items1 = this.items;
-            var items2 = deps.items;
-            var newItems = {};
+            var selfItems = this.items,
+                anotherItems = deps.items,
+                newItems = {};
 
-            for (var k in items2) {
-                if ((items2.hasOwnProperty(k) && items1.hasOwnProperty(k)) || !k) {
-                    newItems[k] = items1[k];
+            for (var key in anotherItems) {
+                if ((anotherItems.hasOwnProperty(key) && selfItems.hasOwnProperty(key)) || !key) {
+                    newItems[key] = selfItems[key];
                 }
             }
 
@@ -311,14 +311,14 @@ module.exports.OldDeps = (function () {
          * @returns {Number}
          */
         getCount: function () {
-            var res = 0;
-            var items = this.items;
+            var count = 0,
+                items = this.items;
 
-            for (var k in items) {
-                items.hasOwnProperty(k) && res++;
+            for (var key in items) {
+                items.hasOwnProperty(key) && count++;
             }
 
-            return res;
+            return count;
         },
 
         /**
@@ -347,43 +347,43 @@ module.exports.OldDeps = (function () {
          * Modified procedure use MustDeps data structure to handle such cases.
          *
          * @param {Function} fn Function accepts `item` and `ctx` arguments
-         * @param {Object.<string,boolean>} uniq Hash for marking visited values
+         * @param {Object.<string,boolean>} visited Hash for marking visited values
          * @param {Array} [itemsByOrder]
          * @param {Object} [ctx]
          */
-        forEach: function (fn, uniq, itemsByOrder, ctx) {
-            uniq || (uniq = {});
+        forEach: function (fn, visited, itemsByOrder, ctx) {
+            visited || (visited = {});
             var _this = this,
                 md = MustDeps(this, fn);
             (itemsByOrder || this.items[''].shouldDeps).forEach(function (key) {
-                _this._iterateItem(md, uniq, key, ctx || _this.items[key]);
+                _this._iterateItem(md, visited, key, ctx || _this.items[key]);
             });
             this._mustDepsLoops = md.getLoops();
         },
 
         /**
-         * @param {MustDeps} md First item in series of mustDeps calls, undefined if item is in shouldDeps
-         * @param {Object.<string,boolean>} uniq Hash for marking visited values
+         * @param {MustDeps} mustDeps First item in series of mustDeps calls, undefined if item is in shouldDeps
+         * @param {Object.<string,boolean>} visited Hash for marking visited values
          * @param {string} key Current item key
          * @param {Object} ctx
          */
-        _iterateItem: function (md, uniq, key, ctx) {
-            if (uniq[key]) { return }
-            uniq[key] = true;
+        _iterateItem: function (mustDeps, visited, key, ctx) {
+            if (visited[key]) { return }
+            visited[key] = true;
 
             var _this = this,
                 item = this.items[key];
 
             item.mustDeps.forEach(function (childKey) { // iterate mustDeps
                 if (childKey === key) { return } // skip if item depends on itself
-                md.addDep(key, childKey);
-                _this._iterateItem(md, uniq, childKey, ctx);
+                mustDeps.addDep(key, childKey);
+                _this._iterateItem(mustDeps, visited, childKey, ctx);
             });
 
-            md.visit(key, [item, ctx]);
+            mustDeps.visit(key, [item, ctx]);
 
             item.shouldDeps.forEach(function (childKey) { // iterate shouldDeps
-                _this._iterateItem(md, uniq, childKey, ctx);
+                _this._iterateItem(mustDeps, visited, childKey, ctx);
             });
         },
 
@@ -394,11 +394,11 @@ module.exports.OldDeps = (function () {
          * @returns {Array}
          */
         map: function (fn) {
-            var res = [];
+            var mapped = [];
             this.forEach(function (item) {
-                res.push(fn.call(this, item));
+                mapped.push(fn.call(this, item));
             });
-            return res;
+            return mapped;
         },
 
         /**
@@ -407,13 +407,13 @@ module.exports.OldDeps = (function () {
          * @returns {Array}
          */
         filter: function (fn) {
-            var res = [];
+            var filtered = [];
             this.forEach(function (item) {
                 if (fn.call(this, item)) {
-                    res.push(item);
+                    filtered.push(item);
                 }
             });
-            return res;
+            return filtered;
         },
 
         /**
@@ -424,12 +424,12 @@ module.exports.OldDeps = (function () {
         serialize: function () {
             var byTech = {};
             this.forEach(function (item, ctx) {
-                var t1 = ctx.item.tech || '';
-                var t2 = item.item.tech || '';
-                var techsByTech = byTech[t1] || (byTech[t1] = {});
-                var i = item.serialize();
-                if (i) {
-                    (techsByTech[t2] || (techsByTech[t2] = [])).push(i);
+                var contextTech = ctx.item.tech || '';
+                var itemTech = item.item.tech || '';
+                var techsByTech = byTech[contextTech] || (byTech[contextTech] = {});
+                var serializedItem = item.serialize();
+                if (serializedItem) {
+                    (techsByTech[itemTech] || (techsByTech[itemTech] = [])).push(serializedItem);
                 }
             });
             return byTech;
@@ -441,19 +441,19 @@ module.exports.OldDeps = (function () {
          * @returns {String}
          */
         stringify: function () {
-            var res = [];
+            var result = [];
             var deps = this.serialize();
 
             if (deps['']) {
-                res.push('exports.deps = ' + JSON.stringify(deps[''][''], null, 4) + ';\n');
+                result.push('exports.deps = ' + JSON.stringify(deps[''][''], null, 4) + ';\n');
                 delete deps[''][''];
             } else {
-                res.push('exports.deps = [];\n');
+                result.push('exports.deps = [];\n');
             }
 
-            isEmptyObject(deps) || res.push('exports.depsByTechs = ' + JSON.stringify(deps, null, 4) + ';\n');
+            isEmptyObject(deps) || result.push('exports.depsByTechs = ' + JSON.stringify(deps, null, 4) + ';\n');
 
-            return res.join('');
+            return result.join('');
         },
 
         /**
@@ -515,14 +515,14 @@ module.exports.OldDeps = (function () {
          */
         extendByCtx: function (ctx) {
             if (ctx && (ctx = ctx.item)) {
-                var ks = ['tech', 'block', 'elem', 'mod', 'val'];
-                var k;
+                var keys = ['tech', 'block', 'elem', 'mod', 'val'];
+                var key;
 
-                while (k = ks.shift()) {
-                    if (this.item[k]) {
+                while (key = keys.shift()) {
+                    if (this.item[key]) {
                         break;
                     } else {
-                        ctx[k] && (this.item[k] = ctx[k]);
+                        ctx[key] && (this.item[key] = ctx[key]);
                     }
                 }
             }
@@ -535,11 +535,11 @@ module.exports.OldDeps = (function () {
          * @returns {OldDepsItem}
          */
         clone: function () {
-            var res = new this.__self({}, this);
-            res.shouldDeps = this.shouldDeps.concat();
-            res.mustDeps = this.mustDeps.concat();
-            this.hasOwnProperty('key') && (res.key = this.key);
-            return res;
+            var result = new this.__self({}, this);
+            result.shouldDeps = this.shouldDeps.concat();
+            result.mustDeps = this.mustDeps.concat();
+            this.hasOwnProperty('key') && (result.key = this.key);
+            return result;
         },
 
         /**
@@ -552,19 +552,20 @@ module.exports.OldDeps = (function () {
             if (!item) {
                 return this;
             }
-            var ds = ['mustDeps', 'shouldDeps'];
-            var d;
-            var thisDeps;
-            var itemDeps;
-            while (d = ds.shift()) {
-                itemDeps = item[d] || (item[d] = {});
-                if (thisDeps = this.item[d]) {
-                    for (var k in thisDeps) {
-                        if (thisDeps.hasOwnProperty(k)) {
-                            if (!thisDeps[k].extend) {
-                                throw 'bla'; // FIXME: WTF?
+            var depsTypes = ['mustDeps', 'shouldDeps'],
+                depsType,
+                thisDeps,
+                itemDeps;
+
+            while (depsType = depsTypes.shift()) {
+                itemDeps = item[depsType] || (item[depsType] = {});
+                if (thisDeps = this.item[depsType]) {
+                    for (var dependency in thisDeps) {
+                        if (thisDeps.hasOwnProperty(dependency)) {
+                            if (!thisDeps[dependency].extend) {
+                                throw new Error('Failed to extend ' + depsType + ' for ' + dependency); //maybe wrong
                             }
-                            (itemDeps[k] = thisDeps[k].extend(itemDeps[k]));
+                            (itemDeps[dependency] = thisDeps[dependency].extend(itemDeps[dependency]));
                         }
                     }
                 }
@@ -593,21 +594,21 @@ module.exports.OldDeps = (function () {
                 return this.key;
             }
 
-            var i = this.item;
-            var k = '';
+            var item = this.item;
+            var key = '';
 
-            if (i.block) {
-                k += i.block;
-                i.elem && (k += '__' + i.elem);
-                if (i.mod) {
-                    k += '_' + i.mod;
-                    i.val && (k += '_' + i.val);
+            if (item.block) {
+                key += item.block;
+                item.elem && (key += '__' + item.elem);
+                if (item.mod) {
+                    key += '_' + item.mod;
+                    item.val && (key += '_' + item.val);
                 }
             }
-            if (i.tech) {
-                k += '.' + i.tech;
+            if (item.tech) {
+                key += '.' + item.tech;
             }
-            return this.key = k;
+            return this.key = key;
         },
 
         /**
@@ -616,17 +617,17 @@ module.exports.OldDeps = (function () {
          * @returns {Object}
          */
         serialize: function () {
-            var res = {};
-            var ks = ['tech', 'block', 'elem', 'mod', 'val'];
-            var k;
+            var result = {};
+            var keys = ['tech', 'block', 'elem', 'mod', 'val'];
+            var key;
 
-            while (k = ks.shift()) {
-                if (this.item[k]) {
-                    res[k] = this.item[k];
+            while (key = keys.shift()) {
+                if (this.item[key]) {
+                    result[key] = this.item[key];
                 }
             }
-            if (res.block) {
-                return res;
+            if (result.block) {
+                return result;
             }
         }
 
@@ -640,8 +641,8 @@ module.exports.OldDeps = (function () {
      * @returns {Boolean}
      */
     function isSimple(value) {
-        var t = typeof value;
-        return t === 'string' || t === 'number';
+        var type = typeof value;
+        return type === 'string' || type === 'number';
     }
 
     /**
