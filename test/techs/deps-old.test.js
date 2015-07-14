@@ -920,6 +920,38 @@ describe('techs: deps-old', function () {
             return assert(scheme, bemdecl, deps);
         });
 
+        it('must skip empty dependency files', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': ''
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                deps = [
+                    { block: 'block' }
+                ];
+
+            return assert(scheme, bemdecl, deps);
+        });
+
+        it('must skip dependency files with commented code', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': '/*' + stringifyDepsJs({ shouldDeps: [{ block: 'other-block' }] }) + '*/'
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                deps = [
+                    { block: 'block' }
+                ];
+
+            return assert(scheme, bemdecl, deps);
+        });
+
         describe('short aliases for shouldDeps', function () {
             it('should support notation with blocks as array of strings', function () {
                 var scheme = {
