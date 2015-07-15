@@ -562,9 +562,6 @@ module.exports.OldDeps = (function () {
                 if (thisDeps = this.item[depsType]) {
                     for (var dependency in thisDeps) {
                         if (thisDeps.hasOwnProperty(dependency)) {
-                            if (!thisDeps[dependency].extend) {
-                                throw new Error('Failed to extend ' + depsType + ' for ' + dependency); //maybe wrong
-                            }
                             (itemDeps[dependency] = thisDeps[dependency].extend(itemDeps[dependency]));
                         }
                     }
