@@ -1,52 +1,3 @@
-/**
- * levels
- * ======
- *
- * Собирает информацию об уровнях переопределения проекта. Результат выполнения этой технологии необходим
- * следующим технологиям:
- *
- *  * `levelsToBemdecl`
- *  * `deps`
- *  * `depsOld`
- *  * `files`
- *
- * Опции:
- *
- * `target`
- *
- * Тип: `String`. По умолчанию: `?.levels`.
- * Результирующий таргет.
- *
- * `levels`
- *
- * Тип: `String[] | Object[]`.
- * Список путей до уровней переопределения.
- *
- * Каждый путь может быть задан абсолютным или относительно корня проекта.
- *
- * Вместо строки может использоваться объект вида `{ path: 'path/to/level', check: false }`.
- * Поле `path` является обязательным, а поле `check` по умолчанию равно `true`.
- *
- * Значение `check: false` используется для того, чтобы закэшировать содержимое уровня.
- *
- * Если указать `check: true` уровень будет сканироваться заново каждый раз при сборке, вне зависимости от наличия кэша.
- *
- * Пример:
- *
- * ```js
- * var techs = require('enb-bem-techs');
- *
- * nodeConfig.addTech([techs.levels, { levels: [
- *     // На проекте не нужно менять код внешних библиотек,
- *     // достаточно один раз просканировать их уровни и использовать кэш.
- *     { path: 'libs/bem-core/common.blocks', check: false },
- *     { path: 'libs/bem-core/desktop.blocks', check: false },
- *
- *     // Уровни проекта нужно сканировать перед каждой сборкой.
- *     { path: 'desktop.blocks', check: true },
- * ] }]);
- * ```
- */
 var path = require('path'),
     inherit = require('inherit'),
     vow = require('vow'),
@@ -54,6 +5,39 @@ var path = require('path'),
     Level = require('../lib/levels/level'),
     Levels = require('../lib/levels/levels');
 
+/**
+ * @class LevelsTech
+ * @augments {BaseTech}
+ * @see {@link Levels}
+ * @classdesc
+ *
+ * Scans project levels.
+ *
+ * Result result of this technology is needed for following technologies: {@link LevelsToBemdeclTech}, {@link DepsTech},
+ * {@link DepsOldTech}, {@link FilesTech}.
+ *
+ * @param {Object}              options                      Options.
+ * @param {String}              [options.target='?.levels']  Path to result target with {@link Levels}.
+ * @param {String[] | Object[]} options.levels               Paths of levels to scan. Instead path you can specified
+ *                                                           `{ path: 'path/to/level', check: true }`.
+ * @example
+ * var FileProvideTech = require('enb/techs/file-provider'),
+ *     bem = require('enb-bem-techs');
+ *
+ * module.exports = function(config) {
+ *     node.addTech([bem.levels, {
+ *         levels: [
+ *             // In project no need to change source code of libs.
+ *             // It is possible to scan libs levels one time and take result from cache.
+ *             { path: 'libs/bem-core/common.blocks', check: false },
+ *             { path: 'libs/bem-core/desktop.blocks', check: false },
+ *
+ *             // Project levels need scan for each build.
+ *             { path: 'desktop.blocks', check: true }
+ *         ]
+ *     }]);
+ * };
+ */
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
         return 'levels';

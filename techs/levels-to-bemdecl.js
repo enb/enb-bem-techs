@@ -1,43 +1,35 @@
-/**
- * levels-to-bemdecl
- * =================
- *
- * Формирует BEMDECL-файл, состоящий из всех БЭМ-сущностей, найденных в указанных уровнях.
- *
- * Опции:
- *
- * `target`
- *
- * Тип: `String`. По умолчанию: `?.bemdecl.js`.
- * Результирующий BEMDECL-файл.
- *
- * `source`
- *
- * Тип: `String`. По умолчанию: `?.levels`.
- * Таргет с интроспекцией уровней (результат сканирования `levels` технологией).
- *
- * Пример:
- *
- * ```js
- * var techs = require('enb-bem-techs');
- *
- * nodeConfig.addTechs([
- *     // Сканируем уровни проекта.
- *     // Результат записываем в `?.levels`, т.к. опция `target` по умолчанию — `?.levels`.
- *     [techs.levels, { levels: ['blocks'] }],
- *
- *     // Строим BEMDECL-файл по результатам сканирования уровней.
- *     // Интроспекцию берём из `?.levels`, т.к. опция `source` по умолчанию — `?.levels`.
- *     [techs.levelsToBemdecl]
- * ]);
- * ```
- */
 var inherit = require('inherit'),
     vfs = require('enb/lib/fs/async-fs'),
     deps = require('../lib/deps/deps'),
     asyncRequire = require('enb/lib/fs/async-require'),
     dropRequireCache = require('enb/lib/fs/drop-require-cache');
 
+/**
+ * @class LevelsToBemdeclTech
+ * @augments {BaseTech}
+ * @see {@link Levels}
+ * @classdesc
+ *
+ * Builds BEMDECL file with BEM entities from specified levels.
+ *
+ * @param {Object}  [options]                         Options.
+ * @param {String}  [options.target='?.bemdecl.js']   Path to result BEMDECL file.
+ * @param {String}  [options.source='?.levels']       Path to target with {@link Levels}.
+ *
+ * @example
+ * var bem = require('enb-bem-techs');
+ *
+ * module.exports = function(config) {
+ *     config.node('bundle', function(node) {
+ *         // scan levels
+ *         node.addTech([bem.levels, { levels: ['blocks'] }]);
+ *
+ *         // build BEMDECL file
+ *         node.addTech(bem.levelsToBemdecl);
+ *         node.addTarget('?.bemdecl.js');
+ *     });
+ * };
+ */
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
         return 'levels-to-bemdecl';

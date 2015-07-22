@@ -1,65 +1,3 @@
-/**
- * files
- * =====
- *
- * Собирает список исходных файлов и директорий для сборки на основе декларации БЭМ-сущностей,
- * а также результате сканирования уровней `levels` технологией.
- *
- * Предоставляет `?.files` и `?.dirs` таргеты.
- *
- * Используется большинством технологиями в ENB (кроме базовых).
- *
- * Опции:
- *
- * `filesTarget`
- *
- * Тип: `String`. По умолчанию: `?.files`.
- * Результирующий `files`-таргет.
- *
- * `dirsTarget`
- *
- * Тип: `String`. По умолчанию: `?.dirs`.
- * Результирующий `dirs`-таргет.
- *
- * `depsFile`
- *
- * Тип: `String`. По умолчанию: `?.deps.js`.
- * Исходная декларация БЭМ-сущностей.
- *
- * `levelsTarget`
- *
- * Тип: `String`. По умолчанию: `?.levels`.
- * Таргет с интроспекцией уровней (результат сканирования `levels` технологией).
- *
- * Пример:
- *
- * Формирование списка файлов и директорий по BEMDECL-файлу.
- *
- * ```js
- * var techs = require('enb-bem-techs'),
- * provide = require('enb/techs/file-provider');
- *
- * nodeConfig.addTechs([
- *     [techs.levels, { levels: ['blocks'] }],
- *     [provide, { target: '?.bemdecl.js' }]
- *     [techs.files, { depsFile: '?.bemdecl.js' }]
- * ]);
- * ```
- *
- * Формирование списка файлов и директорий по DEPS-файлу.
- *
- * ```js
- * var techs = require('enb-bem-techs'),
- * provide = require('enb/techs/file-provider');
- *
- * nodeConfig.addTechs([
- *     [techs.levels, { levels: ['blocks'] }],
- *     [provide, { target: '?.bemdecl.js' }],
- *     [techs.deps],
- *     [techs.files]
- * ]);
- * ```
- */
 var inherit = require('inherit'),
     vow = require('vow'),
     deps = require('../lib/deps/deps'),
@@ -67,6 +5,48 @@ var inherit = require('inherit'),
     dropRequireCache = require('enb/lib/fs/drop-require-cache'),
     FileList = require('enb/lib/file-list');
 
+/**
+ * @class FilesTech
+ * @augments {BaseTech}
+ * @see {@link FileList}
+ * @classdesc
+ *
+ * Builds list of files and list of directories. Uses declaration of BEM entities and {@link Levels}.
+ *
+ * Used by the most of other technologies except for base technologies.
+ *
+ * Important: provides result in two targets: `?.files` and `?.dirs`.
+ *
+ * @param {Object}  [options]                         Options.
+ * @param {String}  [options.filesTarget='?.files']   Path to built target with files list ({@link FileList}).
+ * @param {String}  [options.dirsTarget='?.dirs']     Path to built target with dirs list ({@link FileList}).
+ * @param {String}  [options.levelsTarget=?.levels]   Path to target with {@link Levels}.
+ * @param {String}  [options.depsFile=?.deps.js]      Path to file with declaration of BEM entities.
+ *
+ * @example
+ * var FileProvideTech = require('enb/techs/file-provider'),
+ *     bem = require('enb-bem-techs');
+ *
+ * module.exports = function(config) {
+ *     config.node('bundle', function(node) {
+ *         // scan levels
+ *         node.addTech([bem.levels, { levels: ['blocks'] }]);
+ *
+ *         // build DEPS file
+ *         node.addTechs([
+ *              [FileProvideTech, { target: '?.bemdecl.js' }],
+ *              bem.deps
+ *         ]);
+ *
+ *         // build lists of files and dirs
+ *         node.addTech([techs.files, {
+ *             filesTarget: '?.files',
+ *             dirsTarget: '?.dirs'
+ *         }]);
+ *         node.addTargets(['?.files', '?.dirs']);
+ *     });
+ * };
+ */
 module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
     getName: function () {
         return 'files';
@@ -82,9 +62,9 @@ module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
         this._depsFile = this.getOption('depsTarget');
         if (this._depsFile) {
             logger.logOptionIsDeprecated(this._filesTarget, 'enb-bem', this.getName(),
-                'depsTarget', 'depsFile', ' It will be removed from this package in v3.0.0.');
+                'depsTarget', 'depsFile', ' It will be removed in v3.0.0.');
             logger.logOptionIsDeprecated(this._dirsTarget, 'enb-bem', this.getName(),
-                'depsTarget', 'depsFile', ' It will be removed from this package in v3.0.0.');
+                'depsTarget', 'depsFile', ' It will be removed in v3.0.0.');
         } else {
             this._depsFile = this.getOption('depsFile', '?.deps.js');
         }

@@ -1,38 +1,3 @@
-/**
- * subtract-deps
- * =============
- *
- * Формирует DEPS-файл, вычитая один DEPS-файл из другого.
- *
- * Опции:
- *
- * `target`
- *
- * Тип: `String`. По умолчанию: `?.deps.js`.
- * Результирующий DEPS-файл.
- *
- * `from`
- *
- * Тип: `String`. Обязательная опция.
- * DEPS-файл, из которого вычитают.
- *
- * `what`
- *
- * Тип: `String`. Обязательная опция.
- * DEPS-файл, который вычитают.
- *
- * Пример:
- *
- * ```js
- * var techs = require('enb-bem-techs');
- *
- * nodeConfig.addTech([techs.subtractDeps, {
- *     from: 'bundle-1.deps.js',
- *     what: 'bundle-2.deps.js',
- *     target: 'bundle.deps.js'
- * } ]);
- * ```
- */
 var inherit = require('inherit'),
     vow = require('vow'),
     vfs = require('enb/lib/fs/async-fs'),
@@ -40,6 +5,44 @@ var inherit = require('inherit'),
     dropRequireCache = require('enb/lib/fs/drop-require-cache'),
     deps = require('../lib/deps/deps');
 
+/**
+ * @class SubtractDepsTech
+ * @augments {BaseTech}
+ * @classdesc
+ *
+ * Builds DEPS file subtracting one file from another.
+ *
+ * @param {Object}  options                         Options.
+ * @param {String}  options.from                    Path to DEPS file from which is subtracted.
+ * @param {String}  options.what                    Path to DEPS file that is subtracted.
+ * @param {String}  [options.target=?.deps.js]      Path to result DEPS file.
+ *
+ * @example
+ * // Nodes in file system before build:
+ * //
+ * // bundle/
+ * // ├── bundle-1.deps.js
+ * // └── bundle-2.deps.js
+ * //
+ * // After build:
+ * // bundle/
+ * // ├── bundle-1.deps.js
+ * // ├── bundle-2.deps.js
+ * // └── bundle.deps.js
+ *
+ * var bem = require('enb-bem-techs');
+ *
+ * module.exports = function(config) {
+ *     config.node('bundle', function(node) {
+ *         node.addTech([bem.subtractDeps, {
+ *             from: 'bundle-1.deps.js',
+ *             what: 'bundle-2.deps.js',
+ *             target: 'bundle.deps.js'
+ *         }]);
+ *         node.addTarget('bundle.deps.js');
+ *     });
+ * };
+ */
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
         return 'subtract-deps';
@@ -52,7 +55,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._target = this.getOption('depsTarget');
         if (this._target) {
             logger.logOptionIsDeprecated(node.unmaskTargetName(this._target), 'enb-bem', this.getName(),
-                'depsTarget', 'target', ' It will be removed from this package in v3.0.0.');
+                'depsTarget', 'target', ' It will be removed in v3.0.0.');
         } else {
             this._target = this.getOption('target', '?.deps.js');
         }
@@ -61,7 +64,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._fromTarget = this.getOption('subtractFromTarget');
         if (this._fromTarget) {
             logger.logOptionIsDeprecated(this._target, 'enb-bem-techs', this.getName(),
-                'subtractFromTarget', 'from', ' It will be removed from this package in v3.0.0.');
+                'subtractFromTarget', 'from', ' It will be removed in v3.0.0.');
         } else {
             this._fromTarget = this.getRequiredOption('from');
         }
@@ -70,7 +73,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._whatTarget = this.getOption('subtractWhatTarget');
         if (this._whatTarget) {
             logger.logOptionIsDeprecated(this._target, 'enb-bem-techs', this.getName(),
-                'subtractWhatTarget', 'what', ' It will be removed from this package in v3.0.0.');
+                'subtractWhatTarget', 'what', ' It will be removed in v3.0.0.');
         } else {
             this._whatTarget = this.getRequiredOption('what');
         }
