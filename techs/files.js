@@ -81,8 +81,10 @@ module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
 
         this._depsFile = this.getOption('depsTarget');
         if (this._depsFile) {
-            logger.logOptionIsDeprecated(this._filesTarget, 'enb-bem', this.getName(), 'depsTarget', 'depsFile');
-            logger.logOptionIsDeprecated(this._dirsTarget, 'enb-bem', this.getName(), 'depsTarget', 'depsFile');
+            logger.logOptionIsDeprecated(this._filesTarget, 'enb-bem', this.getName(),
+                'depsTarget', 'depsFile', ' It will be removed from this package in v3.0.0.');
+            logger.logOptionIsDeprecated(this._dirsTarget, 'enb-bem', this.getName(),
+                'depsTarget', 'depsFile', ' It will be removed from this package in v3.0.0.');
         } else {
             this._depsFile = this.getOption('depsFile', '?.deps.js');
         }

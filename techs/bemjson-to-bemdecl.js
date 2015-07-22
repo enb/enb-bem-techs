@@ -51,7 +51,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._target = this.getOption('destTarget');
         if (this._target) {
             logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem-techs', this.getName(),
-                'destTarget', 'target');
+                'destTarget', 'target', ' It will be removed from this package in v3.0.0.');
         } else {
             this._target = this.getOption('target', '?.bemdecl.js');
         }
@@ -59,7 +59,8 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
         this._sourceTarget = this.getOption('sourceTarget');
         if (this._sourceTarget) {
-            logger.logOptionIsDeprecated(this._target, 'enb-bem-techs', this.getName(), 'sourceTarget', 'source');
+            logger.logOptionIsDeprecated(this._target, 'enb-bem-techs', this.getName(),
+                'sourceTarget', 'source', ' It will be removed from this package in v3.0.0.');
         } else {
             this._sourceTarget = this.getOption('source', '?.bemjson.js');
         }

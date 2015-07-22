@@ -60,7 +60,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._target = this.getOption('depsTarget');
         if (this._target) {
             logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem', this.getName(),
-                'depsTarget', 'target');
+                'depsTarget', 'target', ' It will be removed from this package in v3.0.0.');
         } else {
             this._target = this.getOption('target', this.node.getTargetName('deps.js'));
         }
@@ -68,7 +68,8 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
         this._sources = this.getOption('depsSources');
         if (this._sources) {
-            logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(), 'depsSources', 'sources');
+            logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(),
+                'depsSources', 'sources', ' It will be removed from this package in v3.0.0.');
         } else {
             this._sources = this.getRequiredOption('sources');
         }

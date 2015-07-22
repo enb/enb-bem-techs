@@ -14,8 +14,8 @@ module.exports = inherit(require('./deps-by-tech-to-bemdecl'), {
     build: function () {
         var logger = this.node.getLogger();
 
-        logger.logTechIsDeprecated(this._target, this.getName(),
-            'enb-bem-techs', 'deps-by-tech-to-bemdecl', 'enb-bem-techs');
+        logger.logTechIsDeprecated(this._target, this.getName(), 'enb-bem-techs',
+            'deps-by-tech-to-bemdecl', 'enb-bem-techs', ' It will be removed from this package in v3.0.0.');
         this.__base();
     }
 });

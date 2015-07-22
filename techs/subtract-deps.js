@@ -52,7 +52,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._target = this.getOption('depsTarget');
         if (this._target) {
             logger.logOptionIsDeprecated(node.unmaskTargetName(this._target), 'enb-bem', this.getName(),
-                'depsTarget', 'target');
+                'depsTarget', 'target', ' It will be removed from this package in v3.0.0.');
         } else {
             this._target = this.getOption('target', '?.deps.js');
         }
@@ -60,7 +60,8 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
         this._fromTarget = this.getOption('subtractFromTarget');
         if (this._fromTarget) {
-            logger.logOptionIsDeprecated(this._target, 'enb-bem-techs', this.getName(), 'subtractFromTarget', 'from');
+            logger.logOptionIsDeprecated(this._target, 'enb-bem-techs', this.getName(),
+                'subtractFromTarget', 'from', ' It will be removed from this package in v3.0.0.');
         } else {
             this._fromTarget = this.getRequiredOption('from');
         }
@@ -68,7 +69,8 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
         this._whatTarget = this.getOption('subtractWhatTarget');
         if (this._whatTarget) {
-            logger.logOptionIsDeprecated(this._target, 'enb-bem-techs', this.getName(), 'subtractWhatTarget', 'what');
+            logger.logOptionIsDeprecated(this._target, 'enb-bem-techs', this.getName(),
+                'subtractWhatTarget', 'what', ' It will be removed from this package in v3.0.0.');
         } else {
             this._whatTarget = this.getRequiredOption('what');
         }
