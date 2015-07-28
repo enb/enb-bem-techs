@@ -12,7 +12,7 @@ var inherit = require('inherit'),
  *
  * Merges BEMDECL files in one.
  *
- * It may be necessary for build of merged bundle.
+ * It could be necessary to build the merged bundle.
  *
  * @param {Object}    options                          Options.
  * @param {String[]}  options.sources                  Paths to BEMDECL files for merge.

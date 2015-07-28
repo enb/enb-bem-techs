@@ -13,7 +13,7 @@ var path = require('path'),
  *
  * Scans project levels.
  *
- * Result result of this technology is needed for following technologies: {@link LevelsToBemdeclTech}, {@link DepsTech},
+ * The following technologies use the result of this technology: {@link LevelsToBemdeclTech}, {@link DepsTech},
  * {@link DepsOldTech}, {@link FilesTech}.
  *
  * @param {Object}              options                      Options.
@@ -27,7 +27,7 @@ var path = require('path'),
  * module.exports = function(config) {
  *     node.addTech([bem.levels, {
  *         levels: [
- *             // In project no need to change source code of libs.
+ *             // In project you don't needto change source code of libs.
  *             // It is possible to scan libs levels one time and take result from cache.
  *             { path: 'libs/bem-core/common.blocks', check: false },
  *             { path: 'libs/bem-core/desktop.blocks', check: false },

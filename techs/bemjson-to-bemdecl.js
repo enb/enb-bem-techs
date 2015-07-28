@@ -13,8 +13,8 @@ var inherit = require('inherit'),
  * Builds BEMDECL file from BEMJSON file.
  *
  * @param {Object}  [options]                          Options.
- * @param {String}  [options.target='?.bemdecl.js']    Path to built BEMDECL file.
- * @param {String}  [options.source='?.bemjson.js']    Path to BEMJSON file.
+ * @param {String}  [options.target='?.bemdecl.js']    Path to a built BEMDECL file.
+ * @param {String}  [options.source='?.bemjson.js']    Path to a BEMJSON file.
  *
  * @example
  * var FileProvideTech = require('enb/techs/file-provider'),

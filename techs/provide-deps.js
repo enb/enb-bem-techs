@@ -11,7 +11,7 @@ var inherit = require('inherit'),
  *
  * Copies DEPS file in current node with specified name from specified node.
  *
- * It may be necessary to merge DEPS files from different nodes.
+ * It could be necessary to merge DEPS files from different nodes.
  *
  * @param {Object}  options                         Options.
  * @param {String}  options.node                    Path to node with DEPS file.

@@ -12,7 +12,7 @@ var inherit = require('inherit'),
  *
  * Merges DEPS files and BEMDECL files in one.
  *
- * It may be necessary for build of merged bundle.
+ * It could be necessary to build the merged bundle.
  *
  * @param {Object}    options                          Options.
  * @param {String[]}  options.sources                  Paths to DEPS or BEMDECL files for merge.
