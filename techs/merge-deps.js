@@ -1,46 +1,3 @@
-/**
- * merge-deps
- * ==========
- *
- * Объединяет DEPS-файлы и BEMDECL-файлы в результирующий DEPS-файл.
- *
- * Может понадобиться для формирования `merged`-бандла.
- *
- * Опции:
- *
- * `target`
- *
- * Тип: `String`. По умолчанию: `?.deps.js`.
- * Результирующий DEPS-файл.
- *
- * `sources`
- *
- * Тип: `String[]`. Обязательная опция.
- * Исходные DEPS-файлы. Обязательная опция.
- *
- * Пример:
- *
- * Ноды в файловой системе до сборки:
- *
- * merged-bundle/
- * ├── bundle-1.deps.js
- * └── bundle-2.deps.js
- *
- * Что должно получиться после сборки:
- *
- * merged-bundle/
- * ├── bundle-1.deps.js
- * ├── bundle-2.deps.js
- * └── merged-bundle.deps.js
- *
- * ```js
- * var techs = require('enb-bem-techs');
- * nodeConfig.addTech([techs.mergeDeps, {
- *     sources: ['bundle-1.deps.js', 'bundle-2.deps.js'],
- *     target: 'merged-bundle.deps.js'
- * }]);
- * ```
- */
 var inherit = require('inherit'),
     vow = require('vow'),
     vfs = require('enb/lib/fs/async-fs'),
@@ -48,6 +5,43 @@ var inherit = require('inherit'),
     dropRequireCache = require('enb/lib/fs/drop-require-cache'),
     deps = require('../lib/deps/deps');
 
+/**
+ * @class MergeDepsTech
+ * @augments {BaseTech}
+ * @classdesc
+ *
+ * Merges DEPS files and BEMDECL files in one.
+ *
+ * It could be necessary to build the merged bundle.
+ *
+ * @param {Object}    options                          Options.
+ * @param {String[]}  options.sources                  Paths to DEPS or BEMDECL files for merge.
+ * @param {String}    [options.target='?.bemdecl.js']  Path to merged DEPS file.
+ *
+ * @example
+ * // Nodes in file system before build:
+ * // merged-bundle/
+ * // ├── bundle-1.deps.js
+ * // └── bundle-2.deps.js
+ * //
+ * // After build:
+ * // merged-bundle/
+ * // ├── bundle-1.deps.js
+ * // ├── bundle-2.deps.js
+ * // └── merged-bundle.deps.js
+ *
+ * var bem = require('enb-bem-techs');
+ *
+ * module.exports = function(config) {
+ *     config.node('merged-bundle', function(node) {
+ *         node.addTech([bem.mergeDeps, {
+ *             sources: ['bundle-1.deps.js', 'bundle-2.deps.js'],
+ *             target: 'merged-bundle.deps.js'
+ *         }]);
+ *         node.addTarget('merged-bundle.deps.js');
+ *     });
+ * };
+ */
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
         return 'merge-deps';
@@ -60,7 +54,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._target = this.getOption('depsTarget');
         if (this._target) {
             logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem', this.getName(),
-                'depsTarget', 'target', ' It will be removed from this package in v3.0.0.');
+                'depsTarget', 'target', ' It will be removed in v3.0.0.');
         } else {
             this._target = this.getOption('target', this.node.getTargetName('deps.js'));
         }
@@ -69,7 +63,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._sources = this.getOption('depsSources');
         if (this._sources) {
             logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(),
-                'depsSources', 'sources', ' It will be removed from this package in v3.0.0.');
+                'depsSources', 'sources', ' It will be removed in v3.0.0.');
         } else {
             this._sources = this.getRequiredOption('sources');
         }

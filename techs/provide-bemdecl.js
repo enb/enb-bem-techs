@@ -1,75 +1,69 @@
-/**
- * provide-bemdecl
- * ===============
- *
- * Копирует BEMDECL-файл в текущую ноду по указанному имени из указанной ноды.
- *
- * Может понадобиться для объединения BEMDECL-файлов из разных нод.
- *
- * Опции:
- *
- * `target`
- *
- * Тип: `String`. По умолчанию: `?.bemdecl.js` (демаскируется в рамках текущей ноды).
- * Результирующий BEMDECL-файл.
- *
- * `node`
- *
- * Тип: `String`. Обязательная опция.
- * Путь ноды с исходным BEMDECL-файлом.
- *
- * `source`
- *
- * Тип: `String`. По умолчанию: `?.bemdecl.js` (демаскируется в рамках исходной ноды).
- * Исходный BEMDECL-файл, который будет скопирован.
- *
- * Пример:
- *
- * Ноды в файловой системе до сборки:
- *
- * bundles/
- * ├── bundle-1/
- *     └── bundle-1.bemdecl.js
- * ├── bundle-2/
- *     └── bundle-1.bemdecl.js
- * └── bundle-3/
- *
- * Что должно получиться после сборки:
- *
- * bundles/
- * ├── bundle-1/
- *     └── bundle-1.bemdecl.js
- * ├── bundle-2/
- *     └── bundle-2.bemdecl.js
- * └── bundle-3/
- *     ├── bundle-1.bemdecl.js
- *     └── bundle-2.bemdecl.js
- *
- * ```js
- * var techs = require('enb-bem-techs');
- * config.node('bundle-3', function (nodeConfig) {
- *     nodeConfig.addTechs([
- *         // Копируем BEMDECL-файл из ноды `bundle-1` в `bundle-3`
- *         [techs.provideBemdecl, {
- *             node: 'bundles/bundle-1',
- *             target: 'bundle-1.bemdecl.js'
- *         }],
- *
- *         // Копируем BEMDECL-файл из ноды `bundle-2` в `bundle-3`
- *         [techs.provideBemdecl, {
- *             node: 'bundles/bundle-2',
- *             target: 'bundle-2.bemdecl.js'
- *         }]
- *     ]);
- * });
- * ```
- */
 var inherit = require('inherit'),
     vow = require('vow'),
     vfs = require('enb/lib/fs/async-fs'),
     asyncRequire = require('enb/lib/fs/async-require'),
     dropRequireCache = require('enb/lib/fs/drop-require-cache');
 
+/**
+ * @class ProvideBemdeclTech
+ * @augments {BaseTech}
+ * @classdesc
+ *
+ * Copies BEMDECL file in current node with specified name from specified node.
+ *
+ * It could be necessary to merge BEMDECL files from different nodes.
+ *
+ * @param {Object}  options                         Options.
+ * @param {String}  options.node                    Path to node with BEMDECL file.
+ * @param {String}  [options.source=?.bemdecl.js]   Path to source BEMDECL file (unmasked by `options.node`).
+ * @param {String}  [options.target=?.bemdecl.js]   Path to result BEMDECL file (unmasked by current node).
+ *
+ * @example
+ * // Nodes in file system before build:
+ * //
+ * // bundles/
+ * // ├── bundle-1/
+ * //    └── bundle-1.bemdecl.js
+ * // ├── bundle-2/
+ * //    └── bundle-1.bemdecl.js
+ * // └── bundle-3/
+ * //
+ * // After build:
+ * // bundles/
+ * // ├── bundle-1/
+ * //    └── bundle-1.bemdecl.js
+ * // ├── bundle-2/
+ * //    └── bundle-2.bemdecl.js
+ * // └── bundle-3/
+ * //    ├── bundle-1.bemdecl.js
+ * //    └── bundle-2.bemdecl.js
+ *
+ * var bem = require('enb-bem-techs');
+ *
+ * module.exports = function(config) {
+ *     config.node('bundle-3', function(node) {
+ *         node.addTechs([
+ *             // Copy BEMDECL file from `bundle-1` to `bundle-3` node
+ *             [bem.provideBemdecl, {
+ *                 node: 'bundles/bundle-1',
+ *                 source: 'bundle-1.bemdecl.js',
+ *                 target: 'bundle-1.bemdecl.js'
+ *             }],
+ *
+ *             // Copy BEMDECL file from `bundle-2` to `bundle-3` node
+ *             [bem.provideBemdecl, {
+ *                 node: 'bundles/bundle-2',
+ *                 source: 'bundle-1.bemdecl.js',
+ *                 target: 'bundle-2.bemdecl.js'
+ *             }]
+ *         ]);
+ *         node.addTargets([
+ *             'bundle-1.bemdecl.js',
+ *             'bundle-2.bemdecl.js'
+ *         ]);
+ *     });
+ * };
+ */
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
         return 'provide-bemdecl';
@@ -81,7 +75,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._target = this.getOption('bemdeclTarget');
         if (this._target) {
             logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem', this.getName(),
-                'bemdeclTarget', 'target', ' It will be removed from this package in v3.0.0.');
+                'bemdeclTarget', 'target', ' It will be removed in v3.0.0.');
         } else {
             this._target = this.getOption('target', '?.bemdecl.js');
         }
@@ -90,7 +84,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._fromNode = this.getOption('sourceNodePath');
         if (this._fromNode) {
             logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(),
-                'sourceNodePath', 'node', ' It will be removed from this package in v3.0.0.');
+                'sourceNodePath', 'node', ' It will be removed in v3.0.0.');
         } else {
             this._fromNode = this.getRequiredOption('node');
         }
@@ -98,7 +92,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._sourceTarget = this.getOption('sourceTarget');
         if (this._sourceTarget) {
             logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(),
-                'sourceTarget', 'source', ' It will be removed from this package in v3.0.0.');
+                'sourceTarget', 'source', ' It will be removed in v3.0.0.');
         } else {
             this._sourceTarget = this.getOption('source', '?.bemdecl.js');
         }

@@ -1,85 +1,3 @@
-/**
- * deps-by-tech-to-bemdecl
- * =======================
- *
- * Формирует BEMDECL-файл на основе зависимостей по технологиям (depsByTech).
- * Такие зависимости описываются в `deps.js` технологиях БЭМ-сущностей.
- *
- * Опции:
- *
- * `target`
- *
- * Тип: `String`. По умолчанию: `?.bemdecl.js`.
- * Результирующий BEMDECL-файл.
- *
- * `sourceTech`
- *
- * Тип: `String`. Обязательная опция.
- * Имя технологии для которой собираются зависимости.
- *
- * `destTech`
- *
- * Тип: `String`.
- * Имя технологии от которой зависит `sourceTech`.
- *
- * `filesTarget`
- *
- * Тип: `String`. По умолчанию: `?.files`.
- * Таргет со списоком `deps.js`-файлов (результат технологии `files`).
- *
- * `sourceSuffixes`
- *
- * Тип: `String[]`. По умолчанию: `['deps.js']`.
- * Суффиксы файлов с описанием зависимостей БЭМ-сущностей.
- *
- * Пример:
- *
- * Частый случай, когда БЭМ-сущность в технологии клиенского JavaScript использует свою же технологию шаблонов.
- *
- * `button.deps.js`
- *
- * ```js
- * {
- *     block: 'button'
- *     tech: 'js'              // sourceTech
- *     shouldDeps: {
- *         tech: 'bemhtml'     // destTech
- *     }
- * }
- * ```
- *
- * В большинстве случаев схема построения BEMDECL-файла по `depsByTech` выглядит так:
- *
- * ```
- * (BEMJSON ->) BEMDECL (1) -> deps (2) -> files (3) -> BEMDECL (4)
- * ```
- *
- * 1. Получаем BEMDECL-файл (?.bemdecl.js).
- * 2. Дополняем декларацию БЭМ-сущностей из BEMDECL-файла и записываем результат в DEPS-файл (?.deps.js).
- * 3. Получаем упорядоченный список `deps.js` файлов (?.files.js).
- * 4. Получаем BEMDECL-файл на основе зависимостей по технологиям (?.tech.bemdecl.js).
- *
- * ```js
- * var techs = require('enb-bem-techs'),
- * provide = require('enb/techs/file-provider');
- *
- * nodeConfig.addTechs([
- *     [techs.levels, { levels: ['blocks'] }],
- *     [provide, { target: '?.bemdecl.js' }], // (1) `?.bemdecl.js`
- *     [techs.deps],                          // (2) `?.deps.js`
- *     [techs.files],                         // (3) `?.files.js`
- *     // Далее '?.bemhtml.bemdecl.js' можно использовать для сборки шаблонов,
- *     // которые используются в клиенском JavaScript.
- *     // Список `deps.js` файлов берём из `?.files`, т.к. опция filesTarget
- *     // по умолчанию — `?.files`.
- *     [techs.depsByTechToBemdecl, {          // (4) `?.bemhtml.bemdecl.js`
- *         target: '?.bemhtml.bemdecl.js',
- *         sourceTech: 'js',
- *         destTech: 'bemhtml'
- *     }]
- * ]);
- * ```
- */
 var inherit = require('inherit'),
     vm = require('vm'),
     naming = require('bem-naming'),
@@ -89,6 +7,45 @@ var inherit = require('inherit'),
     dropRequireCache = require('enb/lib/fs/drop-require-cache'),
     deps = require('../lib/deps/deps');
 
+/**
+ * @class DepsByTechToBemdeclTech
+ * @augments {BaseTech}
+ * @classdesc
+ *
+ * Builds BEMDECL file using tech dependencies (depsByTech). Such dependencies are described in `deps.js` files.
+ *
+ * @param {Object}      options                           Options.
+ * @param {String}      options.sourceTech                Tech name to build declaration for.
+ *                                                        It depends on `destTech`.
+ * @param {String}      options.destTech                  Tech name `sourceTech` depends from.
+ * @param {String}      [options.target=?.bemdecl.js]     Path to BEMDECL file to build.
+ * @param {String}      [options.filesTarget='?.files']   Path to target with {@link FileList}.
+ * @param {String[]}    [options.sourceSuffixes]          Files with specified suffixes involved in the assembly.
+ *
+ * @example
+ * var FileProvideTech = require('enb/techs/file-provider'),
+ *     bem = require('enb-bem-techs');
+ *
+ * module.exports = function(config) {
+ *     config.node('bundle', function(node) {
+ *         // get FileList
+ *         node.addTechs([
+ *             [bem.levels, { levels: ['blocks'] }],
+ *             [FileProvideTech, { target: '?.bemdecl.js' }],
+ *             bem.deps,
+ *             bem.files
+ *         ]);
+ *
+ *         // build BEMDECL file with BEMHTML entities for JavaScript
+ *         node.addTech([bem.depsByTechToBemdecl, {
+ *             target: '?.bemhtml.bemdecl.js',
+ *             sourceTech: 'js',
+ *             destTech: 'bemhtml'
+ *         }]);
+ *         node.addTarget('?.bemhtml.bemdecl.js');
+ *     });
+ * };
+ */
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
         return 'deps-by-tech-to-bemdecl';

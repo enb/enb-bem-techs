@@ -1,59 +1,3 @@
-/**
- * deps-old
- * ========
- *
- * Дополняет декларацию БЭМ-сущностей на основе информации из технологий зависимостей (`deps.js`)
- * БЭМ-сущностей.
- *
- * Использует алгоритм, заимствованный из [bem-tools](http://ru.bem.info/tools/bem/bem-tools/).
- *
- * Опции:
- *
- * `target`
- *
- * Тип: `String`. По умолчанию: `?.deps.js`.
- * Результирующий DEPS-файл.
- *
- * `bemdeclFile`
- *
- * Тип: `String`. По умолчанию: `?.bemdecl.js`.
- * Файл с декларацией БЭМ-сущностей.
- *
- * `levelsTarget`
- *
- * Тип: `String`. По умолчанию: `?.levels`.
- * Таргет с интроспекцией уровней (результат сканирования `levels` технологией).
- *
- * `strict`
- *
- * Тип: `Boolean`. По умолчанию: `false`.
- * Включает строгий режим раскрытия зависимостей: если будет найдена хотя бы одна циклическая зависимость
- * `mustDeps` (A <- B <- A), то сборка прекратится с ошибкой.
- *
- * Пример:
- *
- * Раскрытие зависимостей по BEMDECL-файлу.
- *
- * ```js
- * var techs = require('enb-bem-techs');
- *
- * nodeConfig.addTech([techs.depsOld, {
- *    bemdeclFile: '?.bemdecl.js',
- *    target: '?.deps.js'
- * }]);
- * ```
- *
- * Раскрытие зависимостей по DEPS-файлу.
- *
- * ```js
- * var techs = require('enb-bem-techs');
- *
- * nodeConfig.addTech([techs.depsOld, {
- *    bemdeclFile: 'source-decl.deps.js',
- *    target: '?.deps.js'
- * }]);
- * ```
- */
 var inherit = require('inherit'),
     vow = require('vow'),
     vfs = require('enb/lib/fs/async-fs'),
@@ -62,8 +6,44 @@ var inherit = require('inherit'),
     OldDeps = require('../exlib/deps-old').OldDeps,
     deps = require('../lib/deps/deps');
 
+/**
+ * @class DepsOldTech
+ * @augments {BaseTech}
+ * @classdesc
+ *
+ * Supplements declaration of BEM entities using information about dependencies in `deps.js` files.
+ *
+ * Important: it uses the algorithm from [bem-tools]{@link https://en.bem.info/tools/bem/bem-tools/}.
+ *
+ * @param {Object}  [options]                             Options.
+ * @param {String}  [options.target=?.deps.js]            Path to built file with completed declaration of BEM entities.
+ * @param {String}  [options.levelsTarget=?.levels]       Path to target with {@link Levels}.
+ * @param {String}  [options.bemdeclFile='?.bemdecl.js']  Path to file with declaration of BEM entities.
+ * @param {Boolean} [strict=false]                        Turn on strict mode for dependency resolver.
+ *                                                        Throws error on mustDeps loop.
+ *
+ * @example
+ * var FileProvideTech = require('enb/techs/file-provider'),
+ *     bem = require('enb-bem-techs');
+ *
+ * module.exports = function(config) {
+ *     config.node('bundle', function(node) {
+ *         // scan levels
+ *         node.addTech([bem.levels, { levels: ['blocks'] }]);
+ *
+ *         // get BEMDECL file
+ *         node.addTech([FileProvideTech, { target: '?.bemdecl.js' }]);
+ *
+ *         // build DEPS file
+ *         node.addTech([bem.depsOld, {
+ *             target: '?.deps.js',
+ *             bemdeclFile: '?.bemdecl.js'
+ *         }]);
+ *         node.addTarget('?.deps.js');
+ *     });
+ * };
+ */
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
-
     getName: function () {
         return 'deps-old';
     },
@@ -74,7 +54,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._target = this.getOption('depsTarget');
         if (this._target) {
             logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem-techs', this.getName(),
-                'depsTarget', 'target', ' It will be removed from this package in v3.0.0.');
+                'depsTarget', 'target', ' It will be removed in v3.0.0.');
         } else {
             this._target = this.getOption('target', this.node.getTargetName('deps.js'));
         }
@@ -83,7 +63,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._declFile = this.getOption('bemdeclTarget');
         if (this._declFile) {
             logger.logOptionIsDeprecated(this._target, 'enb-bem-techs', this.getName(),
-                'bemdeclTarget', 'bemdeclFile', ' It will be removed from this package in v3.0.0.');
+                'bemdeclTarget', 'bemdeclFile', ' It will be removed in v3.0.0.');
         } else {
             this._declFile = this.getOption('bemdeclFile', this.node.getTargetName('bemdecl.js'));
         }

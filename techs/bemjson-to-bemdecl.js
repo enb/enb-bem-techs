@@ -1,38 +1,3 @@
-/**
- * bemjson-to-bemdecl
- * ==================
- *
- * Формирует BEMDECL-файл из BEMJSON-файла.
- *
- * Опции:
- *
- * `target`
- *
- * Тип: `String`. По умолчанию: `?.bemdecl.js`.
- * Результирующий BEMDECL-файл.
- *
- * `source`
- *
- * Тип: `String`. По умолчанию: `?.bemjson.js`.
- * Исходный BEMJSON-файл.
- *
- * Пример:
- *
- * ```js
- * var techs = require('enb-bem-techs'),
- * provide = require('enb/techs/file-provider');
- *
- * nodeConfig.addTechs([
- *     // Предоставляет BEMJSON-файл, написанный вручную, для ENB.
- *     // В опции `target` путь до BEMJSON-файла.
- *     [provide, { target: '?.bemjson.js' }],
- *
- *     // Строим BEMDECL-файл по полученному BEMJSON-файлу.
- *     // BEMJSON-файл берём из `?.bemjson.js`, т.к. опция `source` по умолчанию — `?.bemjson.js`.
- *     [techs.bemjsonToBemdecl]
- * ]);
- * ```
- */
 var inherit = require('inherit'),
     vfs = require('enb/lib/fs/async-fs'),
     requireOrEval = require('enb/lib/fs/require-or-eval'),
@@ -40,6 +5,32 @@ var inherit = require('inherit'),
     dropRequireCache = require('enb/lib/fs/drop-require-cache'),
     deps = require('../lib/deps/deps');
 
+/**
+ * @class BemjsonToBemdeclTech
+ * @augments {BaseTech}
+ * @classdesc
+ *
+ * Builds BEMDECL file from BEMJSON file.
+ *
+ * @param {Object}  [options]                          Options.
+ * @param {String}  [options.target='?.bemdecl.js']    Path to a built BEMDECL file.
+ * @param {String}  [options.source='?.bemjson.js']    Path to a BEMJSON file.
+ *
+ * @example
+ * var FileProvideTech = require('enb/techs/file-provider'),
+ *     bem = require('enb-bem-techs');
+ *
+ * module.exports = function(config) {
+ *     config.node('bundle', function(node) {
+ *         // get BEMJSON file
+ *         node.addTech([FileProvideTech, { target: '?.bemjson.js' }]);
+ *
+ *         // build BEMDECL file
+ *         node.addTech(bem.bemjsonToBemdecl);
+ *         node.addTarget('?.bemdecl.js');
+ *     });
+ * };
+ */
 module.exports = inherit(require('enb/lib/tech/base-tech'), {
     getName: function () {
         return 'bemjson-to-bemdecl';
@@ -51,7 +42,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._target = this.getOption('destTarget');
         if (this._target) {
             logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem-techs', this.getName(),
-                'destTarget', 'target', ' It will be removed from this package in v3.0.0.');
+                'destTarget', 'target', ' It will be removed in v3.0.0.');
         } else {
             this._target = this.getOption('target', '?.bemdecl.js');
         }
@@ -60,7 +51,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
         this._sourceTarget = this.getOption('sourceTarget');
         if (this._sourceTarget) {
             logger.logOptionIsDeprecated(this._target, 'enb-bem-techs', this.getName(),
-                'sourceTarget', 'source', ' It will be removed from this package in v3.0.0.');
+                'sourceTarget', 'source', ' It will be removed in v3.0.0.');
         } else {
             this._sourceTarget = this.getOption('source', '?.bemjson.js');
         }
