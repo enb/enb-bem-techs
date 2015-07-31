@@ -1,6 +1,6 @@
 {
   "name": "enb-bem-techs",
-  "version": "2.0.0-beta1",
+  "version": "2.0.0-rc",
   "description": "BEM methodology for ENB",
   "keywords": [
     "enb",
