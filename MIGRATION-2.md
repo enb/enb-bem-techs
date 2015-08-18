@@ -76,19 +76,19 @@ level-2/block/block.ext-2
 В случае со сборкой CSS-файлов для IE можно отдельно собрать обычный CSS, отдельно CSS для IE, а потом склеить файлы.
 
 ```js
-var bem = require('enb-bem-techs'),
+var bemTechs = require('enb-bem-techs'),
     CSSTech = require('enb/techs/css'),
     FileMergeTech = require('enb/techs/css');
 
 module.exports = function (config) {
     config.node('bundle', function (node) {
         node.addTechs([
-            // Получает FileList
+            // Получаем FileList
             node.addTechs([
                 [FileProvideTech, { target: '?.bemdecl.js' }],
-                [bem.levels, levels: ['blocks']],
-                [bem.deps],
-                [bem.files]
+                [bemTechs.levels, levels: ['blocks']],
+                [bemTechs.deps],
+                [bemTechs.files]
             ]);
 
             // Собираем CSS-файлы без IE
@@ -183,7 +183,3 @@ exports.deps = [
 ```
 
 Таким образом, после обновления на `enb-bem-techs@2.0.0` порядок БЭМ-сущностей в раскрытой декларации бандла может отличаться. Если не все необходимые зависимости были указаны в `deps.js`-файлах, результат сборки может оказаться неправильным.
-
-### bemhint
-
-Чтобы было легче исправить ошибки в `deps.js`-файлах, воспользуйтесь инструментом [bemhint](https://github.com/bem/bemhint).
