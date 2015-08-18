@@ -50,14 +50,14 @@
   },
   "devDependencies": {
     "enb": ">=0.13.0 <1.0.0",
-    "istanbul": "0.3.17",
+    "istanbul": "0.3.18",
     "jscs": "1.13.1",
     "jshint": "2.8.0",
-    "lodash": "3.10.0",
+    "lodash": "3.10.1",
     "matcha": "0.6.0",
     "mocha": "2.2.5",
     "mock-enb": "0.1.0",
-    "mock-fs": "3.0.0",
+    "mock-fs": "3.1.0",
     "must": "0.12.0",
     "seedrandom": "2.4.2"
   },
