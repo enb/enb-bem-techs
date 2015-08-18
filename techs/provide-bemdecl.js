@@ -38,20 +38,20 @@ var inherit = require('inherit'),
  * //    ├── bundle-1.bemdecl.js
  * //    └── bundle-2.bemdecl.js
  *
- * var bem = require('enb-bem-techs');
+ * var bemTechs = require('enb-bem-techs');
  *
  * module.exports = function(config) {
  *     config.node('bundle-3', function(node) {
  *         node.addTechs([
  *             // Copy BEMDECL file from `bundle-1` to `bundle-3` node
- *             [bem.provideBemdecl, {
+ *             [bemTechs.provideBemdecl, {
  *                 node: 'bundles/bundle-1',
  *                 source: 'bundle-1.bemdecl.js',
  *                 target: 'bundle-1.bemdecl.js'
  *             }],
  *
  *             // Copy BEMDECL file from `bundle-2` to `bundle-3` node
- *             [bem.provideBemdecl, {
+ *             [bemTechs.provideBemdecl, {
  *                 node: 'bundles/bundle-2',
  *                 source: 'bundle-1.bemdecl.js',
  *                 target: 'bundle-2.bemdecl.js'

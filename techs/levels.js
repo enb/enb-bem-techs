@@ -22,10 +22,10 @@ var path = require('path'),
  *                                                           `{ path: 'path/to/level', check: true }`.
  * @example
  * var FileProvideTech = require('enb/techs/file-provider'),
- *     bem = require('enb-bem-techs');
+ *     bemTechs = require('enb-bem-techs');
  *
  * module.exports = function(config) {
- *     node.addTech([bem.levels, {
+ *     node.addTech([bemTechs.levels, {
  *         levels: [
  *             // In project you don't needto change source code of libs.
  *             // It is possible to scan libs levels one time and take result from cache.

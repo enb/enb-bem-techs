@@ -24,18 +24,18 @@ var inherit = require('inherit'),
  *
  * @example
  * var FileProvideTech = require('enb/techs/file-provider'),
- *     bem = require('enb-bem-techs');
+ *     bemTechs = require('enb-bem-techs');
  *
  * module.exports = function(config) {
  *     config.node('bundle', function(node) {
  *         // scan levels
- *         node.addTech([bem.levels, { levels: ['blocks'] }]);
+ *         node.addTech([bemTechs.levels, { levels: ['blocks'] }]);
  *
  *         // get BEMDECL file
  *         node.addTech([FileProvideTech, { target: '?.bemdecl.js' }]);
  *
  *         // build DEPS file
- *         node.addTech([bem.depsOld, {
+ *         node.addTech([bemTechs.depsOld, {
  *             target: '?.deps.js',
  *             bemdeclFile: '?.bemdecl.js'
  *         }]);

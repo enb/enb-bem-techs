@@ -30,11 +30,11 @@ var inherit = require('inherit'),
  * // ├── bundle-2.deps.js
  * // └── bundle.deps.js
  *
- * var bem = require('enb-bem-techs');
+ * var bemTechs = require('enb-bem-techs');
  *
  * module.exports = function(config) {
  *     config.node('bundle', function(node) {
- *         node.addTech([bem.subtractDeps, {
+ *         node.addTech([bemTechs.subtractDeps, {
  *             from: 'bundle-1.deps.js',
  *             what: 'bundle-2.deps.js',
  *             target: 'bundle.deps.js'

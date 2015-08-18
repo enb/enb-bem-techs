@@ -18,7 +18,7 @@ var inherit = require('inherit'),
  *
  * @example
  * var FileProvideTech = require('enb/techs/file-provider'),
- *     bem = require('enb-bem-techs');
+ *     bemTechs = require('enb-bem-techs');
  *
  * module.exports = function(config) {
  *     config.node('bundle', function(node) {
@@ -26,7 +26,7 @@ var inherit = require('inherit'),
  *         node.addTech([FileProvideTech, { target: '?.bemjson.js' }]);
  *
  *         // build BEMDECL file
- *         node.addTech(bem.bemjsonToBemdecl);
+ *         node.addTech(bemTechs.bemjsonToBemdecl);
  *         node.addTarget('?.bemdecl.js');
  *     });
  * };

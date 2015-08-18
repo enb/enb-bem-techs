@@ -60,11 +60,11 @@ levels
 **Пример**
 
 ```js
-var bem = require('enb-bem-techs');
+var bemTechs = require('enb-bem-techs');
 
 module.exports = function (config) {
     config.node('bundle', function (node) {
-        node.addTech([bem.levels, {
+        node.addTech([bemTechs.levels, {
             levels: [
                 // В проекте не нужно менять код внешних библиотек,
                 // достаточно один раз просканировать их уровни и использовать кэш.
@@ -100,14 +100,14 @@ levelsToBemdecl
 
 Тип: `String`. По умолчанию: `?.bemdecl.js`.
 
-Имя таргета, в который будет записан BEMDECL-файл со всеми БЭМ-сущностями, найденными в уровнях переопределения.
+Имя файла, в который будет записан BEMDECL-файл со всеми БЭМ-сущностями, найденными в уровнях переопределения.
 
 --------------------------------------
 
 **Пример**
 
 ```js
-var bem = require('enb-bem-techs');
+var bemTechs = require('enb-bem-techs');
 
 module.exports = function (config) {
     config.node('bundle', function (node) {
@@ -115,12 +115,12 @@ module.exports = function (config) {
             // Сканируем уровни проекта.
             // Результат записываем в `?.levels`,
             // т.к. опция `target` по умолчанию — `?.levels`.
-            [bem.levels, { levels: ['blocks'] }],
+            [bemTechs.levels, { levels: ['blocks'] }],
 
             // Строим BEMDECL-файл по результатам сканирования уровней.
             // Интроспекцию берем из `?.levels`,
             // т.к. опция `source` по умолчанию — `?.levels`.
-            [bem.levelsToBemdecl]
+            [bemTechs.levelsToBemdecl]
         ]);
         node.addTarget('?.bemdecl.js');
     });
@@ -154,7 +154,7 @@ bemjsonToBemdecl
 **Пример**
 
 ```js
-var bem = require('enb-bem-techs'),
+var bemTechs = require('enb-bem-techs'),
     FileProviderTech = require('enb/techs/file-provider');
 
 module.exports = function (config) {
@@ -167,7 +167,7 @@ module.exports = function (config) {
             // Строим BEMDECL-файл по полученному BEMJSON-файлу.
             // BEMJSON-файл берем из `?.bemjson.js`,
             // т.к. опция `source` по умолчанию — `?.bemjson.js`.
-            [bem.bemjsonToBemdecl]
+            [bemTechs.bemjsonToBemdecl]
         ]);
         node.addTarget('?.bemdecl.js');
     });
@@ -210,11 +210,11 @@ deps
 Раскрытие зависимостей по BEMDECL-файлу.
 
 ```js
-var bem = require('enb-bem-techs');
+var bemTechs = require('enb-bem-techs');
 
 module.exports = function (config) {
     config.node('bundle', function (node) {
-        node.addTech([bem.deps, {
+        node.addTech([bemTechs.deps, {
             bemdeclFile: '?.bemdecl.js',
             target: '?.deps.js'
         }]);
@@ -226,11 +226,11 @@ module.exports = function (config) {
 Раскрытие зависимостей по DEPS-файлу.
 
 ```js
-var techs = require('enb-bem-techs');
+var bemTechs = require('enb-bem-techs');
 
 module.exports = function (config) {
     config.node('bundle', function (node) {
-        node.addTech([bem.deps, {
+        node.addTech([bemTechs.deps, {
             bemdeclFile: 'source-decl.deps.js',
             target: '?.deps.js'
         }]);
@@ -283,11 +283,11 @@ depsOld
 Раскрытие зависимостей по BEMDECL-файлу.
 
 ```js
-var bem = require('enb-bem-techs');
+var bemTechs = require('enb-bem-techs');
 
 module.exports = function (config) {
     config.node('bundle', function (node) {
-        node.addTech([bem.depsOld, {
+        node.addTech([bemTechs.depsOld, {
             bemdeclFile: '?.bemdecl.js',
             target: '?.deps.js'
         }]);
@@ -299,11 +299,11 @@ module.exports = function (config) {
 Раскрытие зависимостей по DEPS-файлу.
 
 ```js
-var techs = require('enb-bem-techs');
+var bemTechs = require('enb-bem-techs');
 
 module.exports = function (config) {
     config.node('bundle', function (node) {
-        node.addTech([bem.depsOld, {
+        node.addTech([bemTechs.depsOld, {
             bemdeclFile: 'source-decl.deps.js',
             target: '?.deps.js'
         }]);
@@ -385,21 +385,21 @@ depsByTechToBemdecl
 4. Получаем BEMDECL-файл на основании зависимостей по технологиям (?.tech.bemdecl.js).
 
 ```js
-var bem = require('enb-bem-techs'),
+var bemTechs = require('enb-bem-techs'),
     FileProviderTech = require('enb/techs/file-provider');
 
 module.exports = function (config) {
     config.node('bundle', function () {
         node.addTechs([
-            [bem.levels, { levels: ['blocks'] }],
+            [bemTechs.levels, { levels: ['blocks'] }],
             [FileProviderTech, { target: '?.bemdecl.js' }], // (1) `?.bemdecl.js`
-            [bem.deps],                          // (2) `?.deps.js`
-            [bem.files],                         // (3) `?.files.js`
+            [bemTechs.deps],                          // (2) `?.deps.js`
+            [bemTechs.files],                         // (3) `?.files.js`
             // Далее '?.bemhtml.bemdecl.js' можно использовать для сборки шаблонов,
             // которые используются в клиенском JavaScript.
             // Список `deps.js` файлов берем из `?.files`, т.к. опция filesTarget
             // по умолчанию — `?.files`.
-            [bem.depsByTechToBemdecl, {          // (4) `?.bemhtml.bemdecl.js`
+            [bemTechs.depsByTechToBemdecl, {          // (4) `?.bemhtml.bemdecl.js`
                 target: '?.bemhtml.bemdecl.js',
                 sourceTech: 'js',
                 destTech: 'bemhtml'
@@ -461,15 +461,15 @@ files
 Формирование списка файлов и директорий по BEMDECL-файлу.
 
 ```js
-var bem = require('enb-bem-techs'),
+var bemTechs = require('enb-bem-techs'),
     FileProviderTech = require('enb/techs/file-provider');
 
 module.exports = function (config) {
     config.node('bundle', function (node) {
         node.addTechs([
-            [bem.levels, { levels: ['blocks'] }],
+            [bemTechs.levels, { levels: ['blocks'] }],
             [FileProviderTech, { target: '?.bemdecl.js' }]
-            [bem.files, { depsFile: '?.bemdecl.js' }]
+            [bemTechs.files, { depsFile: '?.bemdecl.js' }]
         ]);
         node.addTargets(['?.files', '?.dirs']);
     });
@@ -479,16 +479,16 @@ module.exports = function (config) {
 Формирование списка файлов и директорий по DEPS-файлу.
 
 ```js
-var bem = require('enb-bem-techs'),
+var bemTechs = require('enb-bem-techs'),
     FileProviderTech = require('enb/techs/file-provider');
 
 module.exports = function (config) {
     config.node('bundle', function (node) {
         node.addTechs([
-            [bem.levels, { levels: ['blocks'] }],
+            [bemTechs.levels, { levels: ['blocks'] }],
             [FileProviderTech, { target: '?.bemdecl.js' }]
-            [bem.deps],
-            [bem.files]
+            [bemTechs.deps],
+            [bemTechs.files]
         ]);
         node.addTargets(['?.files', '?.dirs']);
     });
@@ -531,8 +531,6 @@ provideBemdecl
 **Пример**
 
 ```js
-var bem = require('enb-bem-techs');
-
 /**
  * Ноды в файловой системе до сборки:
  *
@@ -555,18 +553,20 @@ var bem = require('enb-bem-techs');
  *     └── bundle-2.bemdecl.js
  */
 
+var bemTechs = require('enb-bem-techs');
+
 module.exports = function (config) {
     config.node('bundle-3', function (node) {
         node.addTechs([
             // Копируем BEMDECL-файл из ноды `bundle-1` в `bundle-3`
-            [bem.provideBemdecl, {
+            [bemTechs.provideBemdecl, {
                 node: 'bundles/bundle-1',
                 source: 'bundle-1.bemdecl.js',
                 target: 'bundle-1.bemdecl.js'
             }],
 
             // Копируем BEMDECL-файл из ноды `bundle-2` в `bundle-3`
-            [bem.provideBemdecl, {
+            [bemTechs.provideBemdecl, {
                 node: 'bundles/bundle-2',
                 source: 'bundle-2.bemdecl.js',
                 target: 'bundle-2.bemdecl.js'
@@ -582,7 +582,7 @@ provideDeps
 
 Копирует DEPS-файл в текущую [ноду](#https://github.com/enb-make/enb#Терминология) (node) по указанному имени из указанной [ноды](#https://github.com/enb-make/enb#Терминология) (node) .
 
-Может понадобиться для объединения DEPS-таргетов из разных [нод](#https://github.com/enb-make/enb#Терминология) (node) .
+Может понадобиться для объединения DEPS-файлов из разных [нод](#https://github.com/enb-make/enb#Терминология) (node) .
 
 ### Опции
 
@@ -613,8 +613,6 @@ provideDeps
 **Пример**
 
 ```js
-var bem = require('enb-bem-techs');
-
 /**
  * Ноды в файловой системе до сборки:
  *
@@ -636,17 +634,20 @@ var bem = require('enb-bem-techs');
  *     ├── bundle-1.deps.js
  *     └── bundle-2.deps.js
  */
+
+var bemTechs = require('enb-bem-techs');
+
 module.exports = function (config) {
     config.node('bundle-3', function (node) {
         node.addTechs([
             // Копируем DEPS-файл из ноды `bundle-1` в `bundle-3`
-            [bem.provideDeps, {
+            [bemTechs.provideDeps, {
                 node: 'bundles/bundle-1',
                 target: 'bundle-1.deps.js'
             }],
 
             // Копируем DEPS-файл из ноды `bundle-2` в `bundle-3`
-            [bem.provideDeps, {
+            [bemTechs.provideDeps, {
                 node: 'bundles/bundle-2',
                 target: 'bundle-2.deps.js'
             }]
@@ -685,8 +686,6 @@ mergeBemdecl
 **Пример**
 
 ```js
-var bem = require('enb-bem-techs');
-
 /**
  * Ноды в файловой системе до сборки:
  *
@@ -701,9 +700,12 @@ var bem = require('enb-bem-techs');
  * ├── bundle-2.bemdecl.js
  * └── merged-bundle.bemdecl.js
  */
+
+var bemTechs = require('enb-bem-techs');
+
 module.exports = function (config) {
     config.node('merged-bundle', function (node) {
-        node.addTech([bem.mergeBemdecl, {
+        node.addTech([bemTechs.mergeBemdecl, {
             sources: ['bundle-1.bemdecl.js', 'bundle-2.bemdecl.js'],
             target: 'merged-bundle.bemdecl.js'
         }]);
@@ -741,8 +743,6 @@ mergeDeps
 **Пример**
 
 ```js
-var bem = require('enb-bem-techs');
-
 /**
  * Ноды в файловой системе до сборки:
  *
@@ -757,9 +757,12 @@ var bem = require('enb-bem-techs');
  * ├── bundle-2.deps.js
  * └── merged-bundle.deps.js
  */
+
+var bemTechs = require('enb-bem-techs');
+
 module.exports = function (config) {
     config.node('merged-bundle', function (node) {
-        node.addTech([bem.mergeDeps, {
+        node.addTech([bemTechs.mergeDeps, {
             sources: ['bundle-1.deps.js', 'bundle-2.deps.js'],
             target: 'merged-bundle.deps.js'
         }]);
@@ -802,11 +805,11 @@ subtractDeps
 **Пример**
 
 ```js
-var bem = require('enb-bem-techs');
+var bemTechs = require('enb-bem-techs');
 
 module.exports = function (config) {
     config.node('bundle', function () {
-        node.addTech([techs.subtractDeps, {
+        node.addTech([bemTechs.subtractDeps, {
             from: 'bundle-1.deps.js',
             what: 'bundle-2.deps.js',
             target: 'bundle.deps.js'

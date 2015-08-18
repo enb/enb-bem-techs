@@ -17,15 +17,15 @@ var inherit = require('inherit'),
  * @param {String}  [options.source='?.levels']       Path to target with {@link Levels}.
  *
  * @example
- * var bem = require('enb-bem-techs');
+ * var bemTechs = require('enb-bem-techs');
  *
  * module.exports = function(config) {
  *     config.node('bundle', function(node) {
  *         // scan levels
- *         node.addTech([bem.levels, { levels: ['blocks'] }]);
+ *         node.addTech([bemTechs.levels, { levels: ['blocks'] }]);
  *
  *         // build BEMDECL file
- *         node.addTech(bem.levelsToBemdecl);
+ *         node.addTech(bemTechs.levelsToBemdecl);
  *         node.addTarget('?.bemdecl.js');
  *     });
  * };

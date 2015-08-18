@@ -30,11 +30,11 @@ var inherit = require('inherit'),
  * // ├── bundle-2.deps.js
  * // └── merged-bundle.deps.js
  *
- * var bem = require('enb-bem-techs');
+ * var bemTechs = require('enb-bem-techs');
  *
  * module.exports = function(config) {
  *     config.node('merged-bundle', function(node) {
- *         node.addTech([bem.mergeDeps, {
+ *         node.addTech([bemTechs.mergeDeps, {
  *             sources: ['bundle-1.deps.js', 'bundle-2.deps.js'],
  *             target: 'merged-bundle.deps.js'
  *         }]);
