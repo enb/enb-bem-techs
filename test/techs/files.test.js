@@ -89,6 +89,48 @@ describe('techs: files', function () {
         return hasFiles(scheme, deps, files);
     });
 
+    describe('duplicates', function () {
+        it('must add same file only once', function () {
+            var scheme = {
+                    level: {
+                        block: {
+                            'block.ext': ''
+                        }
+                    }
+                },
+                levels = ['level', 'level'],
+                deps = [{ block: 'block' }],
+                files = [
+                    'level/block/block.ext'
+                ];
+
+            return hasFiles(scheme, deps, files, levels);
+        });
+
+        it('must add files only once if level nested in another level', function () {
+            var scheme = {
+                    'level-1': {
+                        'block-1': {
+                            'block-1.ext': ''
+                        },
+                        'level-2': {
+                            'block-2': {
+                                'block-2.ext': ''
+                            }
+                        }
+                    }
+                },
+                levels = ['level-1', 'level-1/level-2'],
+                deps = [{ block: 'block-1' }, { block: 'block-2' }],
+                files = [
+                    'level-1/block-1/block-1.ext',
+                    'level-1/level-2/block-2/block-2.ext'
+                ];
+
+            return hasFiles(scheme, deps, files, levels);
+        });
+    });
+
     describe('order', function () {
         it('must keep order by extensions', function () {
             mockFs({
@@ -640,8 +682,8 @@ describe('techs: files', function () {
     });
 });
 
-function getEntityFiles(fsScheme, deps, filetype) {
-    var levels = Object.keys(fsScheme);
+function getEntityFiles(fsScheme, deps, filetype, levels) {
+    levels = levels || Object.keys(fsScheme);
 
     fsScheme['bundle'] = {};
 
@@ -661,8 +703,8 @@ function getEntityFiles(fsScheme, deps, filetype) {
         });
 }
 
-function has(fsScheme, deps, filenames, filetype) {
-    return getEntityFiles(fsScheme, deps, filetype)
+function has(fsScheme, deps, filenames, filetype, levels) {
+    return getEntityFiles(fsScheme, deps, filetype, levels)
         .then(function (files) {
             files.items.must.have.length(filenames.length);
 
@@ -674,10 +716,10 @@ function has(fsScheme, deps, filenames, filetype) {
         });
 }
 
-function hasFiles(fsScheme, deps, filenames) {
-    return has(fsScheme, deps, filenames, 'files');
+function hasFiles(fsScheme, deps, filenames, levels) {
+    return has(fsScheme, deps, filenames, 'files', levels);
 }
 
-function hasDirs(fsScheme, deps, filenames) {
-    return has(fsScheme, deps, filenames, 'dirs');
+function hasDirs(fsScheme, deps, filenames, levels) {
+    return has(fsScheme, deps, filenames, 'dirs', levels);
 }

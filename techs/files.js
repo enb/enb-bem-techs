@@ -110,12 +110,16 @@ module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
                         }
 
                         function slice(files) {
-                            var slices = levelPaths.map(function () { return []; });
+                            var slices = levelPaths.map(function () { return []; }),
+                                uniqs = {};
 
                             files.forEach(function iterate(file) {
+                                var filename = file.fullname;
+
                                 levelPaths.forEach(function (levelPath, index) {
-                                    if (file.fullname.indexOf(levelPath) === 0) {
+                                    if (!uniqs[filename] && filename.indexOf(levelPath) === 0) {
                                         slices[index].push(file);
+                                        uniqs[filename] = true;
                                     }
                                 });
                             });
@@ -124,11 +128,13 @@ module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
                         }
 
                         function filter(file) {
-                            if (hash[file.fullname]) {
+                            var filename = file.fullname;
+
+                            if (hash[filename]) {
                                 return false;
                             }
 
-                            hash[file.fullname] = true;
+                            hash[filename] = true;
                             return true;
                         }
 
