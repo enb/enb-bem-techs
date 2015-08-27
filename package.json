@@ -45,7 +45,7 @@
   "dependencies": {
     "bem-naming": "0.5.1",
     "inherit": "2.2.2",
-    "js-yaml": "3.3.1",
+    "js-yaml": "3.4.0",
     "vow": "0.4.10"
   },
   "devDependencies": {
