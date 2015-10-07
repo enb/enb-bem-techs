@@ -1,8 +1,10 @@
 var inherit = require('inherit'),
     vow = require('vow'),
-    vfs = require('enb/lib/fs/async-fs'),
-    asyncRequire = require('enb/lib/fs/async-require'),
-    dropRequireCache = require('enb/lib/fs/drop-require-cache'),
+    enb = require('enb'),
+    vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
+    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
+    asyncRequire = require('enb-async-require'),
+    clearRequire = require('clear-require'),
     DepsResolver = require('../lib/deps/deps-resolver'),
     deps = require('../lib/deps/deps');
 
@@ -39,7 +41,7 @@ var inherit = require('inherit'),
  *     });
  * };
  */
-module.exports = inherit(require('enb/lib/tech/base-tech'), {
+module.exports = inherit(BaseTech, {
     getName: function () {
         return 'deps';
     },
@@ -109,7 +111,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                         });
                 } else {
                     node.isValidTarget(target);
-                    dropRequireCache(require, targetFilename);
+                    clearRequire(targetFilename);
 
                     return asyncRequire(targetFilename)
                         .then(function (result) {
@@ -123,7 +125,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
 function requireSourceDeps(data, filename) {
     return (data ? vow.resolve(data) : (
-            dropRequireCache(require, filename),
+            clearRequire(filename),
             asyncRequire(filename)
         ))
         .then(function (sourceDeps) {

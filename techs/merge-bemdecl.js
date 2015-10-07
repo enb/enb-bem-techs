@@ -1,8 +1,10 @@
 var inherit = require('inherit'),
     vow = require('vow'),
-    vfs = require('enb/lib/fs/async-fs'),
-    asyncRequire = require('enb/lib/fs/async-require'),
-    dropRequireCache = require('enb/lib/fs/drop-require-cache'),
+    enb = require('enb'),
+    vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
+    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
+    asyncRequire = require('enb-async-require'),
+    clearRequire = require('clear-require'),
     deps = require('../lib/deps/deps');
 
 /**
@@ -42,7 +44,7 @@ var inherit = require('inherit'),
  *     });
  * };
  */
-module.exports = inherit(require('enb/lib/tech/base-tech'), {
+module.exports = inherit(BaseTech, {
     getName: function () {
         return 'merge-bemdecl';
     },
@@ -103,7 +105,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
 
                             var filename = sourceFilenames[i];
 
-                            dropRequireCache(require, filename);
+                            clearRequire(filename);
                             return asyncRequire(filename)
                                 .then(function (result) {
                                     return deps.fromBemdecl(result.blocks);
@@ -125,7 +127,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                         });
                 } else {
                     node.isValidTarget(target);
-                    dropRequireCache(require, targetFilename);
+                    clearRequire(targetFilename);
 
                     return asyncRequire(targetFilename)
                         .then(function (result) {
