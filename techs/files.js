@@ -1,9 +1,11 @@
 var inherit = require('inherit'),
     vow = require('vow'),
     deps = require('../lib/deps/deps'),
-    asyncRequire = require('enb/lib/fs/async-require'),
-    dropRequireCache = require('enb/lib/fs/drop-require-cache'),
-    FileList = require('enb/lib/file-list');
+    enb = require('enb'),
+    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
+    asyncRequire = require('enb-async-require'),
+    clearRequire = require('clear-require'),
+    FileList = enb.FileList || require('enb/lib/file-list');
 
 /**
  * @class FilesTech
@@ -47,7 +49,7 @@ var inherit = require('inherit'),
  *     });
  * };
  */
-module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
+module.exports = inherit(BaseTech, {
     getName: function () {
         return 'files';
     },
@@ -149,7 +151,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech.js'), {
 
 function requireSourceDeps(data, filename) {
     return (data ? vow.resolve(data) : (
-            dropRequireCache(require, filename),
+            clearRequire(filename),
             asyncRequire(filename)
         ))
         .then(function (sourceDeps) {

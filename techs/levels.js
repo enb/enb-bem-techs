@@ -1,7 +1,9 @@
 var path = require('path'),
     inherit = require('inherit'),
     vow = require('vow'),
-    vfs = require('enb/lib/fs/async-fs'),
+    enb = require('enb'),
+    vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
+    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
     Level = require('../lib/levels/level'),
     Levels = require('../lib/levels/levels');
 
@@ -38,7 +40,7 @@ var path = require('path'),
  *     }]);
  * };
  */
-module.exports = inherit(require('enb/lib/tech/base-tech'), {
+module.exports = inherit(BaseTech, {
     getName: function () {
         return 'levels';
     },

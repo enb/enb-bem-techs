@@ -1,8 +1,10 @@
 var inherit = require('inherit'),
-    vfs = require('enb/lib/fs/async-fs'),
+    enb = require('enb'),
+    vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
+    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
     deps = require('../lib/deps/deps'),
-    asyncRequire = require('enb/lib/fs/async-require'),
-    dropRequireCache = require('enb/lib/fs/drop-require-cache');
+    asyncRequire = require('enb-async-require'),
+    clearRequire = require('clear-require');
 
 /**
  * @class LevelsToBemdeclTech
@@ -30,7 +32,7 @@ var inherit = require('inherit'),
  *     });
  * };
  */
-module.exports = inherit(require('enb/lib/tech/base-tech'), {
+module.exports = inherit(BaseTech, {
     getName: function () {
         return 'levels-to-bemdecl';
     },
@@ -81,7 +83,7 @@ module.exports = inherit(require('enb/lib/tech/base-tech'), {
                     });
             } else {
                 node.isValidTarget(target);
-                dropRequireCache(require, bemdeclFilename);
+                clearRequire(bemdeclFilename);
 
                 return asyncRequire(bemdeclFilename)
                     .then(function (result) {
