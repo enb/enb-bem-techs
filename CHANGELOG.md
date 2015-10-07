@@ -1,6 +1,18 @@
 История изменений
 =================
 
+2.1.0
+-----
+
+### Крупные изменения
+
+* Добавлена поддержка `enb` версии `1.x` ([#185]).
+
+### Зависимости
+
+* Модуль `js-yaml@3.4.0` обновлен до версии `3.4.2`.
+* Модуль `vow@0.4.10` обновлен до версии `0.4.11`.
+
 2.0.1
 -----
 
@@ -172,6 +184,7 @@
 * Модуль `inherit` обновлён до версии `2.2.2`.
 * Модуль `js-yaml` обновлён до версии `3.2.3`.
 
+[#185]: https://github.com/enb-bem/enb-bem-techs/pull/185
 [#179]: https://github.com/enb-bem/enb-bem-techs/issues/179
 [#175]: https://github.com/enb-bem/enb-bem-techs/issues/175
 [#156]: https://github.com/enb-bem/enb-bem-techs/issues/156
