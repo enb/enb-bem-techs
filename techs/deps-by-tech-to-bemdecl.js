@@ -16,13 +16,13 @@ var inherit = require('inherit'),
  *
  * Builds BEMDECL file using tech dependencies (depsByTech). Such dependencies are described in `deps.js` files.
  *
- * @param {Object}      options                           Options.
- * @param {String}      options.sourceTech                Tech name to build declaration for.
- *                                                        It depends on `destTech`.
- * @param {String}      options.destTech                  Tech name `sourceTech` depends from.
- * @param {String}      [options.target=?.bemdecl.js]     Path to BEMDECL file to build.
- * @param {String}      [options.filesTarget='?.files']   Path to target with {@link FileList}.
- * @param {String[]}    [options.sourceSuffixes]          Files with specified suffixes involved in the assembly.
+ * @param {Object}      options                              Options.
+ * @param {String}      options.sourceTech                   Tech name to build declaration for.
+ *                                                           It depends on `destTech`.
+ * @param {String}      options.destTech                     Tech name `sourceTech` depends from.
+ * @param {String}      [options.target=?.bemdecl.js]        Path to BEMDECL file to build.
+ * @param {String}      [options.filesTarget='?.files']      Path to target with {@link FileList}.
+ * @param {String[]}    [options.sourceSuffixes=['deps.js']] Files with specified suffixes involved in the assembly.
  *
  * @example
  * var FileProvideTech = require('enb/techs/file-provider'),
