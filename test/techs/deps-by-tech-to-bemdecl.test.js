@@ -51,6 +51,142 @@ describe('techs: deps', function () {
     });
 
     describe('deps.js format', function () {
+        it('respect context for block', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                shouldDeps: {
+                                    tech: 'destTech',
+                                }
+                            })
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [{ name: 'block' }];
+
+            return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
+        });
+
+        it('respect context for mod', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            _mod: {
+                                'block_mod_val.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    shouldDeps: {
+                                        tech: 'destTech',
+                                    }
+                                })
+                            }
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block', mods: [{ name: 'mod', vals: [{ name: 'val' }] }] }],
+                exepted = [{ name: 'block', mods: [{ name: 'mod', vals: [{ name: 'val' }] }] }];
+
+            return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
+        });
+
+        it('respect context for boolean mod', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            _mod: {
+                                'block_mod.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    shouldDeps: {
+                                        tech: 'destTech',
+                                    }
+                                })
+                            }
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block', mods: [{ name: 'mod', vals: [{ name: true }] }] }],
+                exepted = [{ name: 'block', mods: [{ name: 'mod', vals: [{ name: true }] }] }];
+
+            return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
+        });
+
+        it('respect context for elem', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            __elem: {
+                                'block__elem.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    shouldDeps: {
+                                        tech: 'destTech',
+                                    }
+                                })
+                            }
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block', elems: [{ name: 'elem' }] }],
+                exepted = [{ name: 'block', elems: [{ name: 'elem' }] }];
+
+            return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
+        });
+
+        it('respect context for elem mod', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            __elem: {
+                                _mod: {
+                                    'block__elem_mod_val.deps.js': stringifyDepsJs({
+                                        tech: 'sourceTech',
+                                        shouldDeps: {
+                                            tech: 'destTech',
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block', elems: [
+                    { name: 'elem', mods: [{ name: 'mod', vals: [{ name: 'val' }] }] }
+                ] }],
+                exepted = [{ name: 'block', elems: [
+                    { name: 'elem', mods: [{ name: 'mod', vals: [{ name: 'val' }] }] }
+                ] }];
+
+            return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
+        });
+
+        it('respect context for boolean mod of elem', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            __elem: {
+                                _mod: {
+                                    'block__elem_mod.deps.js': stringifyDepsJs({
+                                        tech: 'sourceTech',
+                                        shouldDeps: {
+                                            tech: 'destTech',
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block', elems: [
+                    { name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }
+                ] }],
+                exepted = [{ name: 'block', elems: [
+                    { name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }
+                ] }];
+
+            return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
+        });
+
         it('must add should dep of block', function () {
             var scheme = {
                     blocks: {
