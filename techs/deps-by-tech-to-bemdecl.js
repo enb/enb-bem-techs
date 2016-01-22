@@ -104,6 +104,7 @@ module.exports = inherit(BaseTech, {
                                         if (dep[depType]) {
                                             deps.flattenDeps(dep[depType]).forEach(function (singleDep) {
                                                 singleDep.block || (singleDep.block = notation.block);
+                                                singleDep.val || singleDep.mod && (singleDep.val = true);
 
                                                 if (!destTech || singleDep.tech === destTech) {
                                                     var key = depKey(singleDep);
