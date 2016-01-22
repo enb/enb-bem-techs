@@ -251,6 +251,23 @@ describe('techs: deps', function () {
             return assert(scheme, bemdecl, exepted);
         });
 
+        it('must add must dep of block boolean mod with short record', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                mustDeps: [{ block: 'other-block', mod: 'mod' }]
+                            })
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [{ name: 'other-block', mods: [{ name: 'mod', vals: [{ name: true }] }] }];
+
+            return assert(scheme, bemdecl, exepted);
+        });
+
         it('must add must dep of block mod', function () {
             var scheme = {
                     blocks: {
@@ -316,6 +333,28 @@ describe('techs: deps', function () {
                                 tech: 'sourceTech',
                                 mustDeps: [
                                     { block: 'other-block', elem: 'elem', mods: { mod: true } }
+                                ]
+                            })
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block' }],
+                exepted = [{
+                    name: 'other-block',
+                    elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }]
+                }];
+
+            return assert(scheme, bemdecl, exepted);
+        });
+
+        it('must add must dep of elem bool mod with short record', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({
+                                tech: 'sourceTech',
+                                mustDeps: [
+                                    { block: 'other-block', elem: 'elem', mod: 'mod' }
                                 ]
                             })
                         }
