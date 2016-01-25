@@ -89,6 +89,7 @@ levelsToBemdecl
 
 * [source](#source)
 * [target](#target-1)
+* [bemdeclFormat](#bemdeclformat)
 
 #### source
 
@@ -101,6 +102,28 @@ levelsToBemdecl
 Тип: `String`. По умолчанию: `?.bemdecl.js`.
 
 Имя файла, в который будет записан BEMDECL-файл со всеми БЭМ-сущностями, найденными в уровнях переопределения.
+
+#### bemdeclFormat
+
+Тип: `String`. По умолчанию: `bemdecl`.
+
+Формат результирующей декларации. Возможные значения:
+
+* `bemdecl` — стандартный BEMDECL-формат.
+
+  Пример:
+
+  ```js
+  { blocks: [{ name: 'b', elems: [{ name: 'e', mods: [{ name: 'm', vals: [{ name: 'v' }] }] }] }]}
+  ```
+
+* `deps` — формат результата `deps` и `depsOld` техннологий.
+
+  Пример:
+
+  ```js
+  { deps: [{ block: 'b', elem: 'e', mod: 'm', val: 'v' }] }
+  ```
 
 --------------------------------------
 
@@ -148,6 +171,28 @@ bemjsonToBemdecl
 Тип: `String`. По умолчанию: `?.bemdecl.js`.
 
 Имя создоваемого BEMDECL-файла.
+
+#### bemdeclFormat
+
+Тип: `String`. По умолчанию: `bemdecl`.
+
+Формат результирующей декларации. Возможные значения:
+
+* `bemdecl` — стандартный BEMDECL-формат.
+
+  Пример:
+
+  ```js
+  { blocks: [{ name: 'b', elems: [{ name: 'e', mods: [{ name: 'm', vals: [{ name: 'v' }] }] }] }]}
+  ```
+
+* `deps` — формат результата `deps` и `depsOld` техннологий.
+
+  Пример:
+
+  ```js
+  { deps: [{ block: 'b', elem: 'e', mod: 'm', val: 'v' }] }
+  ```
 
 --------------------------------------
 
@@ -354,6 +399,28 @@ depsByTechToBemdecl
 Тип: `String[]`. По умолчанию: `['deps.js']`.
 
 Суффиксы файлов, по которым отбираются исходные файлы зависимостей для дальнейшей сборки.
+
+#### bemdeclFormat
+
+Тип: `String`. По умолчанию: `bemdecl`.
+
+Формат результирующей декларации. Возможные значения:
+
+* `bemdecl` — стандартный BEMDECL-формат.
+
+  Пример:
+
+  ```js
+  { blocks: [{ name: 'b', elems: [{ name: 'e', mods: [{ name: 'm', vals: [{ name: 'v' }] }] }] }]}
+  ```
+
+* `deps` — формат результата `deps` и `depsOld` техннологий.
+
+  Пример:
+
+  ```js
+  { deps: [{ block: 'b', elem: 'e', mod: 'm', val: 'v' }] }
+  ```
 
 --------------------------------------
 

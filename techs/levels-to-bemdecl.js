@@ -17,6 +17,7 @@ var inherit = require('inherit'),
  * @param {Object}  [options]                         Options.
  * @param {String}  [options.target='?.bemdecl.js']   Path to result BEMDECL file.
  * @param {String}  [options.source='?.levels']       Path to target with {@link Levels}.
+ * @param {String}  [options.bemdeclFormat='bemdecl'] Format of result declaration (bemdecl or deps).
  *
  * @example
  * var bemTechs = require('enb-bem-techs');
@@ -42,6 +43,7 @@ module.exports = inherit(BaseTech, {
             this.getOption('target', this.node.getTargetName('bemdecl.js')));
         this._source = this.node.unmaskTargetName(
             this.getOption('source', this.node.getTargetName('levels')));
+        this._bemdeclFormat = this.getOption('bemdeclFormat', 'bemdecl');
     },
 
     getTargets: function () {
@@ -52,12 +54,14 @@ module.exports = inherit(BaseTech, {
         var node = this.node,
             target = this._target,
             bemdeclFilename = node.resolvePath(target),
+            bemdeclFormat = this._bemdeclFormat,
             cache = node.getNodeCache(target);
 
         return node.requireSources([this._source]).spread(function (levels) {
             if (cache.needRebuildFile('bemdecl-file', bemdeclFilename)) {
                 var resDeps = [],
-                    blocks = [],
+                    decl = [],
+                    data,
                     str;
 
                 levels.items.forEach(function (level) {
@@ -73,13 +77,20 @@ module.exports = inherit(BaseTech, {
                     });
                 });
 
-                blocks = deps.toBemdecl(resDeps);
-                str = 'exports.blocks = ' + JSON.stringify(blocks, null, 4) + ';\n';
+                if (bemdeclFormat === 'deps') {
+                    decl = resDeps;
+                    data = { deps: decl };
+                    str = 'exports.deps = ' + JSON.stringify(decl, null, 4) + ';\n';
+                } else {
+                    decl = deps.toBemdecl(resDeps);
+                    data = { blocks: decl };
+                    str = 'exports.blocks = ' + JSON.stringify(decl, null, 4) + ';\n';
+                }
 
                 return vfs.write(bemdeclFilename, str, 'utf8')
                     .then(function () {
                         cache.cacheFileInfo('bemdecl-file', bemdeclFilename);
-                        node.resolveTarget(target, { blocks: blocks });
+                        node.resolveTarget(target, data);
                     });
             } else {
                 node.isValidTarget(target);
