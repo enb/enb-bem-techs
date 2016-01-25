@@ -159,6 +159,7 @@ bemjsonToBemdecl
 
 * [source](#source-1)
 * [target](#target-2)
+* [bemdeclFormat](#bemdeclformat-1)
 
 #### source
 
@@ -369,6 +370,7 @@ depsByTechToBemdecl
 * [destTech](#desttech)
 * [filesTarget](#filestarget)
 * [sourceSuffixes](#sourcesuffixes)
+* [bemdeclFormat](#bemdeclformat-2)
 
 #### target
 
