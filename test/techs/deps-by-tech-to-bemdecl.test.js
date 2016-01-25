@@ -71,14 +71,14 @@ describe('techs: deps', function () {
     });
 
     describe('deps.js format', function () {
-        it('respect context for block', function () {
+        it('must respect context for block', function () {
             var scheme = {
                     blocks: {
                         block: {
                             'block.deps.js': stringifyDepsJs({
                                 tech: 'sourceTech',
                                 shouldDeps: {
-                                    tech: 'destTech',
+                                    tech: 'destTech'
                                 }
                             })
                         }
@@ -90,7 +90,7 @@ describe('techs: deps', function () {
             return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
         });
 
-        it('respect context for mod', function () {
+        it('must respect context for mod', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -98,7 +98,7 @@ describe('techs: deps', function () {
                                 'block_mod_val.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
                                     shouldDeps: {
-                                        tech: 'destTech',
+                                        tech: 'destTech'
                                     }
                                 })
                             }
@@ -111,7 +111,7 @@ describe('techs: deps', function () {
             return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
         });
 
-        it('respect context for boolean mod', function () {
+        it('must respect context for boolean mod', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -119,7 +119,7 @@ describe('techs: deps', function () {
                                 'block_mod.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
                                     shouldDeps: {
-                                        tech: 'destTech',
+                                        tech: 'destTech'
                                     }
                                 })
                             }
@@ -132,7 +132,7 @@ describe('techs: deps', function () {
             return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
         });
 
-        it('respect context for elem', function () {
+        it('must respect context for elem', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -140,7 +140,7 @@ describe('techs: deps', function () {
                                 'block__elem.deps.js': stringifyDepsJs({
                                     tech: 'sourceTech',
                                     shouldDeps: {
-                                        tech: 'destTech',
+                                        tech: 'destTech'
                                     }
                                 })
                             }
@@ -153,7 +153,7 @@ describe('techs: deps', function () {
             return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
         });
 
-        it('respect context for elem mod', function () {
+        it('must respect context for elem mod', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -162,7 +162,7 @@ describe('techs: deps', function () {
                                     'block__elem_mod_val.deps.js': stringifyDepsJs({
                                         tech: 'sourceTech',
                                         shouldDeps: {
-                                            tech: 'destTech',
+                                            tech: 'destTech'
                                         }
                                     })
                                 }
@@ -180,7 +180,7 @@ describe('techs: deps', function () {
             return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
         });
 
-        it('respect context for boolean mod of elem', function () {
+        it('must respect context for boolean mod of elem', function () {
             var scheme = {
                     blocks: {
                         block: {
@@ -189,7 +189,7 @@ describe('techs: deps', function () {
                                     'block__elem_mod.deps.js': stringifyDepsJs({
                                         tech: 'sourceTech',
                                         shouldDeps: {
-                                            tech: 'destTech',
+                                            tech: 'destTech'
                                         }
                                     })
                                 }
@@ -203,6 +203,98 @@ describe('techs: deps', function () {
                 exepted = [{ name: 'block', elems: [
                     { name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }
                 ] }];
+
+            return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
+        });
+
+        it('must not respect context 1', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            __elem: {
+                                'block__elem.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    shouldDeps: {
+                                        tech: 'destTech',
+                                        block: 'other-block'
+                                    }
+                                })
+                            }
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block', elems: [{ name: 'elem' }] }],
+                exepted = [{ name: 'other-block' }];
+
+            return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
+        });
+
+        it('must not respect mod context for other block', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            _mod: {
+                                'block_mod_val.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    shouldDeps: {
+                                        block: 'other-block',
+                                        tech: 'destTech'
+                                    }
+                                })
+                            }
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block', mods: [{ name: 'mod', vals: [{ name: 'val' }] }] }],
+                exepted = [{ name: 'other-block' }];
+
+            return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
+        });
+
+        it('must not respect mod val context for other mod', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            _mod: {
+                                'block_mod_val.deps.js': stringifyDepsJs({
+                                    tech: 'sourceTech',
+                                    shouldDeps: {
+                                        mod: 'other-mod',
+                                        tech: 'destTech'
+                                    }
+                                })
+                            }
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block', mods: [{ name: 'mod', vals: [{ name: 'val' }] }] }],
+                exepted = [{ name: 'block', mods: [{ name: 'other-mod', vals: [{ name: true }] }] }];
+
+            return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
+        });
+
+        it('must not respect elem context for other elem', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            __elem: {
+                                _mod: {
+                                    'block__elem_mod_val.deps.js': stringifyDepsJs({
+                                        tech: 'sourceTech',
+                                        shouldDeps: {
+                                            elem: 'other-elem',
+                                            tech: 'destTech'
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block', elems: [
+                    { name: 'elem', mods: [{ name: 'mod', vals: [{ name: 'val' }] }] }
+                ] }],
+                exepted = [{ name: 'block', elems: [{ name: 'other-elem' }] }];
 
             return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
         });

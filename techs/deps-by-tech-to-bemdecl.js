@@ -106,10 +106,22 @@ module.exports = inherit(BaseTech, {
                                     ['mustDeps', 'shouldDeps'].forEach(function (depType) {
                                         if (dep[depType]) {
                                             deps.flattenDeps(dep[depType]).forEach(function (singleDep) {
-                                                singleDep.block || (singleDep.block = notation.block);
-                                                singleDep.elem || notation.elem && (singleDep.elem = notation.elem);
-                                                singleDep.mod || notation.modName && (singleDep.mod = notation.modName);
-                                                singleDep.val || notation.modVal && (singleDep.val = notation.modVal);
+                                                if (!singleDep.block) {
+                                                    singleDep.block = notation.block;
+
+                                                    if (!singleDep.elem) {
+                                                        notation.elem && (singleDep.elem = notation.elem);
+
+                                                        if (!singleDep.mod) {
+                                                             notation.modName && (singleDep.mod = notation.modName);
+
+                                                             if (!singleDep.val) {
+                                                                 notation.modVal && (singleDep.val = notation.modVal);
+                                                             }
+                                                        }
+                                                    }
+                                                }
+
                                                 singleDep.val || singleDep.mod && (singleDep.val = true);
 
                                                 if (!destTech || singleDep.tech === destTech) {
