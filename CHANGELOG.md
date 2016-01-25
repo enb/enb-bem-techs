@@ -1,6 +1,15 @@
 История изменений
 =================
 
+2.2.1
+-----
+
+### Исправления ошибок
+
+Исправлена работа технологии `deps-by-tech-to-bemdecl`:
+
+* Неправильно учитывался контекст БЭМ-сущности по имени файла ([#201]).
+
 2.2.0
 -----
 
@@ -226,6 +235,7 @@
 * Модуль `inherit` обновлён до версии `2.2.2`.
 * Модуль `js-yaml` обновлён до версии `3.2.3`.
 
+[#201]: https://github.com/enb-bem/enb-bem-techs/issues/201
 [#192]: https://github.com/enb-bem/enb-bem-techs/issues/192
 [#191]: https://github.com/enb-bem/enb-bem-techs/issues/191
 [#185]: https://github.com/enb-bem/enb-bem-techs/pull/185
