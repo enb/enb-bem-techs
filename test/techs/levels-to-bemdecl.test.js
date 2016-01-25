@@ -9,6 +9,19 @@ describe('techs: levels-to-bemdecl', function () {
         mockFs.restore();
     });
 
+    it('must support deps format', function () {
+        var scheme = {
+                blocks: {
+                    block: {
+                        'block.ext': ''
+                    }
+                }
+            },
+            bemdecl = [{ block: 'block' }];
+
+        return assert(scheme, bemdecl, { bemdeclFormat: 'deps' });
+    });
+
     it('must detect block', function () {
         var scheme = {
                 blocks: {
@@ -124,7 +137,9 @@ describe('techs: levels-to-bemdecl', function () {
     });
 });
 
-function assert(fsScheme, expected) {
+function assert(fsScheme, expected, options) {
+    options || (options = {});
+
     var levels = Object.keys(fsScheme),
         dataBundle = new TestNode('data-bundle'),
         fsBundle;
@@ -143,16 +158,24 @@ function assert(fsScheme, expected) {
             dataBundle.provideTechData('?.levels', levels);
 
             return vow.all([
-                fsBundle.runTechAndGetResults(levelsToBemdeclTech),
-                fsBundle.runTechAndRequire(levelsToBemdeclTech),
-                dataBundle.runTechAndGetResults(levelsToBemdeclTech),
-                dataBundle.runTechAndRequire(levelsToBemdeclTech)
+                fsBundle.runTechAndGetResults(levelsToBemdeclTech, options),
+                fsBundle.runTechAndRequire(levelsToBemdeclTech, options),
+                dataBundle.runTechAndGetResults(levelsToBemdeclTech, options),
+                dataBundle.runTechAndRequire(levelsToBemdeclTech, options)
             ]);
         })
         .spread(function (data1, target1, data2, target2) {
-            data1['fs-bundle.bemdecl.js'].blocks.must.eql(expected);
-            target1[0].blocks.must.eql(expected);
-            data2['data-bundle.bemdecl.js'].blocks.must.eql(expected);
-            target2[0].blocks.must.eql(expected);
+            var isDepsFormat = options.bemdeclFormat === 'deps',
+                actualDecl1 = isDepsFormat ? data1['fs-bundle.bemdecl.js'].deps : data1['fs-bundle.bemdecl.js'].blocks,
+                actualDecl2 = isDepsFormat ?
+                    data2['data-bundle.bemdecl.js'].deps :
+                    data2['data-bundle.bemdecl.js'].blocks,
+                actualData1 = isDepsFormat ? target1[0].deps : target1[0].blocks,
+                actualData2 = isDepsFormat ? target2[0].deps : target1[0].blocks;
+
+            actualDecl1.must.eql(expected);
+            actualDecl2.must.eql(expected);
+            actualData1.must.eql(expected);
+            actualData2.must.eql(expected);
         });
 }

@@ -50,6 +50,26 @@ describe('techs: deps', function () {
             });
     });
 
+    it('must support deps format for BEMDECL', function () {
+        var scheme = {
+                blocks: {
+                    block: {
+                        'block.deps.js': stringifyDepsJs({
+                            tech: 'sourceTech',
+                            shouldDeps: [{ block: 'other-block' }]
+                        })
+                    }
+                }
+            },
+            bemdecl = [{ name: 'block' }],
+            exepted = [{ block: 'other-block' }];
+
+        return assert(scheme, bemdecl, exepted, {
+            sourceTech: 'sourceTech',
+            bemdeclFormat: 'deps'
+        });
+    });
+
     describe('deps.js format', function () {
         it('respect context for block', function () {
             var scheme = {
@@ -671,7 +691,11 @@ function getResults(fsScheme, bemdecl, options) {
             ]);
         })
         .spread(function (target1, target2) {
-            return [target1['bundle.bemdecl.js'].blocks, target2[0].blocks];
+            if (options.bemdeclFormat === 'deps') {
+                return [target1['bundle.bemdecl.js'].deps, target2[0].deps];
+            } else {
+                return [target1['bundle.bemdecl.js'].blocks, target2[0].blocks];
+            }
         });
 }
 
