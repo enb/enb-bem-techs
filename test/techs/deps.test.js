@@ -121,6 +121,26 @@ describe('techs: deps', function () {
             return assert(scheme, bemdecl, deps);
         });
 
+        it('must add mod from bemdecl after block if it is not specified in mustDeps', function () {
+            var scheme = {
+                    blocks: {
+                        block: {
+                            'block.deps.js': stringifyDepsJs({ mustDeps: [{ mods: { mod1: 'val' } }] })
+                        }
+                    }
+                },
+                bemdecl = [{ name: 'block', mods: [{ name: 'mod2', vals: [{ name: 'val' }] }] }],
+                deps = [
+                    { block: 'block', mod: 'mod1' },
+                    { block: 'block', mod: 'mod1', val: 'val' },
+                    { block: 'block' },
+                    { block: 'block', mod: 'mod2' },
+                    { block: 'block', mod: 'mod2', val: 'val' }
+                ];
+
+            return assert(scheme, bemdecl, deps);
+        });
+
         it('must add should dep of block boolean mod', function () {
             var scheme = {
                     blocks: {
