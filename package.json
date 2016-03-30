@@ -16,15 +16,15 @@
   "licenses": [
     {
       "type": "MPL-2.0",
-      "url": "https://github.com/enb-bem/enb-bem-techs/blob/master/LICENSE.txt"
+      "url": "https://github.com/enb/enb-bem-techs/blob/master/LICENSE.txt"
     }
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:enb-bem/enb-bem-techs.git"
+    "url": "git@github.com:enb/enb-bem-techs.git"
   },
-  "homepage": "https://github.com/enb-bem/enb-bem-techs",
-  "bugs": "https://github.com/enb-bem/enb-bem-techs/issues",
+  "homepage": "https://github.com/enb/enb-bem-techs",
+  "bugs": "https://github.com/enb/enb-bem-techs/issues",
   "maintainers": [
     {
       "name": "Andrew Abramov",
