@@ -78,7 +78,7 @@ module.exports = inherit(BaseTech, {
             }
             levelsIndex[levelPath] = true;
             if (!this.node.buildState[levelKey]) {
-                var level = new Level(levelPath, this.node.getLevelNamingScheme(levelPath));
+                var level = new Level(levelPath);
                 if (levelInfo.check === false) {
                     var blocks = cache.get(levelPath);
                     if (blocks) {
@@ -103,7 +103,7 @@ module.exports = inherit(BaseTech, {
                     var sublevelPath = _this.node.resolvePath(path);
                     if (!levelsIndex[sublevelPath]) {
                         levelsIndex[sublevelPath] = true;
-                        levelList.push(new Level(sublevelPath, _this.node.getLevelNamingScheme(sublevelPath)));
+                        levelList.push(new Level(sublevelPath));
                     }
                 }));
             })
