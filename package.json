@@ -43,7 +43,7 @@
     "enb": ">=0.15.0 <2.0.0"
   },
   "dependencies": {
-    "bem-naming": "0.5.1",
+    "bem-naming": "1.0.0",
     "clear-require": "1.0.1",
     "enb-async-require": "1.0.1",
     "enb-require-or-eval": "1.0.2",
