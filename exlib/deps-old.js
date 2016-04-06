@@ -266,46 +266,6 @@ module.exports.OldDeps = (function () {
         },
 
         /**
-         * Вычитает зависимости из переданного OldDeps.
-         *
-         * @param {OldDeps} deps
-         * @returns {OldDeps}
-         */
-        subtract: function (deps) {
-            var fromItems = this.items,
-                itemsToSubstract = deps.items;
-
-            for (var key in itemsToSubstract) {
-                if (key && itemsToSubstract.hasOwnProperty(key)) {
-                    delete fromItems[key];
-                }
-            }
-            return this;
-        },
-
-        /**
-         * Сохраняет пересечение с другим OldDeps.
-         *
-         * @param {OldDeps} deps
-         * @returns {OldDeps}
-         */
-        intersect: function (deps) {
-            var selfItems = this.items,
-                anotherItems = deps.items,
-                newItems = {};
-
-            for (var key in anotherItems) {
-                if ((anotherItems.hasOwnProperty(key) && selfItems.hasOwnProperty(key)) || !key) {
-                    newItems[key] = selfItems[key];
-                }
-            }
-
-            this.items = newItems;
-
-            return this;
-        },
-
-        /**
          * Возвращает количество зависимостей.
          *
          * @returns {Number}
@@ -388,20 +348,6 @@ module.exports.OldDeps = (function () {
         },
 
         /**
-         * Вызывает map для набора зависимостей.
-         *
-         * @param {Function} fn
-         * @returns {Array}
-         */
-        map: function (fn) {
-            var mapped = [];
-            this.forEach(function (item) {
-                mapped.push(fn.call(this, item));
-            });
-            return mapped;
-        },
-
-        /**
          * Фильтрует зависимости, возвращает результат.
          * @param {Function} fn
          * @returns {Array}
@@ -433,27 +379,6 @@ module.exports.OldDeps = (function () {
                 }
             });
             return byTech;
-        },
-
-        /**
-         * Сериализует в строку.
-         *
-         * @returns {String}
-         */
-        stringify: function () {
-            var result = [];
-            var deps = this.serialize();
-
-            if (deps['']) {
-                result.push('exports.deps = ' + JSON.stringify(deps[''][''], null, 4) + ';\n');
-                delete deps[''][''];
-            } else {
-                result.push('exports.deps = [];\n');
-            }
-
-            isEmptyObject(deps) || result.push('exports.depsByTechs = ' + JSON.stringify(deps, null, 4) + ';\n');
-
-            return result.join('');
         },
 
         /**
@@ -540,45 +465,6 @@ module.exports.OldDeps = (function () {
             result.mustDeps = this.mustDeps.concat();
             this.hasOwnProperty('key') && (result.key = this.key);
             return result;
-        },
-
-        /**
-         * Расширяет зависимость.
-         *
-         * @param {OldDepsItem} item
-         * @returns {OldDepsItem}
-         */
-        extend: function (item) {
-            if (!item) {
-                return this;
-            }
-            var depsTypes = ['mustDeps', 'shouldDeps'],
-                depsType,
-                thisDeps,
-                itemDeps;
-
-            while (depsType = depsTypes.shift()) {
-                itemDeps = item[depsType] || (item[depsType] = {});
-                if (thisDeps = this.item[depsType]) {
-                    for (var dependency in thisDeps) {
-                        if (thisDeps.hasOwnProperty(dependency)) {
-                            (itemDeps[dependency] = thisDeps[dependency].extend(itemDeps[dependency]));
-                        }
-                    }
-                }
-            }
-            return item;
-        },
-
-        /**
-         * Записывает зависимость в кэш по ключу.
-         *
-         * @param {Object} cache
-         * @returns {OldDepsItem}
-         */
-        cache: function (cache) {
-            var key = this.buildKey();
-            return cache[key] = this.extend(cache[key]);
         },
 
         /**
