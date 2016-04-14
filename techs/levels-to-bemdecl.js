@@ -39,10 +39,10 @@ module.exports = inherit(BaseTech, {
     },
 
     configure: function () {
-        this._target = this.node.unmaskTargetName(
-            this.getOption('target', this.node.getTargetName('bemdecl.js')));
-        this._source = this.node.unmaskTargetName(
-            this.getOption('source', this.node.getTargetName('levels')));
+        var node = this.node;
+
+        this._target = node.unmaskTargetName(this.getOption('target', node.getTargetName('bemdecl.js')));
+        this._source = node.unmaskTargetName(this.getOption('source', node.getTargetName('levels')));
         this._bemdeclFormat = this.getOption('bemdeclFormat', 'bemdecl');
     },
 

@@ -51,35 +51,11 @@ module.exports = inherit(BaseTech, {
     },
 
     configure: function () {
-        var node = this.node,
-            logger = node.getLogger();
+        var node = this.node;
 
-        this._target = this.getOption('depsTarget');
-        if (this._target) {
-            logger.logOptionIsDeprecated(node.unmaskTargetName(this._target), 'enb-bem', this.getName(),
-                'depsTarget', 'target', ' It will be removed in v3.0.0.');
-        } else {
-            this._target = this.getOption('target', '?.deps.js');
-        }
-        this._target = node.unmaskTargetName(this._target);
-
-        this._fromTarget = this.getOption('subtractFromTarget');
-        if (this._fromTarget) {
-            logger.logOptionIsDeprecated(this._target, 'enb-bem-techs', this.getName(),
-                'subtractFromTarget', 'from', ' It will be removed in v3.0.0.');
-        } else {
-            this._fromTarget = this.getRequiredOption('from');
-        }
-        this._fromTarget = node.unmaskTargetName(this._fromTarget);
-
-        this._whatTarget = this.getOption('subtractWhatTarget');
-        if (this._whatTarget) {
-            logger.logOptionIsDeprecated(this._target, 'enb-bem-techs', this.getName(),
-                'subtractWhatTarget', 'what', ' It will be removed in v3.0.0.');
-        } else {
-            this._whatTarget = this.getRequiredOption('what');
-        }
-        this._whatTarget = node.unmaskTargetName(this._whatTarget);
+        this._target = node.unmaskTargetName(this.getOption('target', '?.deps.js'));
+        this._fromTarget = node.unmaskTargetName(this.getRequiredOption('from'));
+        this._whatTarget = node.unmaskTargetName(this.getRequiredOption('what'));
     },
 
     getTargets: function () {
