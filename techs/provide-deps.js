@@ -72,33 +72,11 @@ module.exports = inherit(BaseTech, {
     },
 
     configure: function () {
-        var logger = this.node.getLogger();
+        var node = this.node;
 
-        this._target = this.getOption('depsTarget');
-        if (this._target) {
-            logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem-techs', this.getName(),
-                'depsTarget', 'target', ' It will be removed in v3.0.0.');
-        } else {
-            this._target = this.getOption('target', '?.deps.js');
-        }
-        this._target = this.node.unmaskTargetName(this._target);
-
-        this._fromNode = this.getOption('sourceNodePath');
-        if (this._fromNode) {
-            logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(),
-                'sourceNodePath', 'node', ' It will be removed in v3.0.0.');
-        } else {
-            this._fromNode = this.getRequiredOption('node');
-        }
-
-        this._sourceTarget = this.getOption('sourceTarget');
-        if (this._sourceTarget) {
-            logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(),
-                'sourceTarget', 'source', ' It will be removed in v3.0.0.');
-        } else {
-            this._sourceTarget = this.getOption('source', '?.deps.js');
-        }
-        this._sourceTarget = this.node.unmaskNodeTargetName(this._fromNode, this._sourceTarget);
+        this._target = node.unmaskTargetName(this.getOption('target', '?.deps.js'));
+        this._fromNode = this.getRequiredOption('node');
+        this._sourceTarget = node.unmaskNodeTargetName(this._fromNode, this.getOption('source', '?.deps.js'));
     },
 
     getTargets: function () {
