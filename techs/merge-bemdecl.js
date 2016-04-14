@@ -50,27 +50,11 @@ module.exports = inherit(BaseTech, {
     },
 
     configure: function () {
-        var _this = this,
-            logger = this.node.getLogger();
+        var node = this.node;
 
-        this._target = this.getOption('bemdeclTarget');
-        if (this._target) {
-            logger.logOptionIsDeprecated(this.node.unmaskTargetName(this._target), 'enb-bem', this.getName(),
-                'bemdeclTarget', 'target', ' It will be removed in v3.0.0.');
-        } else {
-            this._target = this.getOption('target', this.node.getTargetName('bemdecl.js'));
-        }
-        this._target = this.node.unmaskTargetName(this._target);
-
-        this._sources = this.getOption('bemdeclSources');
-        if (this._sources) {
-            logger.logOptionIsDeprecated(this._target, 'enb-bem', this.getName(),
-                'bemdeclSources', 'sources', ' It will be removed in v3.0.0.');
-        } else {
-            this._sources = this.getRequiredOption('sources');
-        }
-        this._sources = this._sources.map(function (source) {
-            return _this.node.unmaskTargetName(source);
+        this._target = node.unmaskTargetName(this.getOption('target', node.getTargetName('bemdecl.js')));
+        this._sources = this.getRequiredOption('sources').map(function (source) {
+            return node.unmaskTargetName(source);
         });
     },
 

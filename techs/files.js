@@ -55,22 +55,12 @@ module.exports = inherit(BaseTech, {
     },
 
     configure: function () {
-        var logger = this.node.getLogger();
+        var node = this.node;
 
-        this._filesTarget = this.node.unmaskTargetName(this.getOption('filesTarget', '?.files'));
-        this._dirsTarget = this.node.unmaskTargetName(this.getOption('dirsTarget', '?.dirs'));
-        this._levelsTarget = this.node.unmaskTargetName(this.getOption('levelsTarget', '?.levels'));
-
-        this._depsFile = this.getOption('depsTarget');
-        if (this._depsFile) {
-            logger.logOptionIsDeprecated(this._filesTarget, 'enb-bem', this.getName(),
-                'depsTarget', 'depsFile', ' It will be removed in v3.0.0.');
-            logger.logOptionIsDeprecated(this._dirsTarget, 'enb-bem', this.getName(),
-                'depsTarget', 'depsFile', ' It will be removed in v3.0.0.');
-        } else {
-            this._depsFile = this.getOption('depsFile', '?.deps.js');
-        }
-        this._depsFile = this.node.unmaskTargetName(this._depsFile);
+        this._filesTarget = node.unmaskTargetName(this.getOption('filesTarget', '?.files'));
+        this._dirsTarget = node.unmaskTargetName(this.getOption('dirsTarget', '?.dirs'));
+        this._levelsTarget = node.unmaskTargetName(this.getOption('levelsTarget', '?.levels'));
+        this._depsFile = node.unmaskTargetName(this.getOption('depsFile', '?.deps.js'));
     },
 
     getTargets: function () {

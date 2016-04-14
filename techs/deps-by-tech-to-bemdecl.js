@@ -55,8 +55,10 @@ module.exports = inherit(BaseTech, {
     },
 
     configure: function () {
-        this._target = this.node.unmaskTargetName(this.getOption('target', '?.bemdecl.js'));
-        this._filesTarget = this.node.unmaskTargetName(this.getOption('filesTarget', '?.files'));
+        var node = this.node;
+
+        this._target = node.unmaskTargetName(this.getOption('target', '?.bemdecl.js'));
+        this._filesTarget = node.unmaskTargetName(this.getOption('filesTarget', '?.files'));
         this._sourceTech = this.getRequiredOption('sourceTech');
         this._destTech = this.getOption('destTech');
         this._sourceSuffixes = this.getOption('sourceSuffixes', ['deps.js']);
