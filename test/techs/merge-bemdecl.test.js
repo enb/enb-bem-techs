@@ -1,8 +1,10 @@
 var path = require('path'),
+
     vow = require('vow'),
     mockFs = require('mock-fs'),
     TestNode = require('mock-enb/lib/mock-node'),
-    Tech = require('../../techs/merge-bemdecl');
+
+    Tech = require('../utils/techs').mergeBemdecl;
 
 describe('techs: merge-bemdecl', function () {
     afterEach(function () {

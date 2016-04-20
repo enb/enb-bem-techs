@@ -1,12 +1,15 @@
 var path = require('path'),
+
     vow = require('vow'),
     mockFs = require('mock-fs'),
     FileList = require('enb/lib/file-list'),
     TestNode = require('mock-enb/lib/mock-node'),
-    levelsTech = require('../../techs/levels'),
-    filesTech = require('../../techs/files'),
-    depsTech = require('../../techs/deps'),
-    bemdeclFromDepsByTechTech = require('../../techs/deps-by-tech-to-bemdecl');
+
+    techs = require('../utils/techs'),
+    levelsTech = techs.levels,
+    filesTech = techs.files,
+    depsTech = techs.deps,
+    depsByTechToBemdecl = techs.depsByTechToBemdecl;
 
 describe('techs: deps', function () {
     afterEach(function () {
@@ -44,7 +47,7 @@ describe('techs: deps', function () {
 
         bundle.provideTechData('?.files', new FileList());
 
-        return bundle.runTech(bemdeclFromDepsByTechTech, options)
+        return bundle.runTech(depsByTechToBemdecl, options)
             .then(function (target) {
                 target.blocks.must.eql([]);
             });
@@ -778,8 +781,8 @@ function getResults(fsScheme, bemdecl, options) {
             bundle.provideTechData('?.files', files);
 
             return vow.all([
-                bundle.runTechAndGetResults(bemdeclFromDepsByTechTech, options),
-                bundle.runTechAndRequire(bemdeclFromDepsByTechTech, options)
+                bundle.runTechAndGetResults(depsByTechToBemdecl, options),
+                bundle.runTechAndRequire(depsByTechToBemdecl, options)
             ]);
         })
         .spread(function (target1, target2) {

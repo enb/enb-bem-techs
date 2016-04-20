@@ -53,6 +53,7 @@
   },
   "devDependencies": {
     "enb": ">=0.15.0 <2.0.0",
+    "gulp-eval": "1.0.0-0",
     "istanbul": "0.4.2",
     "jscs": "2.8.0",
     "jshint": "2.9.1",
@@ -62,6 +63,7 @@
     "mock-enb": "0.3.0",
     "mock-fs": "3.6.0",
     "must": "0.13.1",
+    "proxyquire": "1.7.4",
     "seedrandom": "2.4.2"
   },
   "main": "index.js",
