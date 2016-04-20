@@ -1,12 +1,15 @@
-var vow = require('vow'),
-    fs = require('fs'),
+var fs = require('fs'),
     path = require('path'),
+
+    vow = require('vow'),
     mockFs = require('mock-fs'),
     TestNode = require('mock-enb/lib/mock-node'),
-    levelsTech = require('../../../techs/levels'),
+
+    techs = require('../../utils/techs'),
+    levelsTech = techs.levels,
     depsTechs = {
-        deps: require('../../../techs/deps'),
-        'deps-old': require('../../../techs/deps-old')
+        deps: techs.deps,
+        'deps-old': techs.depsOld
     },
     DepsGraph = require('../../../lib/deps/deps-graph'),
     needGatherDeps = process.env.GATHER_DEPS,

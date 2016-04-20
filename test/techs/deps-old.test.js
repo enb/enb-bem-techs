@@ -1,9 +1,12 @@
 var path = require('path'),
+
     vow = require('vow'),
     mockFs = require('mock-fs'),
     TestNode = require('mock-enb/lib/mock-node'),
-    levelsTech = require('../../techs/levels'),
-    depsTech = require('../../techs/deps-old');
+
+    techs = require('../utils/techs'),
+    levelsTech = techs.levels,
+    depsTech = techs.depsOld;
 
 describe('techs: deps-old', function () {
     afterEach(function () {
