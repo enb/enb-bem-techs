@@ -1,8 +1,11 @@
 var vow = require('vow'),
+
     mockFs = require('mock-fs'),
     TestNode = require('mock-enb/lib/mock-node'),
-    levelsTech = require('../../techs/levels'),
-    levelsToBemdeclTech = require('../../techs/levels-to-bemdecl');
+
+    techs = require('../utils/techs'),
+    levelsTech = techs.levels,
+    levelsToBemdeclTech = techs.levelsToBemdecl;
 
 describe('techs: levels-to-bemdecl', function () {
     afterEach(function () {

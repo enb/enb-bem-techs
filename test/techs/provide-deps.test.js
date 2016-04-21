@@ -1,7 +1,9 @@
 var path = require('path'),
+
     mockFs = require('mock-fs'),
     TestNode = require('mock-enb/lib/mock-node'),
-    Tech = require('../../techs/provide-deps');
+
+    Tech = require('../utils/techs').provideDeps;
 
 describe('techs: provide-deps', function () {
     var fsBundle,
