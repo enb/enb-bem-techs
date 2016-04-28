@@ -11,7 +11,7 @@ var path = require('path'),
     depsTech = techs.deps,
     depsByTechToBemdecl = techs.depsByTechToBemdecl;
 
-describe('techs: deps', function () {
+describe('techs: deps-by-tech-to-bemdecl', function () {
     afterEach(function () {
         mockFs.restore();
     });
