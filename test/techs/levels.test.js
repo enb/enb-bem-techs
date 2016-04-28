@@ -1,7 +1,6 @@
 var path = require('path'),
 
     mockFs = require('mock-fs'),
-    naming = require('bem-naming'),
     TestNode = require('mock-enb/lib/mock-node'),
 
     Tech = require('../utils/techs').levels;
@@ -19,9 +18,22 @@ describe('techs: levels', function () {
                     }
                 }
             },
-            files = ['blocks/block/block.ext'];
+            expected = {
+                block: [
+                    {
+                        entity: { block: 'block' },
+                        tech: 'ext',
+                        path: path.resolve('./blocks/block/block.ext'),
+                        level: path.resolve('./blocks'),
+                        isDirectory: false
+                    }
+                ]
+            };
 
-        return hasFiles(scheme, files);
+        return assert(scheme, {
+            levels: [path.resolve('blocks')],
+            introspection: expected
+        });
     });
 
     it('must detect block dir in level', function () {
@@ -32,9 +44,22 @@ describe('techs: levels', function () {
                     }
                 }
             },
-            dirs = ['blocks/block/block.ext'];
+            expected = {
+                block: [
+                    {
+                        entity: { block: 'block' },
+                        tech: 'ext',
+                        path: path.resolve('./blocks/block/block.ext'),
+                        level: path.resolve('./blocks'),
+                        isDirectory: true
+                    }
+                ]
+            };
 
-        return hasDirs(scheme, dirs);
+            return assert(scheme, {
+                levels: [path.resolve('blocks')],
+                introspection: expected
+            });
     });
 
     it('must detect boolean mod file of block in level', function () {
@@ -47,9 +72,22 @@ describe('techs: levels', function () {
                     }
                 }
             },
-            files = ['blocks/block/_bool-mod/block_bool-mod.ext'];
+            expected = {
+                'block_bool-mod': [
+                    {
+                        entity: { block: 'block', modName: 'bool-mod', modVal: true },
+                        tech: 'ext',
+                        path: path.resolve('./blocks/block/_bool-mod/block_bool-mod.ext'),
+                        level: path.resolve('./blocks'),
+                        isDirectory: false
+                    }
+                ]
+            };
 
-        return hasFiles(scheme, files);
+            return assert(scheme, {
+                levels: [path.resolve('blocks')],
+                introspection: expected
+            });
     });
 
     it('must detect boolean mod dir of block in level', function () {
@@ -62,9 +100,22 @@ describe('techs: levels', function () {
                     }
                 }
             },
-            dirs = ['blocks/block/_bool-mod/block_bool-mod.ext'];
+            expected = {
+                'block_bool-mod': [
+                    {
+                        entity: { block: 'block', modName: 'bool-mod', modVal: true },
+                        tech: 'ext',
+                        path: path.resolve('./blocks/block/_bool-mod/block_bool-mod.ext'),
+                        level: path.resolve('./blocks'),
+                        isDirectory: true
+                    }
+                ]
+            };
 
-        return hasDirs(scheme, dirs);
+            return assert(scheme, {
+                levels: [path.resolve('blocks')],
+                introspection: expected
+            });
     });
 
     it('must detect mod file of block in level', function () {
@@ -77,9 +128,22 @@ describe('techs: levels', function () {
                     }
                 }
             },
-            files = ['blocks/block/_mod-name/block_mod-name_mod-val.ext'];
+            expected = {
+                'block_mod-name_mod-val': [
+                    {
+                        entity: { block: 'block', modName: 'mod-name', modVal: 'mod-val' },
+                        tech: 'ext',
+                        path: path.resolve('./blocks/block/_mod-name/block_mod-name_mod-val.ext'),
+                        level: path.resolve('./blocks'),
+                        isDirectory: false
+                    }
+                ]
+            };
 
-        return hasFiles(scheme, files);
+            return assert(scheme, {
+                levels: [path.resolve('blocks')],
+                introspection: expected
+            });
     });
 
     it('must detect mod dir of block in level', function () {
@@ -92,9 +156,22 @@ describe('techs: levels', function () {
                     }
                 }
             },
-            dirs = ['blocks/block/_mod-name/block_mod-name_mod-val.ext'];
+            expected = {
+                'block_mod-name_mod-val': [
+                    {
+                        entity: { block: 'block', modName: 'mod-name', modVal: 'mod-val' },
+                        tech: 'ext',
+                        path: path.resolve('./blocks/block/_mod-name/block_mod-name_mod-val.ext'),
+                        level: path.resolve('./blocks'),
+                        isDirectory: true
+                    }
+                ]
+            };
 
-        return hasDirs(scheme, dirs);
+            return assert(scheme, {
+                levels: [path.resolve('blocks')],
+                introspection: expected
+            });
     });
 
     it('must detect elem file of block in level', function () {
@@ -107,9 +184,22 @@ describe('techs: levels', function () {
                     }
                 }
             },
-            files = ['blocks/block/__elem-name/block__elem-name.ext'];
+            expected = {
+                'block__elem-name': [
+                    {
+                        entity: { block: 'block', elem: 'elem-name' },
+                        tech: 'ext',
+                        path: path.resolve('./blocks/block/__elem-name/block__elem-name.ext'),
+                        level: path.resolve('./blocks'),
+                        isDirectory: false
+                    }
+                ]
+            };
 
-        return hasFiles(scheme, files);
+            return assert(scheme, {
+                levels: [path.resolve('blocks')],
+                introspection: expected
+            });
     });
 
     it('must detect elem dir of block in level', function () {
@@ -122,9 +212,22 @@ describe('techs: levels', function () {
                     }
                 }
             },
-            dirs = ['blocks/block/__elem-name/block__elem-name.ext'];
+            expected = {
+                'block__elem-name': [
+                    {
+                        entity: { block: 'block', elem: 'elem-name' },
+                        tech: 'ext',
+                        path: path.resolve('./blocks/block/__elem-name/block__elem-name.ext'),
+                        level: path.resolve('./blocks'),
+                        isDirectory: true
+                    }
+                ]
+            };
 
-        return hasDirs(scheme, dirs);
+            return assert(scheme, {
+                levels: [path.resolve('blocks')],
+                introspection: expected
+            });
     });
 
     it('must detect boolean mod file of elem in level', function () {
@@ -139,9 +242,22 @@ describe('techs: levels', function () {
                     }
                 }
             },
-            files = ['blocks/block/__elem-name/_bool-mod/block__elem-name_bool-mod.ext'];
+            expected = {
+                'block__elem-name_bool-mod': [
+                    {
+                        entity: { block: 'block', elem: 'elem-name', modName: 'bool-mod', modVal: true },
+                        tech: 'ext',
+                        path: path.resolve('./blocks/block/__elem-name/_bool-mod/block__elem-name_bool-mod.ext'),
+                        level: path.resolve('./blocks'),
+                        isDirectory: false
+                    }
+                ]
+            };
 
-        return hasFiles(scheme, files);
+            return assert(scheme, {
+                levels: [path.resolve('blocks')],
+                introspection: expected
+            });
     });
 
     it('must detect boolean mod dir of elem in level', function () {
@@ -156,9 +272,22 @@ describe('techs: levels', function () {
                     }
                 }
             },
-            dirs = ['blocks/block/__elem-name/_bool-mod/block__elem-name_bool-mod.ext'];
+            expected = {
+                'block__elem-name_bool-mod': [
+                    {
+                        entity: { block: 'block', elem: 'elem-name', modName: 'bool-mod', modVal: true },
+                        tech: 'ext',
+                        path: path.resolve('./blocks/block/__elem-name/_bool-mod/block__elem-name_bool-mod.ext'),
+                        level: path.resolve('./blocks'),
+                        isDirectory: true
+                    }
+                ]
+            };
 
-        return hasDirs(scheme, dirs);
+            return assert(scheme, {
+                levels: [path.resolve('blocks')],
+                introspection: expected
+            });
     });
 
     it('must detect mod file of elem in level', function () {
@@ -173,9 +302,24 @@ describe('techs: levels', function () {
                     }
                 }
             },
-            files = ['blocks/block/__elem-name/_mod-name/block__elem-name_mod-name_mod-val.ext'];
+            expected = {
+                'block__elem-name_mod-name_mod-val': [
+                    {
+                        entity: { block: 'block', elem: 'elem-name', modName: 'mod-name', modVal: 'mod-val' },
+                        tech: 'ext',
+                        path: path.resolve(
+                            './blocks/block/__elem-name/_mod-name/block__elem-name_mod-name_mod-val.ext'
+                        ),
+                        level: path.resolve('./blocks'),
+                        isDirectory: false
+                    }
+                ]
+            };
 
-        return hasFiles(scheme, files);
+            return assert(scheme, {
+                levels: [path.resolve('blocks')],
+                introspection: expected
+            });
     });
 
     it('must detect mod dir of elem in level', function () {
@@ -190,9 +334,24 @@ describe('techs: levels', function () {
                     }
                 }
             },
-            dirs = ['blocks/block/__elem-name/_mod-name/block__elem-name_mod-name_mod-val.ext'];
+            expected = {
+                'block__elem-name_mod-name_mod-val': [
+                    {
+                        entity: { block: 'block', elem: 'elem-name', modName: 'mod-name', modVal: 'mod-val' },
+                        tech: 'ext',
+                        path: path.resolve(
+                            './blocks/block/__elem-name/_mod-name/block__elem-name_mod-name_mod-val.ext'
+                        ),
+                        level: path.resolve('./blocks'),
+                        isDirectory: true
+                    }
+                ]
+            };
 
-        return hasDirs(scheme, dirs);
+            return assert(scheme, {
+                levels: [path.resolve('blocks')],
+                introspection: expected
+            });
     });
 
     it('must detect block files in levels', function () {
@@ -208,12 +367,29 @@ describe('techs: levels', function () {
                     }
                 }
             },
-            files = [
-                'level-1/block/block.ext',
-                'level-2/block/block.ext'
-            ];
+            expected = {
+                block: [
+                    {
+                        entity: { block: 'block' },
+                        tech: 'ext',
+                        path: path.resolve('./level-1/block/block.ext'),
+                        level: path.resolve('./level-1'),
+                        isDirectory: false
+                    },
+                    {
+                        entity: { block: 'block' },
+                        tech: 'ext',
+                        path: path.resolve('./level-2/block/block.ext'),
+                        level: path.resolve('./level-2'),
+                        isDirectory: false
+                    }
+                ]
+            };
 
-        return hasFiles(scheme, files);
+            return assert(scheme, {
+                levels: [path.resolve('level-1'), path.resolve('level-2')],
+                introspection: expected
+            });
     });
 
     it('must detect block dirs in levels', function () {
@@ -229,38 +405,33 @@ describe('techs: levels', function () {
                     }
                 }
             },
-            dirs = [
-                'level-1/block/block.ext',
-                'level-2/block/block.ext'
-            ];
+            expected = {
+                block: [
+                    {
+                        entity: { block: 'block' },
+                        tech: 'ext',
+                        path: path.resolve('./level-1/block/block.ext'),
+                        level: path.resolve('./level-1'),
+                        isDirectory: true
+                    },
+                    {
+                        entity: { block: 'block' },
+                        tech: 'ext',
+                        path: path.resolve('./level-2/block/block.ext'),
+                        level: path.resolve('./level-2'),
+                        isDirectory: true
+                    }
+                ]
+            };
 
-        return hasDirs(scheme, dirs);
-    });
-
-    it('must handle full paths', function () {
-        mockFs({
-            blocks: {
-                block: {
-                    'block.ext': ''
-                }
-            },
-            bundle: {}
-        });
-
-        var bundle = new TestNode('bundle'),
-            levelDirname = path.resolve('blocks');
-
-        return bundle.runTech(Tech, { levels: [levelDirname] })
-            .then(function (levels) {
-                var files = getEntityFiles(levels, 'block', 'files');
-
-                files[0].name.must.be('block.ext');
-                files.must.have.length(1);
+            return assert(scheme, {
+                levels: [path.resolve('level-1'), path.resolve('level-2')],
+                introspection: expected
             });
     });
 });
 
-function getLevels(fsScheme) {
+function assert(fsScheme, expected) {
     var levels = Object.keys(fsScheme),
         bundle;
 
@@ -269,37 +440,37 @@ function getLevels(fsScheme) {
 
     bundle = new TestNode('bundle');
 
-    return bundle.runTech(Tech, { levels: levels });
-}
+    return bundle.runTech(Tech, { levels: levels })
+        .then(function (data) {
+            var actual = {
+                levels: data._levels,
+                introspection: mergeIntrospections(data._introspections)
+            };
 
-function getEntityFiles(levels, entity, filetype) {
-    var notation = naming.parse(entity);
-
-    if (notation.elem) {
-        return levels.getElemEntities(notation.block, notation.elem, notation.modName, notation.modVal)[filetype];
-    } else {
-        return levels.getBlockEntities(notation.block, notation.modName, notation.modVal)[filetype];
-    }
-}
-
-function has(fsScheme, filenames, filetype) {
-    return getLevels(fsScheme)
-        .then(function (levels) {
-            filenames.forEach(function (filename, i) {
-                var basename = path.basename(filename).split('.')[0],
-                    fullname = path.resolve(filename),
-                    files = getEntityFiles(levels, basename, filetype);
-
-                files.must.have.length(filenames.length);
-                files[i].fullname.must.be(fullname);
-            });
+            actual.must.eql(expected);
         });
 }
 
-function hasFiles(fsScheme, filenames) {
-    return has(fsScheme, filenames, 'files');
-}
+/**
+  * Merges introspection from several levels.
+  *
+  * @param {object[]} introspections
+  * @returns {object}
+  */
+function mergeIntrospections(introspections) {
+    var result = {};
 
-function hasDirs(fsScheme, filenames) {
-    return has(fsScheme, filenames, 'dirs');
+    introspections.forEach(function (introspection) {
+        Object.keys(introspection).forEach(function (id) {
+            var files = (introspection[id] || []).map(function (file) {
+                delete file.mtime;
+
+                return file;
+            });
+
+            result[id] = (result[id] || []).concat(files);
+        });
+    });
+
+    return result;
 }
