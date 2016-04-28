@@ -1,11 +1,17 @@
-var path = require('path'),
-    inherit = require('inherit'),
-    vow = require('vow'),
-    enb = require('enb'),
-    vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
-    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
-    Level = require('../lib/levels/level'),
-    Levels = require('../lib/levels/levels');
+'use strict';
+
+const path = require('path');
+const fs = require('fs');
+
+const vow = require('vow');
+const enb = require('enb');
+const walk = require('bem-walk');
+const stringifyEntity = require('bem-naming').stringify;
+const uniqBy = require('lodash').uniqBy;
+
+const vfs = enb.asyncFS || require('enb/lib/fs/async-fs');
+const buildFlow = enb.buildFlow || require('enb/lib/build-flow');
+const BundleIntrospection = require('../lib/bundle-introspection');
 
 /**
  * @class LevelsTech
@@ -40,85 +46,162 @@ var path = require('path'),
  *     }]);
  * };
  */
-module.exports = inherit(BaseTech, {
-    getName: function () {
-        return 'levels';
-    },
+module.exports = buildFlow.create()
+    .name('levels')
+    .target('target', '?.levels')
+    .defineRequiredOption('levels')
+    .defineOption('sublevelDirectories', ['blocks'])
+    .saver(function () {})
+    .needRebuild(function () {
+        return true;
+    })
+    .builder(function () {
+        const target = this._target;
+        const node = this.node;
+        const scan = this.scanLevel.bind(this);
 
-    init: function () {
-        this.__base.apply(this, arguments);
-        this._levelConfig = this.getRequiredOption('levels');
-        this._sublevelDirectories = this.getOption('sublevelDirectories', ['blocks']);
-        this._target = this.node.unmaskTargetName(this.getOption('target', '?.levels'));
-    },
+        return this.getLevels()
+            .then(function (levels) {
+                return vow.all(levels.map(scan))
+                    .then(function (introspections) {
+                        return [levels, introspections];
+                    });
+            })
+            .spread(function (levels, introspections) {
+                const levelPaths = levels.map(function (level) { return level.path; });
 
-    getTargets: function () {
-        return [this._target];
-    },
+                node.resolveTarget(target, new BundleIntrospection(levelPaths, introspections));
+            }, this);
+    })
+    .methods({
+        /**
+         * Returns levels for current bundle.
+         *
+         * @returns {{path: string, check: boolean}[]}
+         */
+        getLevels: function () {
+            const sourceLevels = this._initLevels(this._levels);
 
-    build: function () {
-        var _this = this,
-            root = this.node.getRootDir(),
-            target = this._target,
-            levelList = [],
-            levelsToCache = [],
-            levelsIndex = {},
-            cache = this.node.getNodeCache(target),
-            levelConfig = _this._levelConfig;
-
-        for (var i = 0, l = levelConfig.length; i < l; i++) {
-            var levelInfo = levelConfig[i];
-
-            levelInfo = typeof levelInfo === 'object' ? levelInfo : { path: levelInfo };
-
-            var levelPath = path.resolve(root, levelInfo.path),
-                levelKey = 'level:' + levelPath;
-            if (levelsIndex[levelPath]) {
-                continue;
-            }
-            levelsIndex[levelPath] = true;
-            if (!this.node.buildState[levelKey]) {
-                var level = new Level(levelPath);
-                if (levelInfo.check === false) {
-                    var blocks = cache.get(levelPath);
-                    if (blocks) {
-                        level.loadFromCache(blocks);
-                    } else {
-                        levelsToCache.push(level);
-                    }
-                }
-                this.node.buildState[levelKey] = level;
-            }
-            levelList.push(this.node.buildState[levelKey]);
-        }
-
-        return vfs.listDir(path.join(_this.node.getRootDir(), _this.node.getPath()))
-            .then(function (listDir) {
-                return _this._sublevelDirectories.filter(function (path) {
-                    return listDir.indexOf(path) !== -1;
+            return this._findSublevels()
+                .then(function (sublevels) {
+                    return uniqBy(sourceLevels.concat(sublevels), 'path');
                 });
-            })
-            .then(function (sublevels) {
-                return vow.all(sublevels.map(function (path) {
-                    var sublevelPath = _this.node.resolvePath(path);
-                    if (!levelsIndex[sublevelPath]) {
-                        levelsIndex[sublevelPath] = true;
-                        levelList.push(new Level(sublevelPath));
-                    }
-                }));
-            })
-            .then(function () {
-                return vow.all(levelList.map(function (level) {
-                        return level.load();
-                    }))
-                    .then(function () {
-                        levelsToCache.forEach(function (level) {
-                            cache.set(level.getPath(), level.getBlocks());
+        },
+        /**
+         * Scans specified level.
+         *
+         * If level has `check: false` option and was scanned previously then introspection will be taken from cache.
+         *
+         * If the level of need for several bundles then it will be scanned only once.
+         *
+         * @param {{path: string, check: boolean}[]} level
+         * @returns {promise}
+         */
+        scanLevel: function (level) {
+            const node = this.node;
+            const cache = node.getNodeCache(this._target);
+            const state = node.buildState;
+            const scan = this._forceScanLevel.bind(this);
+            const levelpath = level.path;
+            const key = 'level:' + levelpath;
+
+            let promise = state[key];
+            if (promise) { return promise; }
+
+            if (level.check === false) {
+                var data = cache.get(key);
+
+                promise = data ? vow.resolve(data)
+                    : scan(levelpath)
+                        .then(function (introspection) {
+                            cache.set(key, introspection);
+
+                            return introspection;
                         });
-                        _this.node.resolveTarget(target, new Levels(levelList));
+            } else {
+                promise = scan(levelpath);
+            }
+
+            state[key] = promise;
+
+            return promise;
+        },
+        /**
+         * Processes the `levels` option.
+         *
+         * @returns {{path: string, check: boolean}[]}
+         */
+        _initLevels: function () {
+            const root = this.node.getRootDir();
+
+            return this._levels.map(function (level) {
+                const levelpath = typeof level === 'object' ? level.path : level;
+
+                return {
+                    path: path.resolve(root, levelpath),
+                    check: level.hasOwnProperty('check') ? level.check : true
+                };
+            });
+        },
+        /**
+         * Finds special levels for current bundle.
+         *
+         * @returns {{path: string, check: boolean}[]}
+         */
+        _findSublevels: function () {
+            const dir = path.join(this.node.getDir());
+            const patterns = this._sublevelDirectories;
+
+            return vfs.listDir(dir)
+                .then(function (basenames) {
+                    return basenames
+                        .filter(function (basename) {
+                            return patterns.indexOf(basename) !== -1;
+                        })
+                        .map(function (basename) {
+                            return { path: path.join(dir, basename), check: false };
+                        });
+                });
+        },
+        /**
+         * Scans specified level.
+         *
+         * The cache of current node will be ignored and scan happen again.
+         *
+         * @param {string} levelpath - path to level.
+         * @returns {promise}
+         */
+        _forceScanLevel: function (levelpath) {
+            return new vow.Promise((resolve, reject) => {
+                const data = {};
+                const promises = [];
+
+                walk([levelpath])
+                    .on('data', function (file) {
+                        const id = stringifyEntity(file.entity);
+
+                        promises.push(new Promise((resolve, reject) => {
+                            fs.stat(file.path, (err, stats) => {
+                                if (err) {
+                                    return reject(err);
+                                }
+
+                                file.isDirectory = stats.isDirectory();
+                                file.mtime = stats.mtime;
+
+                                (data[id] || (data[id] = [])).push(file);
+
+                                resolve();
+                            });
+                        }));
+                    })
+                    .on('error', reject)
+                    .on('end', () => {
+                        Promise.all(promises)
+                            .catch(reject)
+                            .then(() => resolve(data));
                     });
             });
-    },
-
-    clean: function () {}
-});
+        }
+    })
+    .createTech();
