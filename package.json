@@ -37,7 +37,7 @@
     "Marat Dulin <mdevils@yandex.ru>"
   ],
   "engines": {
-    "node": ">= 0.10.0"
+    "node": ">= 4"
   },
   "peerDependencies": {
     "enb": ">=0.15.0 <2.0.0"
