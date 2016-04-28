@@ -1,10 +1,13 @@
-var inherit = require('inherit'),
-    vow = require('vow'),
+var vow = require('vow'),
+    inherit = require('inherit'),
     enb = require('enb'),
-    vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
-    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
     asyncRequire = require('enb-async-require'),
     clearRequire = require('clear-require'),
+
+    vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
+    FileList = enb.FileList,
+    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
+
     OldDeps = require('../exlib/deps-old').OldDeps,
     deps = require('../lib/deps/deps');
 
@@ -73,8 +76,9 @@ module.exports = inherit(BaseTech, {
             strictMode = this._strict;
 
         return node.requireSources([this._levelsTarget, this._declFile])
-            .spread(function (levels, sourceDeps) {
-                var depFiles = levels.getFilesBySuffix('deps.js');
+            .spread(function (introspection, sourceDeps) {
+                var depFiles = introspection.getFilesByTechs(['deps.js', 'deps.yaml'])
+                        .map(file => FileList.getFileInfo(file.path));
 
                 if (cache.needRebuildFile('deps-file', targetFilename) ||
                     cache.needRebuildFile('decl-file', declFilename) ||
@@ -82,7 +86,7 @@ module.exports = inherit(BaseTech, {
                 ) {
                     return requireSourceDeps(sourceDeps, declFilename)
                         .then(function (sourceDeps) {
-                            return (new OldDeps(sourceDeps, strictMode).expandByFS({ levels: levels }))
+                            return (new OldDeps(sourceDeps, strictMode).expandByFS({ levels: introspection }))
                                 .then(function (resolvedDeps) {
                                     var resultDeps = resolvedDeps.getDeps(),
                                         loopPaths = resolvedDeps.getLoops().mustDeps.map(function (loop) {
