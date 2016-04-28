@@ -1,10 +1,11 @@
 var inherit = require('inherit'),
     enb = require('enb'),
+    asyncRequire = require('enb-async-require'),
+    clearRequire = require('clear-require'),
+
     vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
     BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
-    deps = require('../lib/deps/deps'),
-    asyncRequire = require('enb-async-require'),
-    clearRequire = require('clear-require');
+    deps = require('../lib/deps/deps');
 
 /**
  * @class LevelsToBemdeclTech
@@ -57,32 +58,28 @@ module.exports = inherit(BaseTech, {
             bemdeclFormat = this._bemdeclFormat,
             cache = node.getNodeCache(target);
 
-        return node.requireSources([this._source]).spread(function (levels) {
+        return node.requireSources([this._source]).spread(function (introspection) {
             if (cache.needRebuildFile('bemdecl-file', bemdeclFilename)) {
-                var resDeps = [],
-                    decl = [],
+                var resDeps = introspection.getEntities().map(function (entity) {
+                        var dep = {
+                            block: entity.block
+                        };
+
+                        entity.elem && (dep.elem = entity.elem);
+                        entity.modName && (dep.mod = entity.modName);
+                        entity.modVal && (dep.val = entity.modVal);
+
+                        return dep;
+                    }),
                     data,
                     str;
 
-                levels.items.forEach(function (level) {
-                    Object.keys(level.blocks).forEach(function (name) {
-                        var block = level.blocks[name];
-
-                        resDeps.push({
-                            block: name
-                        });
-
-                        processMods(resDeps, name, block.mods);
-                        processElems(resDeps, name, block.elements);
-                    });
-                });
-
                 if (bemdeclFormat === 'deps') {
-                    decl = resDeps;
-                    data = { deps: decl };
-                    str = 'exports.deps = ' + JSON.stringify(decl, null, 4) + ';\n';
+                    data = { deps: resDeps };
+                    str = 'exports.deps = ' + JSON.stringify(resDeps, null, 4) + ';\n';
                 } else {
-                    decl = deps.toBemdecl(resDeps);
+                    var decl = deps.toBemdecl(resDeps);
+
                     data = { blocks: decl };
                     str = 'exports.blocks = ' + JSON.stringify(decl, null, 4) + ';\n';
                 }
@@ -105,36 +102,3 @@ module.exports = inherit(BaseTech, {
         });
     }
 });
-
-function processElems(deps, block, elems) {
-    if (elems) {
-        Object.keys(elems).forEach(function (elemName) {
-            deps.push({
-                block: block,
-                elem: elemName
-            });
-
-            processMods(deps, block, elems[elemName].mods, elemName);
-        });
-    }
-}
-
-function processMods(deps, block, mods, elem) {
-    if (mods) {
-        Object.keys(mods).forEach(function (modName) {
-            var vals = Object.keys(mods[modName]);
-
-            vals.forEach(function (val) {
-                var dep = {
-                    block: block,
-                    mod: modName,
-                    val: val === '*' ? true : val
-                };
-
-                elem && (dep.elem = elem);
-
-                deps.push(dep);
-            });
-        });
-    }
-}
