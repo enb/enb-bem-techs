@@ -2,7 +2,6 @@
     "excludeFiles": [
         "node_modules",
         "exlib",
-        "benchmark/fixtures",
         "coverage",
         "docs"
     ],

@@ -59,7 +59,6 @@
     "istanbul": "0.4.2",
     "jscs": "2.8.0",
     "jshint": "2.9.1",
-    "matcha": "0.6.1",
     "mocha": "2.3.4",
     "mock-enb": "0.3.2",
     "mock-fs": "3.8.0",
