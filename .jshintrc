@@ -13,7 +13,9 @@
     "unused": true,
 
     "node": true,
+    "esversion": 6,
 
     "expr": true,
-    "sub": true
+    "sub": true,
+    "laxbreak": true
 }

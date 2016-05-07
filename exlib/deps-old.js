@@ -5,10 +5,14 @@
  * Заимствованный.
  */
 
-var inherit = require('inherit');
-var vowFs = require('enb/lib/fs/async-fs');
 var vm = require('vm');
-var Vow = require('vow');
+
+var enb = require('enb');
+var vow = require('vow');
+var inherit = require('inherit');
+var stringifyEntity = require('bem-naming').stringify;
+
+var vowFs = enb.asyncFs || require('enb/lib/fs/async-fs');
 var MustDeps = require('./must-deps');
 
 module.exports.OldDeps = (function () {
@@ -185,13 +189,13 @@ module.exports.OldDeps = (function () {
             var depsCount1 = this.getCount();
             var depsCount2;
 
-            return Vow.when(this.expandOnceByFS())
+            return vow.when(this.expandOnceByFS())
                 .then(function again(newDeps) {
 
                     depsCount2 = newDeps.getCount();
                     if (depsCount1 !== depsCount2) {
                         depsCount1 = depsCount2;
-                        return Vow.when(newDeps.expandOnceByFS(), again);
+                        return vow.when(newDeps.expandOnceByFS(), again);
                     }
 
                     return newDeps.clone(_this);
@@ -228,7 +232,7 @@ module.exports.OldDeps = (function () {
                     return newDeps;
                 });
             } else {
-                return Vow.fulfill(newDeps);
+                return vow.fulfill(newDeps);
             }
         },
 
@@ -243,20 +247,29 @@ module.exports.OldDeps = (function () {
             var _this = this;
             var tech = this.tech;
 
-            var files = tech.levels.getFilesByDecl(item.item.block, item.item.elem, item.item.mod, item.item.val)
+            var dep = item.item;
+            var entity = { block: dep.block };
+
+            dep.elem && (entity.elem = dep.elem);
+            dep.mod && (entity.modName = dep.mod);
+            dep.val && (entity.modVal = dep.val);
+
+            var files = tech.levels.getFilesByEntity(entity)
                 .filter(function (file) {
-                    return file.suffix === 'deps.js';
+                    return file.tech === 'deps.js';
                 });
 
-            var promise = Vow.fulfill();
+            var promise = vow.fulfill();
 
             files.forEach(function (file) {
+                var filename = file.path;
+
                 promise = promise.then(function () {
-                    return vowFs.read(file.fullname, 'utf8').then(function (content) {
+                    return vowFs.read(filename, 'utf8').then(function (content) {
                         try {
-                            _this.parse(vm.runInThisContext(content, file.fullname), item);
+                            _this.parse(vm.runInThisContext(content, filename), item);
                         } catch (e) {
-                            throw new Error('Syntax error in file "' + file.fullname + '": ' + e.message);
+                            throw new Error('Syntax error in file "' + filename + '": ' + e.message);
                         }
                     });
                 });

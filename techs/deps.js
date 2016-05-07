@@ -1,10 +1,12 @@
 var inherit = require('inherit'),
     vow = require('vow'),
     enb = require('enb'),
-    vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
-    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
     asyncRequire = require('enb-async-require'),
     clearRequire = require('clear-require'),
+
+    FileList = enb.FileList,
+    vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
+    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
     DepsResolver = require('../lib/deps/deps-resolver'),
     deps = require('../lib/deps/deps');
 
@@ -66,8 +68,9 @@ module.exports = inherit(BaseTech, {
             declFilename = this.node.resolvePath(this._declFile);
 
         return this.node.requireSources([this._levelsTarget, this._declFile])
-            .spread(function (levels, sourceDeps) {
-                var depFiles = levels.getFilesBySuffix('deps.js').concat(levels.getFilesBySuffix('deps.yaml'));
+            .spread(function (introspection, sourceDeps) {
+                var depFiles = introspection.getFilesByTechs(['deps.js', 'deps.yaml'])
+                    .map(file => FileList.getFileInfo(file.path));
 
                 if (cache.needRebuildFile('deps-file', targetFilename) ||
                     cache.needRebuildFile('decl-file', declFilename) ||
@@ -75,7 +78,7 @@ module.exports = inherit(BaseTech, {
                 ) {
                     return requireSourceDeps(sourceDeps, declFilename)
                         .then(function (sourceDeps) {
-                            var resolver = new DepsResolver(levels),
+                            var resolver = new DepsResolver(introspection),
                                 decls = resolver.normalizeDeps(sourceDeps);
 
                             return resolver.addDecls(decls)
