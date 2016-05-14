@@ -38,12 +38,12 @@ $ npm install --save-dev enb-bem-techs
 Документация
 ------------
 
-* [API технологий](docs/api.ru.md)
 * [Организация файловой структуры](https://ru.bem.info/methodology/filesystem/)
 * [Сборка бандла](docs/build-bundle.md)
 * [Сборка страницы](docs/build-page.md)
 * [Сборка merged-бандла](docs/build-merged-bundle.md)
 * [Сборка дистрибутива](docs/build-dist.md)
+* [API технологий](docs/api.ru.md)
 
 Лицензия
 --------
