@@ -181,12 +181,9 @@ module.exports = buildFlow.create()
                     .pipe(new stream.Writable({
                         objectMode: true,
                         write: function (file, encoding, callback) {
-                            fs.stat(file.path, (err, stats) => {
-                                if (err) {
-                                    return callback(err);
-                                }
-
+                            tryCatch(() => {
                                 const id = stringifyEntity(file.entity);
+                                const stats = fs.statSync(file.path);
 
                                 file.isDirectory = stats.isDirectory();
                                 file.mtime = stats.mtime.getTime();
@@ -194,7 +191,7 @@ module.exports = buildFlow.create()
                                 (data[id] || (data[id] = [])).push(file);
 
                                 callback();
-                            });
+                            }, callback);
                         }
                     }))
                     .on('error', reject)
@@ -203,3 +200,10 @@ module.exports = buildFlow.create()
         }
     })
     .createTech();
+
+// try-catch optimization
+function tryCatch(tryFn, catchFn) {
+    try {
+        tryFn();
+    } catch (e) { catchFn(e); }
+}
