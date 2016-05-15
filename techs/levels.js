@@ -2,6 +2,7 @@
 
 const path = require('path');
 const fs = require('fs');
+const stream = require('stream');
 
 const vow = require('vow');
 const enb = require('enb');
@@ -174,33 +175,30 @@ module.exports = buildFlow.create()
         _forceScanLevel: function (levelpath) {
             return new vow.Promise((resolve, reject) => {
                 const data = {};
-                const promises = [];
 
                 walk([levelpath])
-                    .on('data', function (file) {
-                        const id = stringifyEntity(file.entity);
-
-                        promises.push(new Promise((resolve, reject) => {
+                    .on('error', reject)
+                    .pipe(new stream.Writable({
+                        objectMode: true,
+                        write: function (file, encoding, callback) {
                             fs.stat(file.path, (err, stats) => {
                                 if (err) {
-                                    return reject(err);
+                                    return callback(err);
                                 }
+
+                                const id = stringifyEntity(file.entity);
 
                                 file.isDirectory = stats.isDirectory();
                                 file.mtime = stats.mtime.getTime();
 
                                 (data[id] || (data[id] = [])).push(file);
 
-                                resolve();
+                                callback();
                             });
-                        }));
-                    })
+                        }
+                    }))
                     .on('error', reject)
-                    .on('end', () => {
-                        Promise.all(promises)
-                            .catch(reject)
-                            .then(() => resolve(data));
-                    });
+                    .on('finish', () => resolve(data));
             });
         }
     })
