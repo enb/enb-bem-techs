@@ -22,17 +22,17 @@ module.exports = {
 blocks/              # уровень блоков
 ├── input/
     ├── input.deps.js
-    ├── input.bemhtml
+    ├── input.bemhtml.js
     ├── input.css
     └── input.js
 ├── button/
     ├── button.deps.js
-    ├── button.bemhtml
+    ├── button.bemhtml.js
     ├── button.css
     └── button.js
 └── checkbox/
     ├── checkbox.deps.js
-    ├── checkbox.bemhtml
+    ├── checkbox.bemhtml.js
     ├── checkbox.css
     └── checkbox.js
 page/
