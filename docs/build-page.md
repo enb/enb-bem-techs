@@ -8,10 +8,10 @@
 Пример BEMJSON-файла:
 
 ```js
-({
+module.exports = {
     block: 'page',
     content: 'Hello BEM!'
-})
+};
 ```
 
 В файловой системе наш проект будет выглядеть так:
