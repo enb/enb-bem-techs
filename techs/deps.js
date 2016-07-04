@@ -10,6 +10,10 @@ var inherit = require('inherit'),
     DepsResolver = require('../lib/deps/deps-resolver'),
     deps = require('../lib/deps/deps');
 
+const toArray = require('stream-to-array');
+const bemDeps = require('@bem/deps');
+const BemGraph = require('bem-graph').BemGraph;
+
 /**
  * @class DepsTech
  * @augments {BaseTech}
@@ -68,7 +72,7 @@ module.exports = inherit(BaseTech, {
             declFilename = this.node.resolvePath(this._declFile);
 
         return this.node.requireSources([this._levelsTarget, this._declFile])
-            .spread(function (introspection, sourceDeps) {
+            .spread(function (introspection, sourceDecl) {
                 var depFiles = introspection.getFilesByTechs(['deps.js', 'deps.yaml'])
                     .map(file => FileList.getFileInfo(file.path));
 
@@ -76,23 +80,53 @@ module.exports = inherit(BaseTech, {
                     cache.needRebuildFile('decl-file', declFilename) ||
                     cache.needRebuildFileList('deps-file-list', depFiles)
                 ) {
-                    return requireSourceDeps(sourceDeps, declFilename)
-                        .then(function (sourceDeps) {
-                            var resolver = new DepsResolver(introspection),
-                                decls = resolver.normalizeDeps(sourceDeps);
+                    return requireSourceDeps(sourceDecl, declFilename)
+                        .then(function (decl) {
+                            return toArray(bemDeps.load({
+                                levels: introspection._levels
+                            })).then((relations) => {
+                                return { decl, relations };
+                            });
+                        })
+                        .then((data) => {
+                            const decl = data.decl;
+                            const deps = data.relations;
+                            const graph = new BemGraph();
 
-                            return resolver.addDecls(decls)
+                            deps.forEach((item) => {
+                                item.dependOn.forEach(depend => {
+                                    const isOrdered = depend.order;
+                                    const linkMethod = isOrdered ? 'dependsOn' : 'linkWith';
+
+                                    graph.vertex(item.entity, item.tech)
+                                        [linkMethod](depend.entity, depend.tech);
+                                });
+                            });
+
+                            return graph.dependenciesOf(decl);
+                        })
+                        .then((decl) => {
+                            return decl.map(vertex => {
+                                const entity = vertex.entity;
+
+                                const item = { block: entity.block };
+
+                                entity.elem && (item.elem = entity.elem);
+                                entity.mod && entity.mod.name && (item.mod = entity.mod.name);
+                                entity.mod && entity.mod.val && (item.val = entity.mod.val);
+
+                                return item;
+                            });
+                        })
+                        .then((decl) => {
+                            const str = 'exports.deps = ' + JSON.stringify(decl, null, 4) + ';\n';
+
+                            return vfs.write(targetFilename, str, 'utf8')
                                 .then(function () {
-                                    var resolvedDeps = resolver.resolve(),
-                                        str = 'exports.deps = ' + JSON.stringify(resolvedDeps, null, 4) + ';\n';
-
-                                    return vfs.write(targetFilename, str, 'utf8')
-                                        .then(function () {
-                                            cache.cacheFileInfo('deps-file', targetFilename);
-                                            cache.cacheFileInfo('decl-file', declFilename);
-                                            cache.cacheFileList('deps-file-list', depFiles);
-                                            node.resolveTarget(target, { deps: resolvedDeps });
-                                        });
+                                    cache.cacheFileInfo('deps-file', targetFilename);
+                                    cache.cacheFileInfo('decl-file', declFilename);
+                                    cache.cacheFileList('deps-file-list', depFiles);
+                                    node.resolveTarget(target, { deps: decl });
                                 });
                         });
                 } else {

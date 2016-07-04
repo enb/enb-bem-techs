@@ -43,6 +43,8 @@
     "enb": ">=0.15.0 <2.0.0"
   },
   "dependencies": {
+    "@bem/deps": "0.1.1",
+    "bem-graph": "bem-sdk/bem-graph",
     "bem-naming": "1.0.1",
     "bem-walk": "1.0.0-1",
     "clear-require": "1.0.1",
@@ -51,9 +53,11 @@
     "inherit": "2.2.3",
     "js-yaml": "3.5.2",
     "lodash": "4.11.1",
+    "stream-to-array": "^2.3.0",
     "vow": "0.4.12"
   },
   "devDependencies": {
+    "@bem/deps": "^0.1.1",
     "enb": ">=0.15.0 <2.0.0",
     "gulp-eval": "1.0.0-0",
     "istanbul": "0.4.2",
