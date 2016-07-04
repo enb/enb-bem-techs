@@ -7,7 +7,6 @@ API технологий
 * [levelsToBemdecl](#levelstobemdecl)
 * [bemjsonToBemdecl](#bemjsontobemdecl)
 * [deps](#deps)
-* [depsOld](#depsold)
 * [depsByTechToBemdecl](#depsbytechtobemdecl)
 * [files](#files)
 * [provideBemdecl](#providebemdecl)
@@ -23,7 +22,6 @@ levels
 
 * [levelsToBemdecl](#levelstobemdecl)
 * [deps](#deps)
-* [depsOld](#depsold)
 * [files](#files)
 
 Информация представляет собой экземпляр класса [Levels](../lib/levels/levels.js).
@@ -117,7 +115,7 @@ levelsToBemdecl
   { blocks: [{ name: 'b', elems: [{ name: 'e', mods: [{ name: 'm', vals: [{ name: 'v' }] }] }] }]}
   ```
 
-* `deps` — формат результата `deps` и `depsOld` техннологий.
+* `deps` — формат результата `deps` техннологии.
 
   Пример:
 
@@ -187,7 +185,7 @@ bemjsonToBemdecl
   { blocks: [{ name: 'b', elems: [{ name: 'e', mods: [{ name: 'm', vals: [{ name: 'v' }] }] }] }]}
   ```
 
-* `deps` — формат результата `deps` и `depsOld` техннологий.
+* `deps` — формат результата `deps` техннологии.
 
   Пример:
 
@@ -285,79 +283,6 @@ module.exports = function (config) {
 };
 ```
 
-depsOld
--------
-
-Дополняет декларацию БЭМ-сущностей на основании информации из технологий зависимостей (`deps.js`).
-
-Использует алгоритм, заимствованный из [bem-tools](https://ru.bem.info/tools/bem/bem-tools/).
-
-### Опции
-
-* [target](#target-4)
-* [bemdeclFile](#bemdeclfile-1)
-* [levelsTarget](#levelstarget-1)
-
-#### target
-
-Тип: `String`. По умолчанию: `?.deps.js`.
-
-Имя собираемого файла с дополненной и упорядоченной декларацией БЭМ-сущностей.
-
-#### bemdeclFile
-
-Тип: `String`. По умолчанию: `?.bemdecl.js`.
-
-Имя файла с исходной декларацией БЭМ-сущностей.
-
-#### levelsTarget
-
-Тип: `String`. По умолчанию: `?.levels`.
-
-Имя таргета, из которого будет доступен результат сканирования уровней переопределения ([Levels](../lib/levels/levels.js)). Информацию об уровнях переопределения предоставляет технология [levels](#levels).
-
-#### strict
-
-Тип: `Boolean`. По умолчанию: `false`.
-
-Включает строгий режим раскрытия зависимостей: если будет найдена хотя бы одна циклическая зависимость `mustDeps` (A ← B ← A), то сборка прекратится с ошибкой.
-
---------------------------------------
-
-**Пример**
-
-Раскрытие зависимостей по BEMDECL-файлу.
-
-```js
-var bemTechs = require('enb-bem-techs');
-
-module.exports = function (config) {
-    config.node('bundle', function (node) {
-        node.addTech([bemTechs.depsOld, {
-            bemdeclFile: '?.bemdecl.js',
-            target: '?.deps.js'
-        }]);
-        node.addTarget('?.deps.js');
-    });
-};
-```
-
-Раскрытие зависимостей по DEPS-файлу.
-
-```js
-var bemTechs = require('enb-bem-techs');
-
-module.exports = function (config) {
-    config.node('bundle', function (node) {
-        node.addTech([bemTechs.depsOld, {
-            bemdeclFile: 'source-decl.deps.js',
-            target: '?.deps.js'
-        }]);
-        node.addTarget('?.deps.js');
-    });
-};
-```
-
 depsByTechToBemdecl
 -------------------
 
@@ -416,7 +341,7 @@ depsByTechToBemdecl
   { blocks: [{ name: 'b', elems: [{ name: 'e', mods: [{ name: 'm', vals: [{ name: 'v' }] }] }] }]}
   ```
 
-* `deps` — формат результата `deps` и `depsOld` техннологий.
+* `deps` — формат результата `deps` техннологии.
 
   Пример:
 
