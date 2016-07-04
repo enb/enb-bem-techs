@@ -5,7 +5,6 @@ module.exports = {
     bemjsonToBemdecl: require('./techs/bemjson-to-bemdecl'),
 
     deps: require('./techs/deps'),
-    depsOld: require('./techs/deps-old'),
     depsByTechToBemdecl: require('./techs/deps-by-tech-to-bemdecl'),
 
     files: require('./techs/files'),

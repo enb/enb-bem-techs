@@ -1,7 +1,6 @@
 {
     "excludeFiles": [
         "node_modules",
-        "exlib",
         "coverage",
         "docs"
     ],
