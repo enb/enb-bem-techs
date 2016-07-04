@@ -8,15 +8,14 @@ var fs = require('fs'),
     techs = require('../../utils/techs'),
     levelsTech = techs.levels,
     depsTechs = {
-        deps: techs.deps,
-        'deps-old': techs.depsOld
+        deps: techs.deps
     },
     DepsGraph = require('../../../lib/deps/deps-graph'),
     needGatherDeps = process.env.GATHER_DEPS,
     snapshot = needGatherDeps ? {} : require('./snapshot'),
     EOL = require('os').EOL;
 
-describe('deps vs deps-old: random graphs', function () {
+describe('deps: random graphs', function () {
     before(function () {
         var message = [
             'n — max number of nodes',
@@ -57,9 +56,7 @@ describe('deps vs deps-old: random graphs', function () {
             });
 
             [
-                { name: 'deps', opts: {} },
-                { name: 'deps-old', opts: {} },
-                { name: 'deps-old', opts: { strict: true } }
+                { name: 'deps', opts: {} }
             ].forEach(function (tech) {
                 var techKey = tech.name + (tech.opts.strict ? ' --strict' : '');
                 it(techKey, function () {

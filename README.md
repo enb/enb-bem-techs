@@ -15,7 +15,6 @@ enb-bem-techs
 * [levelsToBemdecl](docs/api.ru.md#levelstobemdecl) — формирует BEMDECL-файл из БЭМ-сущностей с указанных уровней.
 * [bemjsonToBemdecl](docs/api.ru.md#bemjsontobemdecl) — формирует BEMDECL-файл из BEMJSON-файла.
 * [deps](docs/api.ru.md#deps) — дополняет декларацию БЭМ-сущностей необходимыми зависимостями.
-* [depsOld](docs/api.ru.md#depsold) — дополняет декларацию БЭМ-сущностей необходимыми зависимостями. Использует алгоритм, заимствованный из [bem-tools](https://github.com/bem/bem-tools/tree/support/0.10.x).
 * [depsByTechToBemdecl](docs/api.ru.md#depsbytechtobemdecl) — формирует BEMDECL-файл на основе зависимостей по технологиям.
 * [files](docs/api.ru.md#files) — собирает список исходных файлов и директорий для сборки.
 * [provideBemdecl](docs/api.ru.md#providebemdecl) — копирует BEMDECL-файл из указанной ноды (node) в текущую.
