@@ -10,7 +10,6 @@ module.exports = {
     bemjsonToBemdecl: proxyquire('../../techs/bemjson-to-bemdecl', stub),
     depsByTechToBemdecl: proxyquire('../../techs/deps-by-tech-to-bemdecl', stub),
     deps: proxyquire('../../techs/deps', stub),
-    depsOld: proxyquire('../../techs/deps-old', stub),
     files: proxyquire('../../techs/files', stub),
     levels: require('../../techs/levels'),
     levelsToBemdecl: proxyquire('../../techs/levels-to-bemdecl', stub),
