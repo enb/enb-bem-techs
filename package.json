@@ -43,6 +43,7 @@
     "enb": ">=0.15.0 <2.0.0"
   },
   "dependencies": {
+    "bem-decl": "^0.2.3",
     "bem-naming": "1.0.1",
     "bem-walk": "1.0.0-1",
     "clear-require": "1.0.1",

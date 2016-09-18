@@ -42,6 +42,25 @@ describe('libs: deps', function () {
         deps.subtract(firstDecl, secondDecl).must.be.eql(output);
     });
 
+    it('must intersect deps', function () {
+        var firstDecl = [
+                { block: 'block1' },
+                { block: 'block1', mod: 'mod1', val: 'val1' },
+                { block: 'block1', mod: 'mod2', val: 'val2' }
+            ],
+            secondDecl = [
+                { block: 'block1' },
+                { block: 'block1', mod: 'mod2', val: 'val2' },
+                { block: 'block2', mod: 'mod1', val: 'val1' }
+            ],
+            output = [
+                { block: 'block1' },
+                { block: 'block1', mod: 'mod2', val: 'val2' }
+            ];
+
+        deps.intersect([firstDecl, secondDecl]).must.be.eql(output);
+    });
+
     it('must transform bemdecl to deps', function () {
         var input = [{
                 name: 'block1',
