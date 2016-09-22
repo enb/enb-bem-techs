@@ -175,4 +175,28 @@ describe('libs: deps', function () {
 
         deps.flattenDeps(input).must.be.eql(output);
     });
+
+    it('must convert mod and val to modName and modVal', function () {
+        deps._convertFromMod([
+            { block: 'block', elem: 'elem', mod: 'mod1', val: 'val1' },
+            { block: 'block' },
+            { block: 'block', mod: 'mod2', val: 'val2' }
+        ]).must.be.eql([
+            { block: 'block', elem: 'elem', modName: 'mod1', modVal: 'val1' },
+            { block: 'block' },
+            { block: 'block', modName: 'mod2', modVal: 'val2' }
+        ]);
+    });
+
+    it('must convert modName and modVal to mod and val', function () {
+        deps._convertToMod([
+            { block: 'block', elem: 'elem', modName: 'mod1', modVal: 'val1' },
+            { block: 'block' },
+            { block: 'block', modName: 'mod2', modVal: 'val2' }
+        ]).must.be.eql([
+            { block: 'block', elem: 'elem', mod: 'mod1', val: 'val1' },
+            { block: 'block' },
+            { block: 'block', mod: 'mod2', val: 'val2' }
+        ]);
+    });
 });
