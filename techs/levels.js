@@ -187,7 +187,7 @@ module.exports = buildFlow.create()
                                 }
 
                                 file.isDirectory = stats.isDirectory();
-                                file.mtime = stats.mtime;
+                                file.mtime = stats.mtime.getTime();
 
                                 (data[id] || (data[id] = [])).push(file);
 

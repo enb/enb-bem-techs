@@ -429,6 +429,26 @@ describe('techs: levels', function () {
                 introspection: expected
             });
     });
+
+    it('mtime must be number', function () {
+        var fsScheme = {
+                blocks: {
+                    block: {
+                        'block.ext': ''
+                    }
+                },
+                bundle: {}
+            };
+
+        mockFs(fsScheme);
+
+        var bundle = new TestNode('bundle');
+
+        return bundle.runTech(Tech, { levels: ['blocks'] })
+            .then(function (data) {
+                data._introspections[0].block[0].mtime.must.be.number();
+            });
+    });
 });
 
 function assert(fsScheme, expected) {
