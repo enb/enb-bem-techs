@@ -76,10 +76,9 @@
     "LICENSE.txt"
   ],
   "scripts": {
-    "test": "npm run lint && npm run unit && npm run generated-test",
+    "test": "npm run lint && npm run unit",
     "lint": "jshint . && jscs .",
     "unit": "mocha -R spec test/unit test/techs",
-    "generated-test": "mocha -R spec test/generated/**",
     "bench": "npm run bench-deps && matcha benchmark/*.js",
     "bench-deps": "cd benchmark/fixtures && bower i",
     "cover": "istanbul cover _mocha test/unit test/techs",
