@@ -71,7 +71,6 @@
   "main": "index.js",
   "files": [
     "lib/**",
-    "exlib/**",
     "techs/**",
     "index.js",
     "LICENSE.txt"
