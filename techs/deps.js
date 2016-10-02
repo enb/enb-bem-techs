@@ -80,7 +80,7 @@ module.exports = inherit(BaseTech, {
                                 .then(bemDeps.parse())
                                 .then(bemDeps.buildGraph)
                                 .then(function (graph) {
-                                    var resolvedDeps = graph.naturalDependenciesOf(sourceDeps).map(convertEntity),
+                                    var resolvedDeps = graph.dependenciesOf(sourceDeps).map(convertEntity),
                                         str = 'exports.deps = ' + JSON.stringify(resolvedDeps, null, 4) + ';\n';
 
                                     return vfs.write(targetFilename, str, 'utf8')
