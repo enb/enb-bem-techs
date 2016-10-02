@@ -51,7 +51,6 @@
     "enb-async-require": "1.0.1",
     "enb-require-or-eval": "1.0.2",
     "inherit": "2.2.3",
-    "js-yaml": "3.5.2",
     "lodash": "4.11.1",
     "vow": "0.4.12"
   },
@@ -65,8 +64,7 @@
     "mock-enb": "0.3.2",
     "mock-fs": "3.8.0",
     "must": "0.13.1",
-    "proxyquire": "1.7.4",
-    "seedrandom": "2.4.2"
+    "proxyquire": "1.7.4"
   },
   "main": "index.js",
   "files": [
