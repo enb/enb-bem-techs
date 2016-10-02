@@ -134,7 +134,9 @@ function requireSourceDeps(data, filename) {
             if (sourceDeps.deps) {
                 return sourceDeps.deps;
             } else if (sourceDeps.blocks) {
-                return bemDecl.normalizer()(sourceDeps.blocks);
+                return bemDecl.normalizer('v1')(sourceDeps.blocks).map(function (item) {
+                    return item.entity;
+                });
             } else {
                 return sourceDeps;
             }
