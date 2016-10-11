@@ -48,19 +48,19 @@
     "bem-naming": "1.0.1",
     "bem-walk": "1.0.0-1",
     "file-eval": "1.0.0",
-    "inherit": "2.2.3",
-    "lodash": "4.11.1",
+    "inherit": "2.2.6",
+    "lodash": "4.16.4",
     "vow": "0.4.12"
   },
   "devDependencies": {
     "enb": ">=0.15.0 <2.0.0",
-    "istanbul": "0.4.2",
-    "jscs": "2.8.0",
-    "jshint": "2.9.1",
-    "mocha": "2.3.4",
+    "istanbul": "0.4.5",
+    "jscs": "3.0.7",
+    "jshint": "2.9.3",
+    "mocha": "3.1.2",
     "mock-enb": "0.3.2",
-    "mock-fs": "3.8.0",
-    "must": "0.13.1"
+    "mock-fs": "3.11.0",
+    "must": "0.13.2"
   },
   "main": "index.js",
   "files": [
