@@ -1,7 +1,6 @@
 var inherit = require('inherit'),
     enb = require('enb'),
-    asyncRequire = require('enb-async-require'),
-    clearRequire = require('clear-require'),
+    fileEval = require('file-eval'),
 
     vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
     BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
@@ -91,9 +90,8 @@ module.exports = inherit(BaseTech, {
                     });
             } else {
                 node.isValidTarget(target);
-                clearRequire(bemdeclFilename);
 
-                return asyncRequire(bemdeclFilename)
+                return fileEval(bemdeclFilename)
                     .then(function (result) {
                         node.resolveTarget(target, result);
                         return null;

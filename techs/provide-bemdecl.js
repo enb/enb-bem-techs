@@ -3,8 +3,7 @@ var inherit = require('inherit'),
     enb = require('enb'),
     vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
     BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
-    asyncRequire = require('enb-async-require'),
-    clearRequire = require('clear-require');
+    fileEval = require('file-eval');
 
 /**
  * @class ProvideBemdeclTech
@@ -130,6 +129,5 @@ module.exports = inherit(BaseTech, {
 function requireBemdecl(data, filename) {
     if (data) { return vow.resolve(data); }
 
-    clearRequire(filename);
-    return asyncRequire(filename);
+    return fileEval(filename);
 }
