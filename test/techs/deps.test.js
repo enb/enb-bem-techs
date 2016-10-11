@@ -4,7 +4,7 @@ var path = require('path'),
     mockFs = require('mock-fs'),
     TestNode = require('mock-enb/lib/mock-node'),
 
-    techs = require('../utils/techs'),
+    techs = require('../..'),
     levelsTech = techs.levels,
     depsTech = techs.deps;
 

@@ -4,7 +4,7 @@ var path = require('path'),
     mockFs = require('mock-fs'),
     TestNode = require('mock-enb/lib/mock-node'),
 
-    Tech = require('../utils/techs').subtractDeps;
+    Tech = require('../..').subtractDeps;
 
 describe('techs: subtract-deps', function () {
     afterEach(function () {

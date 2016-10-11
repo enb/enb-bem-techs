@@ -3,7 +3,7 @@ var path = require('path'),
     mockFs = require('mock-fs'),
     TestNode = require('mock-enb/lib/mock-node'),
 
-    Tech = require('../utils/techs').levels;
+    Tech = require('../..').levels;
 
 describe('techs: levels', function () {
     afterEach(function () {
