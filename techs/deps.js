@@ -1,8 +1,7 @@
 var inherit = require('inherit'),
     vow = require('vow'),
     enb = require('enb'),
-    asyncRequire = require('enb-async-require'),
-    clearRequire = require('clear-require'),
+    fileEval = require('file-eval'),
     bemDeps = require('@bem/deps'),
     bemDecl = require('bem-decl'),
     vfs = enb.asyncFs || require('enb/lib/fs/async-fs'),
@@ -94,9 +93,8 @@ module.exports = inherit(BaseTech, {
                         });
                 } else {
                     node.isValidTarget(target);
-                    clearRequire(targetFilename);
 
-                    return asyncRequire(targetFilename)
+                    return fileEval(targetFilename)
                         .then(function (result) {
                             node.resolveTarget(target, result);
                             return null;
@@ -125,10 +123,7 @@ function convertEntity(obj) {
 }
 
 function requireSourceDeps(data, filename) {
-    return (data ? vow.resolve(data) : (
-            clearRequire(filename),
-            asyncRequire(filename)
-        ))
+    return (data ? vow.resolve(data) : fileEval(filename))
         .then(function (sourceDeps) {
             // todo:добавить параметр с версией декларации
             if (sourceDeps.deps) {
