@@ -3,7 +3,7 @@ var vow = require('vow'),
     mockFs = require('mock-fs'),
     TestNode = require('mock-enb/lib/mock-node'),
 
-    techs = require('../utils/techs'),
+    techs = require('../..'),
     levelsTech = techs.levels,
     levelsToBemdeclTech = techs.levelsToBemdecl;
 

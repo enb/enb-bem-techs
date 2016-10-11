@@ -3,7 +3,7 @@ var path = require('path'),
     mockFs = require('mock-fs'),
     TestNode = require('mock-enb/lib/mock-node'),
 
-    Tech = require('../utils/techs').provideBemdecl;
+    Tech = require('../..').provideBemdecl;
 
 describe('techs: provide-deps', function () {
     var fsBundle,

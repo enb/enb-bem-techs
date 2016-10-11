@@ -4,7 +4,7 @@ var path = require('path'),
     mockFs = require('mock-fs'),
     TestNode = require('mock-enb/lib/mock-node'),
 
-    Tech = require('../utils/techs').bemjsonToBemdecl;
+    Tech = require('../..').bemjsonToBemdecl;
 
 describe('techs: bemjson-to-bemdecl', function () {
     afterEach(function () {
