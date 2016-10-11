@@ -5,7 +5,7 @@ var path = require('path'),
     FileList = require('enb/lib/file-list'),
     TestNode = require('mock-enb/lib/mock-node'),
 
-    techs = require('../utils/techs'),
+    techs = require('../..'),
     levelsTech = techs.levels,
     filesTech = techs.files,
     depsTech = techs.deps,

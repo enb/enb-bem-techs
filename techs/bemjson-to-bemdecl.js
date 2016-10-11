@@ -2,9 +2,7 @@ var inherit = require('inherit'),
     enb = require('enb'),
     vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
     BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
-    requireOrEval = require('enb-require-or-eval'),
-    asyncRequire = require('enb-async-require'),
-    clearRequire = require('clear-require'),
+    fileEval = require('file-eval'),
     deps = require('../lib/deps/deps');
 
 /**
@@ -64,7 +62,7 @@ module.exports = inherit(BaseTech, {
                 if (cache.needRebuildFile('bemdecl-file', bemdeclFilename) ||
                     cache.needRebuildFile('bemjson-file', bemjsonFilename)
                 ) {
-                    return requireOrEval(bemjsonFilename)
+                    return fileEval(bemjsonFilename)
                         .then(function (bemjson) {
                             var bemjsonDeps = getDepsFromBemjson(bemjson),
                                 decl,
@@ -90,9 +88,8 @@ module.exports = inherit(BaseTech, {
                         });
                 } else {
                     node.isValidTarget(target);
-                    clearRequire(bemdeclFilename);
 
-                    return asyncRequire(bemdeclFilename)
+                    return fileEval(bemdeclFilename)
                         .then(function (result) {
                             node.resolveTarget(target, result);
                             return null;

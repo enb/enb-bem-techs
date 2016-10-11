@@ -4,8 +4,7 @@ var fs = require('fs'),
     inherit = require('inherit'),
     vow = require('vow'),
     enb = require('enb'),
-    asyncRequire = require('enb-async-require'),
-    clearRequire = require('clear-require'),
+    fileEval = require('file-eval'),
     stringifyEntity = require('bem-naming').stringify,
 
     deps = require('../lib/deps/deps'),
@@ -176,10 +175,7 @@ function getFileInfo(file) {
 }
 
 function requireSourceDeps(data, filename) {
-    return (data ? vow.resolve(data) : (
-            clearRequire(filename),
-            asyncRequire(filename)
-        ))
+    return (data ? vow.resolve(data) : fileEval(filename))
         .then(function (sourceDeps) {
             if (sourceDeps.blocks) {
                 return deps.fromBemdecl(sourceDeps.blocks);
