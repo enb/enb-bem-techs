@@ -94,7 +94,7 @@ module.exports = buildFlow.create()
          *
          * If the level of need for several bundles then it will be scanned only once.
          *
-         * @param {{path: string, check: boolean}[]} level
+         * @param {{path: string, check: boolean, cacheId: string}[]} level
          * @returns {promise}
          */
         scanLevel: function (level) {
@@ -109,12 +109,13 @@ module.exports = buildFlow.create()
             if (promise) { return promise; }
 
             if (level.check === false) {
-                var data = cache.get(key);
+                const cacheKey = key + (level.cacheId || '');
+                const data = cache.get(cacheKey);
 
                 promise = data ? vow.resolve(data)
                     : scan(levelpath)
                         .then(function (introspection) {
-                            cache.set(key, introspection);
+                            cache.set(cacheKey, introspection);
 
                             return introspection;
                         });
