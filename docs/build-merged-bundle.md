@@ -35,8 +35,8 @@ var fs = require('fs'),
     path = require('path'),
     techs = require('enb-bem-techs'),
     provide = require('enb/techs/file-provider'),
-    css = require('enb/techs/css'),
-    js = require('enb/techs/js'),
+    css = require('enb-css/techs/css'),
+    js = require('enb-js/techs/browser-js.js')
     platforms = ['desktop'];
 
 module.exports = function (config) {
@@ -90,8 +90,8 @@ module.exports = function (config) {
             [techs.deps],
             [techs.files],
 
-            [css],
-            [js]
+            [css, { target: '?.css' }],
+            [js, { target: '?.js' }]
         ]);
 
         nodeConfig.addTargets(['?.css', '?.js']);
