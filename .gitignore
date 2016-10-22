@@ -1,3 +1,4 @@
 node_modules
 coverage
 benchmark/fixtures/libs
+npm-debug.log
