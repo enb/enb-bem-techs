@@ -1,6 +1,37 @@
 История изменений
 =================
 
+2.2.2
+-----
+
+### Исправления ошибок
+
+* Исправлено кэширование в технологии `levels-to-bemdecl` (@L0stSoul [#255]).
+* Исправлена схема уровней `levels-plain`: не работала с `enb@1.x` (@dmkova [#250]).
+* Исправлена технология `provide-deps`: должна поддерживать зависимости в формате массива (@dmkova [#251]).
+
+[#255]: https://github.com/enb/enb-bem-techs/pull/255
+[#251]: https://github.com/enb/enb-bem-techs/pull/251
+[#250]: https://github.com/enb/enb-bem-techs/pull/250
+
+### Зависимости
+
+* Модуль `bem-naming@0.5.1` обновлен до версии `1.0.1`.
+* Модуль `inherit@2.2.3` обновлен до версии `2.2.6`.
+* Модуль `js-yaml@3.5.2` обновлен до версии `3.7.0`.
+* Модуль `vow@0.4.12` обновлен до версии `0.4.13`.
+
+### Остальное
+
+* Пакет `enb-bem-techs` переехал в организацию [enb](https://github.com/enb) (@blond [240dbd4]).
+* Небольшие исправления документации:
+  * [6d1d7b4](https://github.com/enb/enb-bem-techs/commit/6d1d7b43ba98a10b8228c88e4c703fcbe4f008ed) (@vithar)
+  * [0ae5234](https://github.com/enb/enb-bem-techs/commit/0ae5234e37e6a723757312e63a700a56eed44110) (@mikhailrojo)
+  * [7d5c190](https://github.com/enb/enb-bem-techs/commit/7d5c19087e7028b3e2658d52624362a948533335) (@versus-stack)
+  * [b890390](https://github.com/enb/enb-bem-techs/commit/b890390c8b62df2c8c81b08920d762ee905ef55b) (@blond)
+
+[240dbd4]: https://github.com/enb/enb-bem-techs/commit/240dbd401ec19d7c961308acceab7a6f98c565ea
+
 2.2.1
 -----
 
@@ -50,7 +81,6 @@
 * Модуль `inherit@2.2.2` обновлен до версии `2.2.3`: возможность подменять метод `__base()` при тестировании.
 * Модуль `js-yaml@3.4.2` обновлен до версии `3.5.2`.
 * Модуль `vow@0.4.11` обновлен до версии `0.4.12`.
-
 
 2.1.0
 -----
