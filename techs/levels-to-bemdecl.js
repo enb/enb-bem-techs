@@ -2,9 +2,7 @@ var inherit = require('inherit'),
     enb = require('enb'),
     vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
     BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
-    deps = require('../lib/deps/deps'),
-    asyncRequire = require('enb-async-require'),
-    clearRequire = require('clear-require');
+    deps = require('../lib/deps/deps');
 
 /**
  * @class LevelsToBemdeclTech
@@ -58,50 +56,45 @@ module.exports = inherit(BaseTech, {
             cache = node.getNodeCache(target);
 
         return node.requireSources([this._source]).spread(function (levels) {
-            if (cache.needRebuildFile('bemdecl-file', bemdeclFilename)) {
-                var resDeps = [],
-                    decl = [],
-                    data,
-                    str;
+            var resDeps = [],
+                decl = [],
+                data,
+                str;
 
-                levels.items.forEach(function (level) {
-                    Object.keys(level.blocks).forEach(function (name) {
-                        var block = level.blocks[name];
+            levels.items.forEach(function (level) {
+                Object.keys(level.blocks).forEach(function (name) {
+                    var block = level.blocks[name];
 
-                        resDeps.push({
-                            block: name
-                        });
-
-                        processMods(resDeps, name, block.mods);
-                        processElems(resDeps, name, block.elements);
+                    resDeps.push({
+                        block: name
                     });
+
+                    processMods(resDeps, name, block.mods);
+                    processElems(resDeps, name, block.elements);
                 });
+            });
 
-                if (bemdeclFormat === 'deps') {
-                    decl = resDeps;
-                    data = { deps: decl };
-                    str = 'exports.deps = ' + JSON.stringify(decl, null, 4) + ';\n';
-                } else {
-                    decl = deps.toBemdecl(resDeps);
-                    data = { blocks: decl };
-                    str = 'exports.blocks = ' + JSON.stringify(decl, null, 4) + ';\n';
-                }
+            if (bemdeclFormat === 'deps') {
+                decl = resDeps;
+                data = { deps: decl };
+                str = 'exports.deps = ' + JSON.stringify(decl, null, 4) + ';\n';
+            } else {
+                decl = deps.toBemdecl(resDeps);
+                data = { blocks: decl };
+                str = 'exports.blocks = ' + JSON.stringify(decl, null, 4) + ';\n';
+            }
 
+            if (cache.get('bemdecl') !== str || cache.needRebuildFile('bemdecl-file', bemdeclFilename)) {
                 return vfs.write(bemdeclFilename, str, 'utf8')
                     .then(function () {
                         cache.cacheFileInfo('bemdecl-file', bemdeclFilename);
+                        cache.set('bemdecl', str);
                         node.resolveTarget(target, data);
                     });
-            } else {
-                node.isValidTarget(target);
-                clearRequire(bemdeclFilename);
-
-                return asyncRequire(bemdeclFilename)
-                    .then(function (result) {
-                        node.resolveTarget(target, result);
-                        return null;
-                    });
             }
+
+            node.isValidTarget(target);
+            node.resolveTarget(target, data);
         });
     }
 });
