@@ -43,13 +43,13 @@
     "enb": ">=0.15.0 <2.0.0"
   },
   "dependencies": {
-    "bem-naming": "1.0.0",
+    "bem-naming": "1.0.1",
     "clear-require": "1.0.1",
     "enb-async-require": "1.0.1",
     "enb-require-or-eval": "1.0.2",
-    "inherit": "2.2.3",
-    "js-yaml": "3.5.2",
-    "vow": "0.4.12"
+    "inherit": "2.2.6",
+    "js-yaml": "3.7.0",
+    "vow": "0.4.13"
   },
   "devDependencies": {
     "enb": ">=0.15.0 <2.0.0",
