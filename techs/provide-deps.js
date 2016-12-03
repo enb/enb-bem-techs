@@ -126,13 +126,14 @@ module.exports = inherit(BaseTech, {
                 ) {
                     return requireDeps(preDeps, sourceFilename)
                         .then(function (res) {
-                            var str = 'exports.deps = ' + JSON.stringify(res.deps, null, 4) + ';\n';
+                            var deps = Array.isArray(res) ? res : res.deps,
+                                str = 'exports.deps = ' + JSON.stringify(deps, null, 4) + ';\n';
 
                             return vfs.write(targetFilename, str, 'utf-8')
                                 .then(function () {
                                     cache.cacheFileInfo('deps-file', targetFilename);
                                     cache.cacheFileInfo('deps-source-file', sourceFilename);
-                                    node.resolveTarget(target, { deps: res.deps });
+                                    node.resolveTarget(target, { deps: deps });
                                 });
                         });
                 } else {
