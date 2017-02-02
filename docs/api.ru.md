@@ -496,7 +496,7 @@ files
 
 * [filesTarget](#filestarget-1)
 * [dirsTarget](#dirstarget)
-* [depsfile](#depsfile)
+* [depsFile](#depsfile)
 * [levelstarget](#levelstarget-2)
 
 #### filesTarget
