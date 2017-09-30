@@ -2,8 +2,8 @@ var inherit = require('inherit'),
     vow = require('vow'),
     enb = require('enb'),
     fileEval = require('file-eval'),
-    bemDeps = require('@bem/deps'),
-    bemDecl = require('bem-decl'),
+    bemDeps = require('@bem/sdk.deps'),
+    bemDecl = require('@bem/sdk.decl'),
     vfs = enb.asyncFs || require('enb/lib/fs/async-fs'),
     BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech');
 
@@ -129,9 +129,11 @@ function requireSourceDeps(data, filename) {
             if (sourceDeps.deps) {
                 return sourceDeps.deps;
             } else if (sourceDeps.blocks) {
-                return bemDecl.normalizer('v1')(sourceDeps.blocks).map(function (item) {
-                    return item.entity;
-                });
+                return bemDecl
+                    .normalize(sourceDeps.blocks, { format: 'v1' })
+                    .map(function (item) {
+                        return item.entity;
+                    });
             } else {
                 return sourceDeps;
             }
