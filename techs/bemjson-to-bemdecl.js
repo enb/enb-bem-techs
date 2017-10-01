@@ -1,9 +1,14 @@
-var inherit = require('inherit'),
-    enb = require('enb'),
-    vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
-    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
-    fileEval = require('file-eval'),
-    deps = require('../lib/deps/deps');
+'use strict';
+
+const inherit = require('inherit');
+const enb = require('enb');
+const vfs = enb.asyncFS || require('enb/lib/fs/async-fs');
+const BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech');
+const fileEval = require('file-eval');
+const nodeEval = require('node-eval');
+const BemCell = require('@bem/sdk.cell');
+const bemjsonToDecl = require('@bem/sdk.bemjson-to-decl');
+const bemDecl = require('@bem/sdk.decl');
 
 /**
  * @class BemjsonToBemdeclTech
@@ -51,11 +56,27 @@ module.exports = inherit(BaseTech, {
 
     build: function () {
         var node = this.node,
+            logger = node.getLogger(),
             target = this._target,
             cache = node.getNodeCache(target),
             bemdeclFilename = node.resolvePath(target),
             bemjsonFilename = node.resolvePath(this._sourceTarget),
             bemdeclFormat = this._bemdeclFormat;
+
+        const convertBemdeclFormatName = (formatName) => {
+            const convertedFormatName = {
+                bemdecl: 'v1',
+                deps: 'enb'
+            }[formatName];
+
+            if (convertedFormatName) {
+                const msg = `Deprecated format ${formatName}. Use ${convertedFormatName} instead.`;
+
+                logger.logWarningAction('deprecate', this._target, msg);
+            }
+
+            return convertedFormatName || formatName;
+        };
 
         return this.node.requireSources([this._sourceTarget])
             .then(function () {
@@ -64,20 +85,11 @@ module.exports = inherit(BaseTech, {
                 ) {
                     return fileEval(bemjsonFilename)
                         .then(function (bemjson) {
-                            var bemjsonDeps = getDepsFromBemjson(bemjson),
-                                decl,
-                                data,
-                                str;
-
-                            if (bemdeclFormat === 'deps') {
-                                decl = bemjsonDeps;
-                                data = { deps: decl };
-                                str = 'exports.deps = ' + JSON.stringify(decl, null, 4) + ';\n';
-                            } else {
-                                decl = deps.toBemdecl(bemjsonDeps),
-                                data = { blocks: decl };
-                                str = 'exports.blocks = ' + JSON.stringify(decl, null, 4) + ';\n';
-                            }
+                            const entities = bemjsonToDecl.convert(bemjson);
+                            const cells = entities.map(entity => new BemCell({ entity }));
+                            const bemdeclFormatName = convertBemdeclFormatName(bemdeclFormat);
+                            const str = bemDecl.stringify(cells, { format: bemdeclFormatName, exportType: 'commonjs' });
+                            const data = nodeEval(str);
 
                             return vfs.write(bemdeclFilename, str, 'utf-8')
                                 .then(function () {
@@ -99,70 +111,3 @@ module.exports = inherit(BaseTech, {
     }
 });
 
-function getDepsFromBemjson(bemjson) {
-    var deps = [];
-
-    addDepsFromBemjson(bemjson, deps, {}, null);
-
-    return deps;
-}
-
-function addDepsFromBemjson(bemjson, deps, depsIndex, parentBlockName) {
-    if (!bemjson) { return; }
-    if (Array.isArray(bemjson)) {
-        bemjson.forEach(function (bemjsonItem) {
-            addDepsFromBemjson(bemjsonItem, deps, depsIndex, parentBlockName);
-        });
-    } else {
-        if (bemjson.block || bemjson.elem) {
-            if (bemjson.elem && !bemjson.block) {
-                bemjson.block = parentBlockName;
-            }
-            var dep = { block: bemjson.block };
-            if (bemjson.elem) {
-                dep.elem = bemjson.elem;
-            }
-            var itemKey = depKey(dep);
-            if (!depsIndex[itemKey]) {
-                deps.push(dep);
-                depsIndex[itemKey] = true;
-            }
-            if (bemjson.elemMods) {
-                bemjson.mods = bemjson.elemMods;
-            }
-            if (bemjson.mods) {
-                for (var j in bemjson.mods) {
-                    if (bemjson.mods.hasOwnProperty(j)) {
-                        var subDep = { block: bemjson.block };
-                        if (bemjson.elem) {
-                            subDep.elem = bemjson.elem;
-                        }
-                        subDep.mod = j;
-                        subDep.val = bemjson.mods[j];
-                        var subItemKey = depKey(subDep);
-                        if (!depsIndex[subItemKey]) {
-                            deps.push(subDep);
-                            depsIndex[subItemKey] = true;
-                        }
-                    }
-                }
-            }
-        }
-        for (var i in bemjson) {
-            if (bemjson.hasOwnProperty(i)) {
-                if (i !== 'mods' && i !== 'js' && i !== 'attrs') {
-                    var value = bemjson[i];
-                    if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
-                        addDepsFromBemjson(bemjson[i], deps, depsIndex, bemjson.block || parentBlockName);
-                    }
-                }
-            }
-        }
-    }
-}
-
-function depKey(dep) {
-    return dep.block +
-        (dep.elem ? '__' + dep.elem : '') +
-        (dep.mod ? '_' + dep.mod + (dep.val ? '_' + dep.val : '') : '');
-}
