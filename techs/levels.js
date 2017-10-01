@@ -6,10 +6,9 @@ const stream = require('stream');
 
 const vow = require('vow');
 const enb = require('enb');
-const walk = require('bem-walk');
-const originNamingPreset = require('@bem/sdk.naming.presets').origin;
-const stringifyEntity = require('@bem/sdk.naming.entity.stringify')(originNamingPreset);
+const walk = require('@bem/sdk.walk');
 const uniqBy = require('lodash').uniqBy;
+const omit = require('lodash').omit;
 
 const vfs = enb.asyncFS || require('enb/lib/fs/async-fs');
 const buildFlow = enb.buildFlow || require('enb/lib/build-flow');
@@ -183,13 +182,26 @@ module.exports = buildFlow.create()
                         objectMode: true,
                         write: function (file, encoding, callback) {
                             tryCatch(() => {
-                                const id = stringifyEntity(file.entity);
+                                const entity = file.entity;
+                                const id = file.entity.id;
                                 const stats = fs.statSync(file.path);
+                                const entityData = omit(entity.toJSON(), 'mod');
 
-                                file.isDirectory = stats.isDirectory();
-                                file.mtime = stats.mtime.getTime();
+                                if (entity.mod) {
+                                    entityData.modName = entity.mod.name;
+                                    entity.mod.val && (entityData.modVal = entity.mod.val);
+                                }
 
-                                (data[id] || (data[id] = [])).push(file);
+                                const fileData = {
+                                    entity: entityData,
+                                    tech: file.tech,
+                                    level: file.level,
+                                    path: file.path,
+                                    isDirectory: stats.isDirectory(),
+                                    mtime: stats.mtime.getTime()
+                                };
+
+                                (data[id] || (data[id] = [])).push(fileData);
 
                                 callback();
                             }, callback);
