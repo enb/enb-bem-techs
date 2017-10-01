@@ -7,7 +7,8 @@ const stream = require('stream');
 const vow = require('vow');
 const enb = require('enb');
 const walk = require('bem-walk');
-const stringifyEntity = require('bem-naming').stringify;
+const originNamingPreset = require('@bem/sdk.naming.presets').origin;
+const stringifyEntity = require('@bem/sdk.naming.entity.stringify')(originNamingPreset);
 const uniqBy = require('lodash').uniqBy;
 
 const vfs = enb.asyncFS || require('enb/lib/fs/async-fs');
