@@ -43,15 +43,18 @@
     "enb": ">=0.15.0 <2.0.0"
   },
   "dependencies": {
-    "@bem/sdk.decl": "0.1.0",
-    "@bem/sdk.deps": "0.1.0",
-    "@bem/sdk.naming.entity.stringify": "0.2.0",
+    "@bem/sdk.bemjson-to-decl": "^0.2.0",
+    "@bem/sdk.cell": "0.2.0",
+    "@bem/sdk.decl": "0.2.1",
+    "@bem/sdk.deps": "0.2.0",
     "@bem/sdk.naming.entity.parse": "0.2.0",
+    "@bem/sdk.naming.entity.stringify": "0.2.0",
     "@bem/sdk.naming.presets": "0.0.3",
     "bem-walk": "1.0.0-1",
     "file-eval": "1.0.0",
     "inherit": "2.2.6",
     "lodash": "4.16.4",
+    "node-eval": "1.1.1",
     "vow": "0.4.12"
   },
   "devDependencies": {
