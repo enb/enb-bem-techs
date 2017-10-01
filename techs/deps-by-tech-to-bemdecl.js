@@ -1,6 +1,7 @@
 var inherit = require('inherit'),
     vm = require('vm'),
-    naming = require('bem-naming'),
+    originNamingPreset = require('@bem/sdk.naming.presets').origin,
+    parseEntity = require('@bem/sdk.naming.entity.parse')(originNamingPreset),
     vow = require('vow'),
     enb = require('enb'),
     vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
@@ -96,7 +97,7 @@ module.exports = inherit(BaseTech, {
                         depResults.forEach(function (depResult) {
                             var fileDeps = vm.runInThisContext(depResult.text),
                                 bemname = depResult.file.name.split('.')[0],
-                                notation = naming.parse(bemname);
+                                notation = parseEntity(bemname);
 
                             if (!fileDeps) {
                                 return;

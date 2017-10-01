@@ -45,9 +45,9 @@
   "dependencies": {
     "@bem/sdk.decl": "0.1.0",
     "@bem/sdk.deps": "0.1.0",
-    "@bem/sdk.naming.entity.stringify": "0.1.0",
-    "@bem/sdk.naming.presets": "0.1.0-alpha.21b40d0b",
-    "bem-naming": "1.0.1",
+    "@bem/sdk.naming.entity.stringify": "0.2.0",
+    "@bem/sdk.naming.entity.parse": "0.2.0",
+    "@bem/sdk.naming.presets": "0.0.3",
     "bem-walk": "1.0.0-1",
     "file-eval": "1.0.0",
     "inherit": "2.2.6",
