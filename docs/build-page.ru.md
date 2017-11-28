@@ -2,7 +2,7 @@
 
 Страница — это частный случай [бандла](https://github.com/enb/enb/blob/master/docs/terms.ru.md). Для сборки страницы также нужны список [БЭМ-сущностей](https://ru.bem.info/methodology/key-concepts/#БЭМ-сущность) и [уровни](https://ru.bem.info/methodology/redefinition-levels/) с исходным кодом блоков.
 
-> Как собирать бандлы, читайте в разделе [Сборка бандла](build-bundle.md).
+> Как собирать бандлы, читайте в разделе [Сборка бандла](build-bundle.ru.md).
 
 Основное отличие заключается в том, что страницы принято описывать в формате [BEMJSON](https://ru.bem.info/platform/bemjson/), а [BEMDECL](https://ru.bem.info/methodology/declarations/) получать автоматически.
 

@@ -1,5 +1,4 @@
-enb-bem-techs
-=============
+# enb-bem-techs
 
 [![NPM version](https://img.shields.io/npm/v/enb-bem-techs.svg?style=flat)](https://www.npmjs.org/package/enb-bem-techs) [![Build Status](https://img.shields.io/travis/enb/enb-bem-techs/master.svg?style=flat&label=tests)](https://travis-ci.org/enb/enb-bem-techs) [![Build status](https://img.shields.io/appveyor/ci/blond/enb-bem-techs.svg?style=flat&label=windows)](https://ci.appveyor.com/project/blond/enb-bem-techs) [![Coverage Status](https://img.shields.io/coveralls/enb/enb-bem-techs.svg?style=flat)](https://coveralls.io/r/enb/enb-bem-techs?branch=master) [![Dependency Status](https://img.shields.io/david/enb/enb-bem-techs.svg?style=flat)](https://david-dm.org/enb/enb-bem-techs)
 
@@ -40,10 +39,10 @@ $ npm install --save-dev enb-bem-techs
 
 * [API технологий](docs/api.ru.md)
 * [Организация файловой структуры](https://ru.bem.info/methodology/filesystem/)
-* [Сборка бандла](docs/build-bundle.md)
-* [Сборка страницы](docs/build-page.md)
-* [Сборка merged-бандла](docs/build-merged-bundle.md)
-* [Сборка дистрибутива](docs/build-dist.md)
+* [Сборка бандла](docs/build-bundle.ru.md)
+* [Сборка страницы](docs/build-page.ru.md)
+* [Сборка merged-бандла](docs/build-merged-bundle.ru.md)
+* [Сборка дистрибутива](docs/build-dist.ru.md)
 
 Лицензия
 --------
