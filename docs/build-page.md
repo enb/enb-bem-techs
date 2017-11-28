@@ -1,9 +1,10 @@
-Сборка страницы
-===============
+# Сборка страницы
 
-Страница — это частный случай бандла, и для её сборки также нужны список БЭМ-сущностей и уровни с исходным кодом блоков. О том, как собирать бандлы, читайте в разделе «[Сборка бандла](build-bundle.md)».
+Страница — это частный случай [бандла](https://github.com/enb/enb/blob/master/docs/terms.ru.md). Для сборки страницы также нужны список [БЭМ-сущностей](https://ru.bem.info/methodology/key-concepts/#БЭМ-сущность) и [уровни](https://ru.bem.info/methodology/redefinition-levels/) с исходным кодом блоков.
 
-Основное отличие заключается в том, что страницы принято описывать в BEMJSON формате, а BEMDECL получать автоматически.
+> Как собирать бандлы, читайте в разделе [Сборка бандла](build-bundle.md).
+
+Основное отличие заключается в том, что страницы принято описывать в формате [BEMJSON](https://ru.bem.info/platform/bemjson/), а [BEMDECL](https://ru.bem.info/methodology/declarations/) получать автоматически.
 
 Пример BEMJSON-файла:
 
@@ -14,7 +15,9 @@ module.exports = {
 };
 ```
 
-В файловой системе наш проект будет выглядеть так:
+## Пример сборки страницы
+
+Сборка страницы рассмотрена на примере проекта:
 
 ```sh
 .enb/
@@ -39,76 +42,87 @@ page/
 └── page.bemjson.js  # описание страницы
 ```
 
-Перед сборкой `css`, `js` и `html` нужно получить список исходных файлов, которые будут учавствовать в сборке.
-Для этого нам понадобится:
+Для сборки страницы необходимо выполнить следующие шаги:
 
-1. Просканировать уровни, чтобы узнать, какие БЭМ-сущности существуют.
-2. Прочитать BEMJSON-файл.
-3. Составить список БЭМ-сущностей по BEMJSON-файлу (2).
-4. Дополнить и упорядочить список БЭМ-сущностей (3) на основе информации о зависимостях (`input.deps.js`, `button.deps.js` и `checkbox.deps.js`) между БЭМ-сущностями (1).
-5. Получить упорядоченный список файлов по упорядоченному списку БЭМ-сущностей (3), а также по интроспекции уровней (1).
+1. Получить список исходных файлов, которые будут участвовать в сборке (для `css` и `js`)
 
-После этого нужно воспользоваться технологиями для сборки `css` и `js`. А также собрать код шаблонов (BEMHTML или BH) и применить его к BEMJSON-файлу, чтобы получить HTML-файл.
+    Для этого нам понадобится:
 
-И, как всегда, не забыть объявить таргеты, которые хотим собрать.
+    **a.** Просканировать уровни и узнать, какие БЭМ-сущности существуют в проекте.
 
-ENB-конфиг (.enb/make.js) будет выглядить следующим образом:
+    **b.** Прочитать BEMJSON-файл.
 
-```js
-// Подключаем модули технологий
-var techs = require('enb-bem-techs'),
-    provide = require('enb/techs/file-provider'),
-    bemhtml = require('enb-bemxjst/techs/bemhtml'),
-    html = require('enb-bemxjst/techs/html-from-bemjson'),
-    css = require('enb/techs/css'),
-    js = require('enb/techs/js');
+    **c.** Составить список БЭМ-сущностей по BEMJSON-файлу (b).
 
-module.exports = function(config) {
-    // Настраиваем сборку бандла
-    config.node('page', function(nodeConfig) {
-        // Декларируем модули технологий,
-        // которые могут учавствовать в сборке таргетов.
-        nodeConfig.addTechs([
-            // Используем базовые технологии, чтобы получить
-            // список файлов, которые будут учавствовать в сборке.
-            [techs.levels, { levels: ['blocks'] }],   // (1) -> `?.levels`
-            [provide, { target: '?.bemjson.js' }],    // (2) -> `?.bemjson.js`
-            [techs.bemjsonToBemdecl],                 // (3) -> `?.bemdecl.js`
-            [techs.deps],                             // (4) `?.bemdecl.js` -> `?.deps.js`
-            [techs.files],                            // (5) `?.levels` + `?.deps.js` -> `?.files`
+    **d.** Дополнить и упорядочить список БЭМ-сущностей (c) на основе информации о зависимостях (`input.deps.js`, `button.deps.js` и `checkbox.deps.js`) между БЭМ-сущностями (a).
 
-            // Технологии принимают на вход список файлов. Таргет, в котором хранится список файлов,
-            // задается опцией `filesTarget` (по умолчанию — `?.files`). Для сборки будут
-            // использоваться только файлы, суффиксы которых указаны опцией `sourceSuffixes`.
-            [css],     // Опция `sourceSuffixes` по умолчанию равна `['css']`
-            [js],      // Опция `sourceSuffixes` по умолчанию равна `['js']`
-            [bemhtml], // Опция `sourceSuffixes` по умолчанию равна `['bemhtml', 'bemhtml.xjst']`.
+    **e.** Получить упорядоченный список файлов по упорядоченному списку БЭМ-сущностей (c), а также по интроспекции уровней (a).
 
-            // Технология принимает на вход `?.bemjson.js` и `?.bemhtml.js` таргеты.
-            [html]
-        ]);
+2. Воспользоваться технологиями для сборки `css` и `js`.
 
-        // Объявляем таргеты, которые хотим собрать.
-        nodeConfig.addTargets(['?.css', '?.js', '?.html']);
-    });
-};
-```
+3. Собрать код [шаблонов](https://ru.bem.info/platform/bem-xjst/8/) (BEMHTML или BH) и применить его к BEMJSON-файлу, чтобы получить HTML-файл.
 
-Запускаем сборку в консоли:
+4. Объявить [таргеты](https://github.com/enb/enb/blob/master/docs/terms.ru.md).
 
-```sh
-$ enb make
-```
+    ENB-конфиг (.enb/make.js) будет выглядить следующим образом:
 
-После сборки в директории `page` будут созданы `page.css`, `page.js` и `page.html`, а также служебные файлы.
+    ```js
+    // Подключаем модули технологий
+    var techs = require('enb-bem-techs'),
+        provide = require('enb/techs/file-provider'),
+        bemhtml = require('enb-bemxjst/techs/bemhtml'),
+        html = require('enb-bemxjst/techs/html-from-bemjson'),
+        css = require('enb/techs/css'),
+        js = require('enb/techs/js');
 
-```sh
-.enb/
-blocks/
-page/
-├── page.bemjson.js
-    ...
-├── page.html
-├── page.css
-└── page.js
-```
+    module.exports = function(config) {
+        // Настраиваем сборку бандла
+        config.node('page', function(nodeConfig) {
+            // Декларируем модули технологий,
+            // которые могут учавствовать в сборке таргетов.
+            nodeConfig.addTechs([
+                // Используем базовые технологии, чтобы получить
+                // список файлов, которые будут учавствовать в сборке.
+                [techs.levels, { levels: ['blocks'] }],   // (1) -> `?.levels`
+                [provide, { target: '?.bemjson.js' }],    // (2) -> `?.bemjson.js`
+                [techs.bemjsonToBemdecl],                 // (3) -> `?.bemdecl.js`
+                [techs.deps],                             // (4) `?.bemdecl.js` -> `?.deps.js`
+                [techs.files],                            // (5) `?.levels` + `?.deps.js` -> `?.files`
+
+                // Технологии принимают на вход список файлов. Таргет, в котором хранится список файлов,
+                // задается опцией `filesTarget` (по умолчанию — `?.files`). Для сборки будут
+                // использоваться только файлы, суффиксы которых указаны опцией `sourceSuffixes`.
+                [css],     // Опция `sourceSuffixes` по умолчанию равна `['css']`
+                [js],      // Опция `sourceSuffixes` по умолчанию равна `['js']`
+                [bemhtml], // Опция `sourceSuffixes` по умолчанию равна `['bemhtml', 'bemhtml.xjst']`.
+
+                // Технология принимает на вход `?.bemjson.js` и `?.bemhtml.js` таргеты.
+                [html]
+            ]);
+
+            // Объявляем таргеты, которые хотим собрать.
+            nodeConfig.addTargets(['?.css', '?.js', '?.html']);
+        });
+    };
+    ```
+
+5. Запустить сборку в консоли:
+
+    ```sh
+    $ enb make
+    ```
+
+6. Проверить результат.
+
+   После сборки в директории `page` будут созданы `page.css`, `page.js` и `page.html`, а также служебные файлы.
+
+    ```sh
+    .enb/
+    blocks/
+    page/
+    ├── page.bemjson.js
+        ...
+    ├── page.html
+    ├── page.css
+    └── page.js
+    ```
