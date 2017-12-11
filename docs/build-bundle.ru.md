@@ -60,8 +60,8 @@ bundle/
     // Подключаем модули технологий
     var techs = require('enb-bem-techs'),
         provide = require('enb/techs/file-provider'),
-        css = require('enb/techs/css'),
-        js = require('enb/techs/js');
+        css = require('enb-css/techs/css'), // npm install --save-dev enb-css
+        js = require('enb-js/techs/browser-js'); // npm install --save-dev enb-js
 
     module.exports = function(config) {
         // Настраиваем сборку бандла
@@ -80,7 +80,7 @@ bundle/
                 // задается опцией `filesTarget` (по умолчанию — `?.files`). Для сборки будут
                 // использоваться только файлы, суффиксы которых указаны опцией `sourceSuffixes`.
                 [css],     // Опция `sourceSuffixes` по умолчанию равна `['css']`
-                [js]       // Опция `sourceSuffixes` по умолчанию равна `['js']`
+                [js, { target: '?.js' }],      // Опция `sourceSuffixes` по умолчанию равна `['vanilla.js', 'js', 'browser.js']`
             ]);
 
             // Объявляем таргеты, которые нужно собрать.
