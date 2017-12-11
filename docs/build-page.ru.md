@@ -70,10 +70,10 @@ page/
     // Подключаем модули технологий
     var techs = require('enb-bem-techs'),
         provide = require('enb/techs/file-provider'),
-        bemhtml = require('enb-bemxjst/techs/bemhtml'),
-        html = require('enb-bemxjst/techs/html-from-bemjson'),
-        css = require('enb/techs/css'),
-        js = require('enb/techs/js');
+        bemhtml = require('enb-bemxjst/techs/bemhtml'), // npm install --save-dev enb-bemxjst
+        html = require('enb-bemxjst/techs/bemjson-to-html'),
+        css = require('enb-css/techs/css'), // npm install --save-dev enb-css
+        js = require('enb-js/techs/browser-js'); // npm install --save-dev enb-js
 
     module.exports = function(config) {
         // Настраиваем сборку бандла
@@ -93,7 +93,7 @@ page/
                 // задается опцией `filesTarget` (по умолчанию — `?.files`). Для сборки будут
                 // использоваться только файлы, суффиксы которых указаны опцией `sourceSuffixes`.
                 [css],     // Опция `sourceSuffixes` по умолчанию равна `['css']`
-                [js],      // Опция `sourceSuffixes` по умолчанию равна `['js']`
+                [js, { target: '?.js' }],      // Опция `sourceSuffixes` по умолчанию равна `['vanilla.js', 'js', 'browser.js']`
                 [bemhtml], // Опция `sourceSuffixes` по умолчанию равна `['bemhtml', 'bemhtml.xjst']`.
 
                 // Технология принимает на вход `?.bemjson.js` и `?.bemhtml.js` таргеты.
