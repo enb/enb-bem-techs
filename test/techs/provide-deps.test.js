@@ -1,20 +1,20 @@
-var path = require('path'),
+'use strict';
 
-    mockFs = require('mock-fs'),
-    TestNode = require('mock-enb/lib/mock-node'),
+const path = require('path');
+const mockFs = require('mock-fs');
+const TestNode = require('mock-enb/lib/mock-node');
+const Tech = require('../..').provideDeps;
 
-    Tech = require('../..').provideDeps;
+describe('techs: provide-deps', () => {
+    let fsBundle;
+    let dataBundle;
+    let bundle;
+    const deps = [{ block: 'block' }];
 
-describe('techs: provide-deps', function () {
-    var fsBundle,
-        dataBundle,
-        bundle,
-        deps = [{ block: 'block' }];
-
-    beforeEach(function () {
+    beforeEach(() => {
         mockFs({
             'fs-bundle': {
-                'fs-bundle.deps.js': 'exports.deps = ' + JSON.stringify(deps) + ';'
+                'fs-bundle.deps.js': `exports.deps = ${JSON.stringify(deps)};`
             },
             'data-bundle': {},
             bundle: {}
@@ -24,71 +24,63 @@ describe('techs: provide-deps', function () {
         dataBundle = new TestNode('data-bundle');
 
         bundle = new TestNode('bundle');
-        bundle.provideNodeTechData('data-bundle', 'data-bundle.deps.js', { deps: deps });
+        bundle.provideNodeTechData('data-bundle', 'data-bundle.deps.js', { deps });
     });
 
-    afterEach(function () {
+    afterEach(() => {
         mockFs.restore();
     });
 
-    it('must provide `?.deps.js` target from file', function () {
+    it('must provide `?.deps.js` target from file', () => {
         return bundle.runTech(Tech, {
                 node: 'fs-bundle',
                 source: 'fs-bundle.deps.js'
             })
-            .then(function (res) {
-                res.deps.must.eql(deps);
-            });
+            .then(res => res.deps.must.eql(deps));
     });
 
-    it('must provide `?.deps.js` target from data', function () {
+    it('must provide `?.deps.js` target from data', () => {
         return bundle.runTech(Tech, {
                 node: 'data-bundle',
                 source: 'data-bundle.deps.js'
             })
-            .then(function (res) {
-                res.deps.must.eql(deps);
-            });
+            .then(res => res.deps.must.eql(deps));
     });
 
-    it('must require `?.deps.js` target from file', function () {
+    it('must require `?.deps.js` target from file', () => {
         return bundle.runTechAndRequire(Tech, {
                 node: 'fs-bundle',
                 source: 'fs-bundle.deps.js'
             })
-            .spread(function (res) {
-                res.deps.must.eql(deps);
-            });
-    });
+            .spread(res => res.deps.must.eql(deps));
+        });
 
-    it('must require `?.deps.js` target from data', function () {
+    it('must require `?.deps.js` target from data', () => {
         return bundle.runTechAndRequire(Tech, {
-                node: 'data-bundle',
-                source: 'data-bundle.deps.js'
-            })
-            .spread(function (res) {
-                res.deps.must.eql(deps);
-            });
+            node: 'data-bundle',
+            source: 'data-bundle.deps.js'
+        })
+        .spread(res => res.deps.must.eql(deps));
     });
 
-    it('must provide result from cache', function () {
+    it('must provide result from cache', () => {
         mockFs({
             'bundle-1': {
-                'bundle-1.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'block' }]) + ';'
+                'bundle-1.deps.js': `exports.deps = ${JSON.stringify([{ block: 'block' }])};`
             },
             'bundle-2': {
-                'bundle-2.deps.js': 'exports.deps = ' + JSON.stringify([{ block: 'other-block' }]) + ';'
+                'bundle-2.deps.js': `exports.deps = ${JSON.stringify([{ block: 'other-block' }])};`
             }
         });
 
-        var bundle = new TestNode('bundle-2'),
-            cache = bundle.getNodeCache('bundle-2.deps.js');
+        const bundle = new TestNode('bundle-2');
+        const cache = bundle.getNodeCache('bundle-2.deps.js');
 
         cache.cacheFileInfo('deps-source-file', path.resolve('bundle-1/bundle-1.deps.js'));
         cache.cacheFileInfo('deps-file', path.resolve('bundle-2/bundle-2.deps.js'));
 
         return bundle.runTech(Tech, { node: 'bundle-1' })
-            .then(function (target) {
+            .then(target => {
                 target.deps.must.eql([{ block: 'other-block' }]);
             });
     });

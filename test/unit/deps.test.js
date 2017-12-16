@@ -1,7 +1,7 @@
 var deps = require('../../lib/deps/deps');
 
-describe('libs: deps', function () {
-    it('must merge deps', function () {
+describe('libs: deps', () => {
+    it('must merge deps', () => {
         var firstDecl = [
                 { block: 'block1' },
                 { block: 'block1', mod: 'mod1', val: 'val1' },
@@ -24,7 +24,7 @@ describe('libs: deps', function () {
         deps.merge([firstDecl, secondDecl]).must.be.eql(output);
     });
 
-    it('must substract deps', function () {
+    it('must substract deps', () => {
         var firstDecl = [
                 { block: 'block1' },
                 { block: 'block1', mod: 'mod1', val: 'val1' },
@@ -42,7 +42,7 @@ describe('libs: deps', function () {
         deps.subtract(firstDecl, secondDecl).must.be.eql(output);
     });
 
-    it('must transform bemdecl to deps', function () {
+    it('must transform bemdecl to deps', () => {
         var input = [{
                 name: 'block1',
                 mods: [
@@ -74,11 +74,11 @@ describe('libs: deps', function () {
         deps.fromBemdecl(input).must.be.eql(output);
     });
 
-    it('must return empty deps', function () {
+    it('must return empty deps', () => {
         deps.fromBemdecl().must.be.eql([]);
     });
 
-    it('must transform deps to bemdecl', function () {
+    it('must transform deps to bemdecl', () => {
         var input = [
                 { block: 'block1' },
                 { block: 'block1', mod: 'mod1' },
@@ -99,19 +99,19 @@ describe('libs: deps', function () {
         deps.toBemdecl(input).must.be.eql(output);
     });
 
-    it('must return emty bemdecl', function () {
+    it('must return emty bemdecl', () => {
         deps.toBemdecl().must.be.eql([]);
     });
 
-    it('must convert empty shortcut', function () {
+    it('must convert empty shortcut', () => {
         deps.flattenDep({}, 'block1').must.be.eql([{ block: 'block1' }]);
     });
 
-    it('must convert shortcut given as string', function () {
+    it('must convert shortcut given as string', () => {
         deps.flattenDeps('block1').must.be.eql([{ block: 'block1' }]);
     });
 
-    it('must convert shortcuts', function () {
+    it('must convert shortcuts', () => {
         var input = [
                 { block: 'block1', elem: 'elem1', mods: { mod1: ['val1', 'val2'], mod2: 'val3' } },
                 { block: 'block1', elem: 'elem1', mod: 'mod1', val: 'val2' },
