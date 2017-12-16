@@ -1,5 +1,11 @@
 version: "{build}"
 
+branches:
+  only:
+    - master
+    - 3.x
+    - /^greenkeeper/.*$/
+
 environment:
   nodejs_version: "4"
 
