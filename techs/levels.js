@@ -193,7 +193,8 @@ module.exports = buildFlow.create()
                                     mtime: stats.mtime.getTime()
                                 };
 
-                                (data[id] || (data[id] = [])).push(fileData);
+                                const entityFiles = data.hasOwnProperty(id) && data[id] || (data[id] = []);
+                                entityFiles.push(fileData);
 
                                 callback();
                             }, callback);

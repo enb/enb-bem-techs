@@ -37,6 +37,33 @@ describe('techs: levels', () => {
         });
     });
 
+    it('must support block with constructor name', () => {
+        const scheme = {
+            blocks: {
+                constructor: {
+                    'constructor.ext': ''
+                }
+            }
+        };
+
+        const expected = {
+            constructor: [
+                {
+                    entity: { block: 'constructor' },
+                    tech: 'ext',
+                    path: path.resolve('./blocks/constructor/constructor.ext'),
+                    level: path.resolve('./blocks'),
+                    isDirectory: false
+                }
+            ]
+        };
+
+        return assert(scheme, {
+            levels: [path.resolve('blocks')],
+            introspection: expected
+        });
+    });
+
     it('must detect block dir in level', () => {
         const scheme = {
             blocks: {
@@ -496,13 +523,15 @@ function mergeIntrospections(introspections) {
 
     introspections.forEach(introspection => {
         Object.keys(introspection).forEach(id => {
-            const files = (introspection[id] || []).map(file => {
+            const clearFiles = (introspection[id] || []).map(file => {
                 delete file.mtime;
 
                 return file;
             });
 
-            result[id] = (result[id] || []).concat(files);
+            const files = result.hasOwnProperty(id) ? result[id] : [];
+
+            result[id] = files.concat(clearFiles);
         });
     });
 
