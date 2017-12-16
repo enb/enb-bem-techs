@@ -65,7 +65,7 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                 }
             },
             bemdecl = [{ name: 'block' }],
-            exepted = [{ block: 'other-block' }];
+            exepted = [{ block: 'block', tech: 'sourceTech' }, { block: 'other-block', tech: 'sourceTech' }];
 
         return assert(scheme, bemdecl, exepted, {
             sourceTech: 'sourceTech',
@@ -130,7 +130,7 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block', mods: [{ name: 'mod', vals: [{ name: true }] }] }],
-                exepted = [{ name: 'block', mods: [{ name: 'mod', vals: [{ name: true }] }] }];
+                exepted = [{ name: 'block', mods: [{ name: 'mod', vals: [] }] }];
 
             return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
         });
@@ -204,7 +204,7 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     { name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }
                 ] }],
                 exepted = [{ name: 'block', elems: [
-                    { name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }
+                    { name: 'elem', mods: [{ name: 'mod', vals: [] }] }
                 ] }];
 
             return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
@@ -271,7 +271,7 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block', mods: [{ name: 'mod', vals: [{ name: 'val' }] }] }],
-                exepted = [{ name: 'block', mods: [{ name: 'other-mod', vals: [{ name: true }] }] }];
+                exepted = [{ name: 'block', mods: [{ name: 'other-mod', vals: [] }] }];
 
             return assert(scheme, bemdecl, exepted, { sourceTech: 'sourceTech', destTech: 'destTech' });
         });
@@ -314,7 +314,7 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block' }],
-                exepted = [{ name: 'other-block' }];
+                exepted = [{ name: 'block' }, { name: 'other-block' }];
 
             return assert(scheme, bemdecl, exepted);
         });
@@ -331,7 +331,7 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block' }],
-                exepted = [{ name: 'other-block', mods: [{ name: 'mod', vals: [{ name: true }] }] }];
+                exepted = [{ name: 'block' }, { name: 'other-block', mods: [{ name: 'mod', vals: [] }] }];
 
             return assert(scheme, bemdecl, exepted);
         });
@@ -351,7 +351,10 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block' }],
-                exepted = [{ name: 'other-block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }];
+                exepted = [
+                    { name: 'block' },
+                    { name: 'other-block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }
+                ];
 
             return assert(scheme, bemdecl, exepted);
         });
@@ -368,7 +371,7 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block' }],
-                exepted = [{ name: 'other-block', elems: [{ name: 'elem' }] }];
+                exepted = [{ name: 'block' }, { name: 'other-block', elems: [{ name: 'elem' }] }];
 
             return assert(scheme, bemdecl, exepted);
         });
@@ -388,9 +391,8 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                 },
                 bemdecl = [{ name: 'block' }],
                 exepted = [
-                    { name: 'other-block' },
-                    { name: 'other-block', elems: [{ name: 'elem-1' }] },
-                    { name: 'other-block', elems: [{ name: 'elem-2' }] }
+                    { name: 'block' },
+                    { name: 'other-block', elems: [{ name: 'elem-1' }, { name: 'elem-2' }] },
                 ];
 
             return assert(scheme, bemdecl, exepted);
@@ -411,10 +413,13 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block' }],
-                exepted = [{
-                    name: 'other-block',
-                    elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }]
-                }];
+                exepted = [
+                    { name: 'block' },
+                    {
+                        name: 'other-block',
+                        elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [] }] }]
+                    }
+                ];
 
             return assert(scheme, bemdecl, exepted);
         });
@@ -435,10 +440,13 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block' }],
-                exepted = [{
-                    name: 'other-block',
-                    elems: [{ name: 'elem', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }]
-                }];
+                exepted = [
+                    { name: 'block' },
+                    {
+                        name: 'other-block',
+                        elems: [{ name: 'elem', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }]
+                    }
+                ];
 
             return assert(scheme, bemdecl, exepted);
         });
@@ -461,7 +469,7 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                 },
                 bemdecl = [{ name: 'A' }],
                 exepted = [
-                    // { name: 'A' },
+                    { name: 'A' },
                     { name: 'B' }
                 ];
 
@@ -480,7 +488,7 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block' }],
-                exepted = [{ name: 'other-block' }];
+                exepted = [{ name: 'other-block' }, { name: 'block' }];
 
             return assert(scheme, bemdecl, exepted);
         });
@@ -497,7 +505,7 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block' }],
-                exepted = [{ name: 'other-block', mods: [{ name: 'mod', vals: [{ name: true }] }] }];
+                exepted = [{ name: 'other-block', mods: [{ name: 'mod', vals: [] }] }, { name: 'block' }];
 
             return assert(scheme, bemdecl, exepted);
         });
@@ -514,7 +522,7 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block' }],
-                exepted = [{ name: 'other-block', mods: [{ name: 'mod', vals: [{ name: true }] }] }];
+                exepted = [{ name: 'other-block', mods: [{ name: 'mod', vals: [] }] }, { name: 'block' }];
 
             return assert(scheme, bemdecl, exepted);
         });
@@ -533,7 +541,10 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block' }],
-                exepted = [{ name: 'other-block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }];
+                exepted = [
+                    { name: 'other-block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] },
+                    { name: 'block' }
+                ];
 
             return assert(scheme, bemdecl, exepted);
         });
@@ -550,7 +561,7 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block' }],
-                exepted = [{ name: 'other-block', elems: [{ name: 'elem' }] }];
+                exepted = [{ name: 'other-block', elems: [{ name: 'elem' }] }, { name: 'block' }];
 
             return assert(scheme, bemdecl, exepted);
         });
@@ -568,9 +579,8 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                 },
                 bemdecl = [{ name: 'block' }],
                 exepted = [
-                    { name: 'other-block' },
-                    { name: 'other-block', elems: [{ name: 'elem-1' }] },
-                    { name: 'other-block', elems: [{ name: 'elem-2' }] }
+                    { name: 'other-block', elems: [{ name: 'elem-1' }, { name: 'elem-2' }] },
+                    { name: 'block' }
                 ];
 
             return assert(scheme, bemdecl, exepted);
@@ -590,10 +600,13 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block' }],
-                exepted = [{
-                    name: 'other-block',
-                    elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }]
-                }];
+                exepted = [
+                    {
+                        name: 'other-block',
+                        elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [] }] }]
+                    },
+                    { name: 'block' }
+                ];
 
             return assert(scheme, bemdecl, exepted);
         });
@@ -612,10 +625,13 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block' }],
-                exepted = [{
-                    name: 'other-block',
-                    elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [{ name: true }] }] }]
-                }];
+                exepted = [
+                    {
+                        name: 'other-block',
+                        elems: [{ name: 'elem', mods: [{ name: 'mod', vals: [] }] }]
+                    },
+                    { name: 'block' }
+                ];
 
             return assert(scheme, bemdecl, exepted);
         });
@@ -636,10 +652,13 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block' }],
-                exepted = [{
-                    name: 'other-block',
-                    elems: [{ name: 'elem', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }]
-                }];
+                exepted = [
+                    {
+                        name: 'other-block',
+                        elems: [{ name: 'elem', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }]
+                    },
+                    { name: 'block' }
+                ];
 
             return assert(scheme, bemdecl, exepted);
         });
@@ -662,8 +681,8 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                 },
                 bemdecl = [{ name: 'A' }],
                 exepted = [
-                    // { name: 'A' },
-                    { name: 'B' }
+                    { name: 'B' },
+                    { name: 'A' }
                 ];
 
             return assert(scheme, bemdecl, exepted);
@@ -707,7 +726,8 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                 },
                 bemdecl = [{ name: 'block' }],
                 exepted = [
-                    { name: 'block-with-destTech' }
+                    { name: 'block-with-destTech' },
+                    { name: 'block' }
                 ];
 
             return assert(scheme, bemdecl, exepted);
@@ -722,7 +742,7 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block' }],
-                exepted = [];
+                exepted = [{ name: 'block' }];
 
             return assert(scheme, bemdecl, exepted);
         });
@@ -743,7 +763,7 @@ describe('techs: deps-by-tech-to-bemdecl', function () {
                     }
                 },
                 bemdecl = [{ name: 'block' }],
-                exepted = [];
+                exepted = [{ name: 'block' }];
 
             return assert(scheme, bemdecl, exepted);
         });

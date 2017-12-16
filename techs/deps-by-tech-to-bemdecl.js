@@ -1,13 +1,12 @@
 var inherit = require('inherit'),
-    vm = require('vm'),
     originNamingPreset = require('@bem/sdk.naming.presets').origin,
     parseEntity = require('@bem/sdk.naming.entity.parse')(originNamingPreset),
-    vow = require('vow'),
     enb = require('enb'),
     vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
     BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
     fileEval = require('file-eval'),
-    deps = require('../lib/deps/deps');
+    bemDecl = require('@bem/sdk.decl'),
+    bemDeps = require('@bem/sdk.deps');
 
 /**
  * @class DepsByTechToBemdeclTech
@@ -23,7 +22,7 @@ var inherit = require('inherit'),
  * @param {String}      [options.target=?.bemdecl.js]        Path to BEMDECL file to build.
  * @param {String}      [options.filesTarget='?.files']      Path to target with {@link FileList}.
  * @param {String[]}    [options.sourceSuffixes=['deps.js']] Files with specified suffixes involved in the assembly.
- * @param {String}  [options.bemdeclFormat='bemdecl'] Format of result declaration (bemdecl or deps).
+ * @param {String}      [options.bemdeclFormat='bemdecl'] Format of result declaration (bemdecl or deps).
  *
  * @example
  * var FileProvideTech = require('enb/techs/file-provider'),
@@ -80,92 +79,53 @@ module.exports = inherit(BaseTech, {
             bemdeclFormat = this._bemdeclFormat;
 
         return this.node.requireSources([this._filesTarget])
-            .spread(function (files) {
-                var depsFiles = files.getBySuffix(sourceSuffixes);
+            .spread(files => {
+                var depsFileList = files.getBySuffix(sourceSuffixes);
 
                 if (cache.needRebuildFile('bemdecl-file', bemdeclFilename) ||
-                    cache.needRebuildFileList('deps-files', depsFiles)
+                    cache.needRebuildFileList('deps-files', depsFileList)
                 ) {
-                    return vow.all(depsFiles.map(function (file) {
-                        return vfs.read(file.fullname, 'utf8').then(function (text) {
-                            return { file: file, text: text };
-                        });
-                    })).then(function (depResults) {
-                        var result = [],
-                            depIndex = {};
+                    const entities = [];
+                    const depsFiles = depsFileList.map(file => {
+                        const bemname = file.name.split('.')[0];
+                        const entity = parseEntity(bemname);
 
-                        depResults.forEach(function (depResult) {
-                            var fileDeps = vm.runInThisContext(depResult.text),
-                                bemname = depResult.file.name.split('.')[0],
-                                notation = parseEntity(bemname);
+                        entities.push(entity);
 
-                            if (!fileDeps) {
-                                return;
+                        return { path: file.fullname, entity };
+                    });
+
+                    return bemDeps.read()(depsFiles)
+                        .then(bemDeps.parse())
+                        .then(bemDeps.buildGraph)
+                        .then(function (graph) {
+                            var resolvedDeps = graph.dependenciesOf(entities, sourceTech)
+                                .filter(cell => destTech ? cell.tech === destTech : true);
+
+                            var decl, data, str;
+
+                            if (bemdeclFormat === 'deps') {
+                                decl = bemDecl.format(resolvedDeps, { format: 'enb' });
+                                data = { deps: decl };
+                                str = 'exports.deps = ' + JSON.stringify(decl, null, 4) + ';\n';
+                            } else {
+                                decl = bemDecl.format(resolvedDeps, { format: 'v1' });
+                                data = { blocks: decl };
+                                str = 'exports.blocks = ' + JSON.stringify(decl, null, 4) + ';\n';
                             }
-                            fileDeps = Array.isArray(fileDeps) ? fileDeps : [fileDeps];
-                            fileDeps.forEach(function (dep) {
-                                if (dep.tech === sourceTech) {
-                                    ['mustDeps', 'shouldDeps'].forEach(function (depType) {
-                                        if (dep[depType]) {
-                                            deps.flattenDeps(dep[depType]).forEach(function (singleDep) {
-                                                if (!singleDep.block) {
-                                                    singleDep.block = notation.block;
 
-                                                    if (!singleDep.elem) {
-                                                        notation.elem && (singleDep.elem = notation.elem);
-
-                                                        if (!singleDep.mod) {
-                                                             notation.modName && (singleDep.mod = notation.modName);
-
-                                                             if (!singleDep.val) {
-                                                                 notation.modVal && (singleDep.val = notation.modVal);
-                                                             }
-                                                        }
-                                                    }
-                                                }
-
-                                                singleDep.val || singleDep.mod && (singleDep.val = true);
-
-                                                if (!destTech || singleDep.tech === destTech) {
-                                                    var key = depKey(singleDep);
-                                                    if (!depIndex[key]) {
-                                                        depIndex[key] = true;
-                                                        result.push(singleDep);
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                        });
-
-                        var decl,
-                            data,
-                            str;
-
-                        if (bemdeclFormat === 'deps') {
-                            decl = result;
-                            data = { deps: decl };
-                            str = 'exports.deps = ' + JSON.stringify(decl, null, 4) + ';\n';
-                        } else {
-                            decl = deps.toBemdecl(result),
-                            data = { blocks: decl };
-                            str = 'exports.blocks = ' + JSON.stringify(decl, null, 4) + ';\n';
-                        }
-
-                        return vfs.write(bemdeclFilename, str, 'utf-8')
-                            .then(function () {
-                                cache.cacheFileInfo('bemdecl-file', bemdeclFilename);
-                                cache.cacheFileList('deps-files', depsFiles);
-                                node.resolveTarget(target, data);
-                            });
+                            return vfs.write(bemdeclFilename, str, 'utf-8')
+                                .then(() => {
+                                    cache.cacheFileInfo('bemdecl-file', bemdeclFilename);
+                                    cache.cacheFileList('deps-files', depsFileList);
+                                    node.resolveTarget(target, data);
+                                });
                     });
                 } else {
                     node.isValidTarget(target);
 
                     return fileEval(bemdeclFilename)
-                        .then(function (result) {
+                        .then(result => {
                             node.resolveTarget(target, result);
                             return null;
                         });
@@ -173,9 +133,3 @@ module.exports = inherit(BaseTech, {
             });
     }
 });
-
-function depKey(dep) {
-    return dep.block +
-        (dep.elem ? '__' + dep.elem : '') +
-        (dep.mod ? '_' + dep.mod + (dep.val ? '_' + dep.val : '') : '');
-}
