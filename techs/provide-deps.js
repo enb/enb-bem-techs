@@ -1,9 +1,11 @@
-var inherit = require('inherit'),
-    vow = require('vow'),
-    enb = require('enb'),
-    vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
-    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
-    fileEval = require('file-eval');
+'use strict';
+
+const inherit = require('inherit');
+const vow = require('vow');
+const enb = require('enb');
+const vfs = enb.asyncFS || require('enb/lib/fs/async-fs');
+const BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech');
+const fileEval = require('file-eval');
 
 /**
  * @class ProvideDepsTech
@@ -66,58 +68,58 @@ var inherit = require('inherit'),
  * };
  */
 module.exports = inherit(BaseTech, {
-    getName: function () {
+    getName() {
         return 'provide-deps';
     },
 
-    configure: function () {
-        var node = this.node;
+    configure() {
+        const node = this.node;
 
         this._target = node.unmaskTargetName(this.getOption('target', '?.deps.js'));
         this._fromNode = this.getRequiredOption('node');
         this._sourceTarget = node.unmaskNodeTargetName(this._fromNode, this.getOption('source', '?.deps.js'));
     },
 
-    getTargets: function () {
+    getTargets() {
         return [this._target];
     },
 
-    build: function () {
-        var node = this.node,
-            target = this._target,
-            fromNode = this._fromNode,
-            sourceTarget = this._sourceTarget,
-            targetFilename = node.resolvePath(target),
-            sourceFilename = node.resolveNodePath(fromNode, sourceTarget),
-            cache = node.getNodeCache(target),
-            requirements = {};
+    build() {
+        const node = this.node;
+        const target = this._target;
+        const fromNode = this._fromNode;
+        const sourceTarget = this._sourceTarget;
+        const targetFilename = node.resolvePath(target);
+        const sourceFilename = node.resolveNodePath(fromNode, sourceTarget);
+        const cache = node.getNodeCache(target);
+        const requirements = {};
 
         requirements[fromNode] = [sourceTarget];
 
         return this.node.requireNodeSources(requirements)
-            .then(function (results) {
-                var preDeps = results[fromNode][0];
+            .then(results => {
+                const preDeps = results[fromNode][0];
 
                 if (cache.needRebuildFile('deps-file', targetFilename) ||
                     cache.needRebuildFile('deps-source-file', sourceFilename)
                 ) {
                     return requireDeps(preDeps, sourceFilename)
-                        .then(function (res) {
-                            var deps = Array.isArray(res) ? res : res.deps,
-                                str = 'exports.deps = ' + JSON.stringify(deps, null, 4) + ';\n';
+                        .then(res => {
+                        const deps = Array.isArray(res) ? res : res.deps;
+                        const str = `exports.deps = ${JSON.stringify(deps, null, 4)};\n`;
 
-                            return vfs.write(targetFilename, str, 'utf-8')
-                                .then(function () {
-                                    cache.cacheFileInfo('deps-file', targetFilename);
-                                    cache.cacheFileInfo('deps-source-file', sourceFilename);
-                                    node.resolveTarget(target, { deps: deps });
-                                });
-                        });
+                        return vfs.write(targetFilename, str, 'utf-8')
+                            .then(() => {
+                                cache.cacheFileInfo('deps-file', targetFilename);
+                                cache.cacheFileInfo('deps-source-file', sourceFilename);
+                                node.resolveTarget(target, { deps });
+                            });
+                    });
                 } else {
                     node.isValidTarget(target);
 
                     return requireDeps(null, targetFilename)
-                        .then(function (resDeps) {
+                        .then(resDeps => {
                             node.resolveTarget(target, resDeps);
                             return null;
                         });

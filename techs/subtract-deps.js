@@ -1,10 +1,12 @@
-var inherit = require('inherit'),
-    vow = require('vow'),
-    enb = require('enb'),
-    vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
-    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
-    fileEval = require('file-eval'),
-    deps = require('../lib/deps/deps');
+'use strict';
+
+const inherit = require('inherit');
+const vow = require('vow');
+const enb = require('enb');
+const vfs = enb.asyncFS || require('enb/lib/fs/async-fs');
+const BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech');
+const fileEval = require('file-eval');
+const deps = require('../lib/deps/deps');
 
 /**
  * @class SubtractDepsTech
@@ -45,32 +47,32 @@ var inherit = require('inherit'),
  * };
  */
 module.exports = inherit(BaseTech, {
-    getName: function () {
+    getName() {
         return 'subtract-deps';
     },
 
-    configure: function () {
-        var node = this.node;
+    configure() {
+        const node = this.node;
 
         this._target = node.unmaskTargetName(this.getOption('target', '?.deps.js'));
         this._fromTarget = node.unmaskTargetName(this.getRequiredOption('from'));
         this._whatTarget = node.unmaskTargetName(this.getRequiredOption('what'));
     },
 
-    getTargets: function () {
+    getTargets() {
         return [this._target];
     },
 
-    build: function () {
-        var node = this.node,
-            target = this._target,
-            cache = node.getNodeCache(target),
-            targetFilename = node.resolvePath(target),
-            fromFilename = node.resolvePath(this._fromTarget),
-            whatFilename = node.resolvePath(this._whatTarget);
+    build() {
+        const node = this.node;
+        const target = this._target;
+        const cache = node.getNodeCache(target);
+        const targetFilename = node.resolvePath(target);
+        const fromFilename = node.resolvePath(this._fromTarget);
+        const whatFilename = node.resolvePath(this._whatTarget);
 
         return this.node.requireSources([this._fromTarget, this._whatTarget])
-            .spread(function (fromDeps, whatDeps) {
+            .spread((fromDeps, whatDeps) => {
                 if (cache.needRebuildFile('deps-file', targetFilename) ||
                     cache.needRebuildFile('deps-from-file', fromFilename) ||
                     cache.needRebuildFile('deps-what-file', whatFilename)
@@ -79,25 +81,25 @@ module.exports = inherit(BaseTech, {
                             requireDeps(fromDeps, fromFilename),
                             requireDeps(whatDeps, whatFilename)
                         ])
-                        .spread(function (from, what) {
-                            var fromDeps = Array.isArray(from) ? from : from.deps,
-                                whatDeps = Array.isArray(what) ? what : what.deps,
-                                subtractedDeps = deps.subtract(fromDeps, whatDeps),
-                                str = 'exports.deps = ' + JSON.stringify(subtractedDeps, null, 4) + ';';
+                        .spread((from, what) => {
+                        const fromDeps = Array.isArray(from) ? from : from.deps;
+                        const whatDeps = Array.isArray(what) ? what : what.deps;
+                        const subtractedDeps = deps.subtract(fromDeps, whatDeps);
+                        const str = `exports.deps = ${JSON.stringify(subtractedDeps, null, 4)};`;
 
-                            return vfs.write(targetFilename, str, 'utf-8')
-                                .then(function () {
-                                    cache.cacheFileInfo('deps-file', targetFilename);
-                                    cache.cacheFileInfo('deps-from-file', fromFilename);
-                                    cache.cacheFileInfo('deps-what-file', whatFilename);
-                                    node.resolveTarget(target, { deps: subtractedDeps });
-                                });
-                        });
+                        return vfs.write(targetFilename, str, 'utf-8')
+                            .then(() => {
+                                cache.cacheFileInfo('deps-file', targetFilename);
+                                cache.cacheFileInfo('deps-from-file', fromFilename);
+                                cache.cacheFileInfo('deps-what-file', whatFilename);
+                                node.resolveTarget(target, { deps: subtractedDeps });
+                            });
+                    });
                 } else {
                     node.isValidTarget(target);
 
                     return fileEval(targetFilename)
-                        .then(function (result) {
+                        .then(result => {
                             node.resolveTarget(target, result);
                             return null;
                         });

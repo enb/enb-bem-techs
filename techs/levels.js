@@ -52,24 +52,20 @@ module.exports = buildFlow.create()
     .target('target', '?.levels')
     .defineRequiredOption('levels')
     .defineOption('sublevelDirectories', ['blocks'])
-    .saver(function () {})
-    .needRebuild(function () {
-        return true;
-    })
+    .saver(() => {})
+    .needRebuild(() => true)
     .builder(function () {
         const target = this._target;
         const node = this.node;
         const scan = this.scanLevel.bind(this);
 
         return this.getLevels()
-            .then(function (levels) {
+            .then(levels => {
                 return vow.all(levels.map(scan))
-                    .then(function (introspections) {
-                        return [levels, introspections];
-                    });
+                    .then(introspections => [levels, introspections]);
             })
-            .spread(function (levels, introspections) {
-                const levelPaths = levels.map(function (level) { return level.path; });
+            .spread((levels, introspections) => {
+                const levelPaths = levels.map(level => level.path);
 
                 node.resolveTarget(target, new BundleIntrospection(levelPaths, introspections));
             }, this);
@@ -80,13 +76,11 @@ module.exports = buildFlow.create()
          *
          * @returns {{path: string, check: boolean}[]}
          */
-        getLevels: function () {
+        getLevels() {
             const sourceLevels = this._initLevels(this._levels);
 
             return this._findSublevels()
-                .then(function (sublevels) {
-                    return uniqBy(sourceLevels.concat(sublevels), 'path');
-                });
+                .then(sublevels => uniqBy(sourceLevels.concat(sublevels), 'path'));
         },
         /**
          * Scans specified level.
@@ -98,23 +92,23 @@ module.exports = buildFlow.create()
          * @param {{path: string, check: boolean}[]} level
          * @returns {promise}
          */
-        scanLevel: function (level) {
+        scanLevel(level) {
             const node = this.node;
             const cache = node.getNodeCache(this._target);
             const state = node.buildState;
             const scan = this._forceScanLevel.bind(this);
             const levelpath = level.path;
-            const key = 'level:' + levelpath;
+            const key = `level:${levelpath}`;
 
             let promise = state[key];
             if (promise) { return promise; }
 
             if (level.check === false) {
-                var data = cache.get(key);
+                const data = cache.get(key);
 
                 promise = data ? vow.resolve(data)
                     : scan(levelpath)
-                        .then(function (introspection) {
+                        .then(introspection => {
                             cache.set(key, introspection);
 
                             return introspection;
@@ -132,10 +126,10 @@ module.exports = buildFlow.create()
          *
          * @returns {{path: string, check: boolean}[]}
          */
-        _initLevels: function () {
+        _initLevels() {
             const root = this.node.getRootDir();
 
-            return this._levels.map(function (level) {
+            return this._levels.map(level => {
                 const levelpath = typeof level === 'object' ? level.path : level;
 
                 return {
@@ -149,19 +143,17 @@ module.exports = buildFlow.create()
          *
          * @returns {{path: string, check: boolean}[]}
          */
-        _findSublevels: function () {
+        _findSublevels() {
             const dir = path.join(this.node.getDir());
             const patterns = this._sublevelDirectories;
 
             return vfs.listDir(dir)
-                .then(function (basenames) {
-                    return basenames
-                        .filter(function (basename) {
-                            return patterns.indexOf(basename) !== -1;
-                        })
-                        .map(function (basename) {
-                            return { path: path.join(dir, basename), check: false };
-                        });
+                .then(basenames => {
+                    return basenames.filter(basename => patterns.indexOf(basename) !== -1)
+                        .map(basename => ({
+                            path: path.join(dir, basename),
+                            check: false
+                        }));
                 });
         },
         /**
@@ -172,7 +164,7 @@ module.exports = buildFlow.create()
          * @param {string} levelpath - path to level.
          * @returns {promise}
          */
-        _forceScanLevel: function (levelpath) {
+        _forceScanLevel(levelpath) {
             return new vow.Promise((resolve, reject) => {
                 const data = {};
 
@@ -180,7 +172,7 @@ module.exports = buildFlow.create()
                     .on('error', reject)
                     .pipe(new stream.Writable({
                         objectMode: true,
-                        write: function (file, encoding, callback) {
+                        write(file, encoding, callback) {
                             tryCatch(() => {
                                 const entity = file.entity;
                                 const id = file.entity.id;

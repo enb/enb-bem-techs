@@ -1,11 +1,13 @@
-var inherit = require('inherit'),
-    vow = require('vow'),
-    enb = require('enb'),
-    fileEval = require('file-eval'),
-    bemDeps = require('@bem/sdk.deps'),
-    bemDecl = require('@bem/sdk.decl'),
-    vfs = enb.asyncFs || require('enb/lib/fs/async-fs'),
-    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech');
+'use strict';
+
+const inherit = require('inherit');
+const vow = require('vow');
+const enb = require('enb');
+const fileEval = require('file-eval');
+const bemDeps = require('@bem/sdk.deps');
+const bemDecl = require('@bem/sdk.decl');
+const vfs = enb.asyncFs || require('enb/lib/fs/async-fs');
+const BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech');
 
 /**
  * @class DepsTech
@@ -42,60 +44,60 @@ var inherit = require('inherit'),
  * };
  */
 module.exports = inherit(BaseTech, {
-    getName: function () {
+    getName() {
         return 'deps';
     },
 
-    configure: function () {
-        var node = this.node;
+    configure() {
+        const node = this.node;
 
         this._target = node.unmaskTargetName(this.getOption('target', node.getTargetName('deps.js')));
         this._declFile = node.unmaskTargetName(this.getOption('bemdeclFile', node.getTargetName('bemdecl.js')));
         this._levelsTarget = node.unmaskTargetName(this.getOption('levelsTarget', node.getTargetName('levels')));
     },
 
-    getTargets: function () {
+    getTargets() {
         return [this._target];
     },
 
-    build: function () {
-        var node = this.node,
-            target = this._target,
-            targetFilename = node.resolvePath(target),
-            cache = node.getNodeCache(target),
-            declFilename = node.resolvePath(this._declFile);
+    build() {
+        const node = this.node;
+        const target = this._target;
+        const targetFilename = node.resolvePath(target);
+        const cache = node.getNodeCache(target);
+        const declFilename = node.resolvePath(this._declFile);
 
         return node.requireSources([this._levelsTarget, this._declFile])
-            .spread(function (introspections, sourceDeps) {
-                var depFiles = introspections.getFilesByTechs(['deps.js', 'deps.yaml']);
+            .spread((introspections, sourceDeps) => {
+                const depFiles = introspections.getFilesByTechs(['deps.js', 'deps.yaml']);
 
                 if (cache.needRebuildFile('deps-file', targetFilename) ||
                     cache.needRebuildFile('decl-file', declFilename) ||
                     cache.needRebuildFileList('deps-file-list', depFiles)
                 ) {
                     return requireSourceDeps(sourceDeps, declFilename)
-                        .then(function (sourceDeps) {
+                        .then(sourceDeps => {
                             return bemDeps.read()(depFiles)
                                 .then(bemDeps.parse())
                                 .then(bemDeps.buildGraph)
-                                .then(function (graph) {
-                                    var resolvedDeps = graph.dependenciesOf(sourceDeps).map(convertEntity),
-                                        str = 'exports.deps = ' + JSON.stringify(resolvedDeps, null, 4) + ';\n';
+                                .then(graph => {
+                                const resolvedDeps = graph.dependenciesOf(sourceDeps).map(convertEntity);
+                                const str = `exports.deps = ${JSON.stringify(resolvedDeps, null, 4)};\n`;
 
-                                    return vfs.write(targetFilename, str, 'utf8')
-                                        .then(function () {
-                                            cache.cacheFileInfo('deps-file', targetFilename);
-                                            cache.cacheFileInfo('decl-file', declFilename);
-                                            cache.cacheFileList('deps-file-list', depFiles);
-                                            node.resolveTarget(target, { deps: resolvedDeps });
-                                        });
-                                });
+                                return vfs.write(targetFilename, str, 'utf8')
+                                    .then(() => {
+                                        cache.cacheFileInfo('deps-file', targetFilename);
+                                        cache.cacheFileInfo('decl-file', declFilename);
+                                        cache.cacheFileList('deps-file-list', depFiles);
+                                        node.resolveTarget(target, { deps: resolvedDeps });
+                                    });
+                            });
                         });
                 } else {
                     node.isValidTarget(target);
 
                     return fileEval(targetFilename)
-                        .then(function (result) {
+                        .then(result => {
                             node.resolveTarget(target, result);
                             return null;
                         });
@@ -105,10 +107,11 @@ module.exports = inherit(BaseTech, {
 });
 
 function convertEntity(obj) {
-    var entity = obj.entity,
-        result = {
-            block: entity.block
-        };
+    const entity = obj.entity;
+
+    const result = {
+        block: entity.block
+    };
 
     if (entity.elem) {
         result.elem = entity.elem;
@@ -124,16 +127,14 @@ function convertEntity(obj) {
 
 function requireSourceDeps(data, filename) {
     return (data ? vow.resolve(data) : fileEval(filename))
-        .then(function (sourceDeps) {
+        .then(sourceDeps => {
             // todo:добавить параметр с версией декларации
             if (sourceDeps.deps) {
                 return sourceDeps.deps;
             } else if (sourceDeps.blocks) {
                 return bemDecl
                     .normalize(sourceDeps.blocks, { format: 'v1' })
-                    .map(function (item) {
-                        return item.entity;
-                    });
+                    .map(item => item.entity);
             } else {
                 return sourceDeps;
             }
