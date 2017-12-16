@@ -43,29 +43,29 @@
     "enb": ">=0.15.0 <2.0.0"
   },
   "dependencies": {
-    "@bem/sdk.bemjson-to-decl": "0.2.0",
-    "@bem/sdk.cell": "0.2.0",
-    "@bem/sdk.decl": "0.2.1",
-    "@bem/sdk.deps": "0.2.0",
-    "@bem/sdk.naming.entity.parse": "0.2.0",
-    "@bem/sdk.naming.entity.stringify": "0.2.0",
-    "@bem/sdk.naming.presets": "0.0.3",
+    "@bem/sdk.bemjson-to-decl": "0.2.3",
+    "@bem/sdk.cell": "0.2.3",
+    "@bem/sdk.decl": "0.2.4",
+    "@bem/sdk.deps": "0.2.3",
+    "@bem/sdk.naming.entity.parse": "0.2.3",
+    "@bem/sdk.naming.entity.stringify": "1.0.0",
+    "@bem/sdk.naming.presets": "0.0.6",
     "@bem/sdk.walk": "0.2.3",
-    "file-eval": "1.2.0",
+    "file-eval": "2.0.0",
     "inherit": "2.2.6",
     "lodash": "4.17.4",
-    "node-eval": "1.1.1",
-    "vow": "0.4.16"
+    "node-eval": "2.0.0",
+    "vow": "0.4.17"
   },
   "devDependencies": {
     "enb": ">=0.15.0 <2.0.0",
     "jscs": "^3.0.7",
     "jshint": "^2.9.5",
-    "mocha": "^3.5.3",
+    "mocha": "^4.0.1",
     "mock-enb": "^0.3.6",
     "mock-fs": "^4.4.1",
     "must": "^0.13.4",
-    "nyc": "^11.2.1"
+    "nyc": "^11.3.0"
   },
   "main": "index.js",
   "files": [
