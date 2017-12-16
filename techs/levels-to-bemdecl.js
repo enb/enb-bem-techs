@@ -1,9 +1,10 @@
-var inherit = require('inherit'),
-    enb = require('enb'),
+'use strict';
 
-    vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
-    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
-    deps = require('../lib/deps/deps');
+const inherit = require('inherit');
+const enb = require('enb');
+const vfs = enb.asyncFS || require('enb/lib/fs/async-fs');
+const BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech');
+const deps = require('../lib/deps/deps');
 
 /**
  * @class LevelsToBemdeclTech
@@ -33,57 +34,56 @@ var inherit = require('inherit'),
  * };
  */
 module.exports = inherit(BaseTech, {
-    getName: function () {
+    getName() {
         return 'levels-to-bemdecl';
     },
 
-    configure: function () {
-        var node = this.node;
+    configure() {
+        const node = this.node;
 
         this._target = node.unmaskTargetName(this.getOption('target', node.getTargetName('bemdecl.js')));
         this._source = node.unmaskTargetName(this.getOption('source', node.getTargetName('levels')));
         this._bemdeclFormat = this.getOption('bemdeclFormat', 'bemdecl');
     },
 
-    getTargets: function () {
+    getTargets() {
         return [this.node.unmaskTargetName(this._target)];
     },
 
-    build: function () {
-        var node = this.node,
-            target = this._target,
-            bemdeclFilename = node.resolvePath(target),
-            bemdeclFormat = this._bemdeclFormat,
-            cache = node.getNodeCache(target);
+    build() {
+        const node = this.node;
+        const target = this._target;
+        const bemdeclFilename = node.resolvePath(target);
+        const bemdeclFormat = this._bemdeclFormat;
+        const cache = node.getNodeCache(target);
 
-        return node.requireSources([this._source]).spread(function (introspection) {
-            var resDeps = introspection.getEntities().map(function (entity) {
-                    var dep = {
-                        block: entity.block
-                    };
+        return node.requireSources([this._source]).spread(introspection => {
+            const resDeps = introspection.getEntities().map(entity => {
+                const dep = { block: entity.block };
 
-                    entity.elem && (dep.elem = entity.elem);
-                    entity.modName && (dep.mod = entity.modName);
-                    entity.modVal && (dep.val = entity.modVal);
+                entity.elem && (dep.elem = entity.elem);
+                entity.modName && (dep.mod = entity.modName);
+                entity.modVal && (dep.val = entity.modVal);
 
-                    return dep;
-                }),
-                data,
-                str;
+                return dep;
+            });
+
+            let data;
+            let str;
 
             if (bemdeclFormat === 'deps') {
                 data = { deps: resDeps };
-                str = 'exports.deps = ' + JSON.stringify(resDeps, null, 4) + ';\n';
+                str = `exports.deps = ${JSON.stringify(resDeps, null, 4)};\n`;
             } else {
-                var decl = deps.toBemdecl(resDeps);
+                const decl = deps.toBemdecl(resDeps);
 
                 data = { blocks: decl };
-                str = 'exports.blocks = ' + JSON.stringify(decl, null, 4) + ';\n';
+                str = `exports.blocks = ${JSON.stringify(decl, null, 4)};\n`;
             }
 
             if (cache.get('bemdecl') !== str || cache.needRebuildFile('bemdecl-file', bemdeclFilename)) {
                 return vfs.write(bemdeclFilename, str, 'utf8')
-                    .then(function () {
+                    .then(() => {
                         cache.cacheFileInfo('bemdecl-file', bemdeclFilename);
                         cache.set('bemdecl', str);
                         node.resolveTarget(target, data);

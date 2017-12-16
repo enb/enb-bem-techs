@@ -1,12 +1,14 @@
-var inherit = require('inherit'),
-    originNamingPreset = require('@bem/sdk.naming.presets').origin,
-    parseEntity = require('@bem/sdk.naming.entity.parse')(originNamingPreset),
-    enb = require('enb'),
-    vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
-    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
-    fileEval = require('file-eval'),
-    bemDecl = require('@bem/sdk.decl'),
-    bemDeps = require('@bem/sdk.deps');
+'use strict';
+
+const inherit = require('inherit');
+const originNamingPreset = require('@bem/sdk.naming.presets').origin;
+const parseEntity = require('@bem/sdk.naming.entity.parse')(originNamingPreset);
+const enb = require('enb');
+const vfs = enb.asyncFS || require('enb/lib/fs/async-fs');
+const BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech');
+const fileEval = require('file-eval');
+const bemDecl = require('@bem/sdk.decl');
+const bemDeps = require('@bem/sdk.deps');
 
 /**
  * @class DepsByTechToBemdeclTech
@@ -49,12 +51,12 @@ var inherit = require('inherit'),
  * };
  */
 module.exports = inherit(BaseTech, {
-    getName: function () {
+    getName() {
         return 'deps-by-tech-to-bemdecl';
     },
 
-    configure: function () {
-        var node = this.node;
+    configure() {
+        const node = this.node;
 
         this._target = node.unmaskTargetName(this.getOption('target', '?.bemdecl.js'));
         this._filesTarget = node.unmaskTargetName(this.getOption('filesTarget', '?.files'));
@@ -64,23 +66,23 @@ module.exports = inherit(BaseTech, {
         this._bemdeclFormat = this.getOption('bemdeclFormat', 'bemdecl');
     },
 
-    getTargets: function () {
+    getTargets() {
         return [this._target];
     },
 
-    build: function () {
-        var node = this.node,
-            target = this._target,
-            cache = node.getNodeCache(target),
-            bemdeclFilename = node.resolvePath(target),
-            sourceTech = this._sourceTech,
-            destTech = this._destTech,
-            sourceSuffixes = Array.isArray(this._sourceSuffixes) ? this._sourceSuffixes : [this._sourceSuffixes],
-            bemdeclFormat = this._bemdeclFormat;
+    build() {
+        const node = this.node;
+        const target = this._target;
+        const cache = node.getNodeCache(target);
+        const bemdeclFilename = node.resolvePath(target);
+        const sourceTech = this._sourceTech;
+        const destTech = this._destTech;
+        const sourceSuffixes = Array.isArray(this._sourceSuffixes) ? this._sourceSuffixes : [this._sourceSuffixes];
+        const bemdeclFormat = this._bemdeclFormat;
 
         return this.node.requireSources([this._filesTarget])
             .spread(files => {
-                var depsFileList = files.getBySuffix(sourceSuffixes);
+                const depsFileList = files.getBySuffix(sourceSuffixes);
 
                 if (cache.needRebuildFile('bemdecl-file', bemdeclFilename) ||
                     cache.needRebuildFileList('deps-files', depsFileList)
@@ -98,28 +100,30 @@ module.exports = inherit(BaseTech, {
                     return bemDeps.read()(depsFiles)
                         .then(bemDeps.parse())
                         .then(bemDeps.buildGraph)
-                        .then(function (graph) {
-                            var resolvedDeps = graph.dependenciesOf(entities, sourceTech)
-                                .filter(cell => destTech ? cell.tech === destTech : true);
+                        .then(graph => {
+                        const resolvedDeps = graph.dependenciesOf(entities, sourceTech)
+                            .filter(cell => destTech ? cell.tech === destTech : true);
 
-                            var decl, data, str;
+                        let decl;
+                        let data;
+                        let str;
 
-                            if (bemdeclFormat === 'deps') {
-                                decl = bemDecl.format(resolvedDeps, { format: 'enb' });
-                                data = { deps: decl };
-                                str = 'exports.deps = ' + JSON.stringify(decl, null, 4) + ';\n';
-                            } else {
-                                decl = bemDecl.format(resolvedDeps, { format: 'v1' });
-                                data = { blocks: decl };
-                                str = 'exports.blocks = ' + JSON.stringify(decl, null, 4) + ';\n';
-                            }
+                        if (bemdeclFormat === 'deps') {
+                            decl = bemDecl.format(resolvedDeps, { format: 'enb' });
+                            data = { deps: decl };
+                            str = `exports.deps = ${JSON.stringify(decl, null, 4)};\n`;
+                        } else {
+                            decl = bemDecl.format(resolvedDeps, { format: 'v1' });
+                            data = { blocks: decl };
+                            str = `exports.blocks = ${JSON.stringify(decl, null, 4)};\n`;
+                        }
 
-                            return vfs.write(bemdeclFilename, str, 'utf-8')
-                                .then(() => {
-                                    cache.cacheFileInfo('bemdecl-file', bemdeclFilename);
-                                    cache.cacheFileList('deps-files', depsFileList);
-                                    node.resolveTarget(target, data);
-                                });
+                        return vfs.write(bemdeclFilename, str, 'utf-8')
+                            .then(() => {
+                                cache.cacheFileInfo('bemdecl-file', bemdeclFilename);
+                                cache.cacheFileList('deps-files', depsFileList);
+                                node.resolveTarget(target, data);
+                            });
                     });
                 } else {
                     node.isValidTarget(target);

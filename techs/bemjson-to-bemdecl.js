@@ -38,30 +38,30 @@ const bemDecl = require('@bem/sdk.decl');
  * };
  */
 module.exports = inherit(BaseTech, {
-    getName: function () {
+    getName() {
         return 'bemjson-to-bemdecl';
     },
 
-    configure: function () {
-        var node = this.node;
+    configure() {
+        const node = this.node;
 
         this._target = node.unmaskTargetName(this.getOption('target', '?.bemdecl.js'));
         this._sourceTarget = node.unmaskTargetName(this.getOption('source', '?.bemjson.js'));
         this._bemdeclFormat = this.getOption('bemdeclFormat', 'bemdecl');
     },
 
-    getTargets: function () {
+    getTargets() {
         return [this._target];
     },
 
-    build: function () {
-        var node = this.node,
-            logger = node.getLogger(),
-            target = this._target,
-            cache = node.getNodeCache(target),
-            bemdeclFilename = node.resolvePath(target),
-            bemjsonFilename = node.resolvePath(this._sourceTarget),
-            bemdeclFormat = this._bemdeclFormat;
+    build() {
+        const node = this.node;
+        const logger = node.getLogger();
+        const target = this._target;
+        const cache = node.getNodeCache(target);
+        const bemdeclFilename = node.resolvePath(target);
+        const bemjsonFilename = node.resolvePath(this._sourceTarget);
+        const bemdeclFormat = this._bemdeclFormat;
 
         const convertBemdeclFormatName = (formatName) => {
             const convertedFormatName = {
@@ -79,12 +79,12 @@ module.exports = inherit(BaseTech, {
         };
 
         return this.node.requireSources([this._sourceTarget])
-            .then(function () {
+            .then(() => {
                 if (cache.needRebuildFile('bemdecl-file', bemdeclFilename) ||
                     cache.needRebuildFile('bemjson-file', bemjsonFilename)
                 ) {
                     return fileEval(bemjsonFilename)
-                        .then(function (bemjson) {
+                        .then(bemjson => {
                             const entities = bemjsonToDecl.convert(bemjson);
                             const cells = entities.map(entity => new BemCell({ entity }));
                             const bemdeclFormatName = convertBemdeclFormatName(bemdeclFormat);
@@ -92,7 +92,7 @@ module.exports = inherit(BaseTech, {
                             const data = nodeEval(str);
 
                             return vfs.write(bemdeclFilename, str, 'utf-8')
-                                .then(function () {
+                                .then(() => {
                                     cache.cacheFileInfo('bemdecl-file', bemdeclFilename);
                                     cache.cacheFileInfo('bemjson-file', bemjsonFilename);
                                     node.resolveTarget(target, data);
@@ -102,7 +102,7 @@ module.exports = inherit(BaseTech, {
                     node.isValidTarget(target);
 
                     return fileEval(bemdeclFilename)
-                        .then(function (result) {
+                        .then(result => {
                             node.resolveTarget(target, result);
                             return null;
                         });

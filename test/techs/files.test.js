@@ -1,18 +1,18 @@
-var path = require('path'),
+'use strict';
 
-    mockFs = require('mock-fs'),
-    TestNode = require('mock-enb/lib/mock-node'),
+const path = require('path');
+const mockFs = require('mock-fs');
+const TestNode = require('mock-enb/lib/mock-node');
+const techs = require('../..');
+const levelsTech = techs.levels;
+const filesTech = techs.files;
 
-    techs = require('../..'),
-    levelsTech = techs.levels,
-    filesTech = techs.files;
-
-describe('techs: files', function () {
-    afterEach(function () {
+describe('techs: files', () => {
+    afterEach(() => {
         mockFs.restore();
     });
 
-    it('must get block file by bemdecl', function () {
+    it('must get block file by bemdecl', () => {
         mockFs({
             blocks: {
                 block: {
@@ -22,11 +22,11 @@ describe('techs: files', function () {
             bundle: {}
         });
 
-        var bundle = new TestNode('bundle'),
-            bemdecl = { blocks: [{ name: 'block' }] };
+        const bundle = new TestNode('bundle');
+        const bemdecl = { blocks: [{ name: 'block' }] };
 
         return bundle.runTech(levelsTech, { levels: ['blocks'] })
-            .then(function (levels) {
+            .then(levels => {
                 bundle.provideTechData('?.levels', levels);
                 bundle.provideTechData('?.bemdecl.js', bemdecl);
 
@@ -34,15 +34,15 @@ describe('techs: files', function () {
                     depsFile: '?.bemdecl.js'
                 });
             })
-            .then(function (result) {
-                var files = result['bundle.files'],
-                    file = files.getByName('block.ext')[0];
+            .then(result => {
+            const files = result['bundle.files'];
+            const file = files.getByName('block.ext')[0];
 
-                file.name.must.be('block.ext');
-            });
+            file.name.must.be('block.ext');
+        });
     });
 
-    it('must support deps as array', function () {
+    it('must support deps as array', () => {
         mockFs({
             blocks: {
                 block: {
@@ -52,90 +52,96 @@ describe('techs: files', function () {
             bundle: {}
         });
 
-        var bundle = new TestNode('bundle'),
-            deps = [{ block: 'block' }];
+        const bundle = new TestNode('bundle');
+        const deps = [{ block: 'block' }];
 
         return bundle.runTech(levelsTech, { levels: ['blocks'] })
-            .then(function (levels) {
+            .then(levels => {
                 bundle.provideTechData('?.levels', levels);
                 bundle.provideTechData('?.deps.js', deps);
 
                 return bundle.runTechAndGetResults(filesTech);
             })
-            .then(function (result) {
-                var files = result['bundle.files'],
-                    file = files.getByName('block.ext')[0];
+            .then(result => {
+            const files = result['bundle.files'];
+            const file = files.getByName('block.ext')[0];
 
-                file.name.must.be('block.ext');
-            });
+            file.name.must.be('block.ext');
+        });
     });
 
-    it('must get files from levels', function () {
-        var scheme = {
-                'level-1': {
-                    block: {
-                        'block.ext': ''
-                    }
-                },
-                'level-2': {
-                    block: {
-                        'block.ext': ''
-                    }
-                }
-            },
-            deps = [{ block: 'block' }],
-            files = [
-                'level-1/block/block.ext',
-                'level-2/block/block.ext'
-            ];
+    it('must get files from levels', () => {
+        const scheme = {
+                      'level-1': {
+                          block: {
+                              'block.ext': ''
+                          }
+                      },
+                      'level-2': {
+                          block: {
+                              'block.ext': ''
+                          }
+                      }
+                  };
+
+        const deps = [{ block: 'block' }];
+
+        const files = [
+            'level-1/block/block.ext',
+            'level-2/block/block.ext'
+        ];
 
         return hasFiles(scheme, deps, files);
     });
 
-    describe('duplicates', function () {
-        it('must add same file only once', function () {
-            var scheme = {
-                    level: {
-                        block: {
-                            'block.ext': ''
-                        }
-                    }
-                },
-                levels = ['level', 'level'],
-                deps = [{ block: 'block' }],
-                files = [
-                    'level/block/block.ext'
-                ];
+    describe('duplicates', () => {
+        it('must add same file only once', () => {
+            const scheme = {
+                          level: {
+                              block: {
+                                  'block.ext': ''
+                              }
+                          }
+                      };
+
+            const levels = ['level', 'level'];
+            const deps = [{ block: 'block' }];
+
+            const files = [
+                'level/block/block.ext'
+            ];
 
             return hasFiles(scheme, deps, files, levels);
         });
 
-        it('must add files only once if level nested in another level', function () {
-            var scheme = {
-                    'level-1': {
-                        'block-1': {
-                            'block-1.ext': ''
-                        },
-                        'level-2': {
-                            'block-2': {
-                                'block-2.ext': ''
-                            }
-                        }
-                    }
-                },
-                levels = ['level-1', 'level-1/level-2'],
-                deps = [{ block: 'block-1' }, { block: 'block-2' }],
-                files = [
-                    'level-1/block-1/block-1.ext',
-                    'level-1/level-2/block-2/block-2.ext'
-                ];
+        it('must add files only once if level nested in another level', () => {
+            const scheme = {
+                          'level-1': {
+                              'block-1': {
+                                  'block-1.ext': ''
+                              },
+                              'level-2': {
+                                  'block-2': {
+                                      'block-2.ext': ''
+                                  }
+                              }
+                          }
+                      };
+
+            const levels = ['level-1', 'level-1/level-2'];
+            const deps = [{ block: 'block-1' }, { block: 'block-2' }];
+
+            const files = [
+                'level-1/block-1/block-1.ext',
+                'level-1/level-2/block-2/block-2.ext'
+            ];
 
             return hasFiles(scheme, deps, files, levels);
         });
     });
 
-    describe('order', function () {
-        it('must keep order by extensions', function () {
+    describe('order', () => {
+        it('must keep order by extensions', () => {
             mockFs({
                 blocks: {
                     block: {
@@ -146,33 +152,33 @@ describe('techs: files', function () {
                 bundle: {}
             });
 
-            var bundle = new TestNode('bundle'),
-                deps = [
-                    { block: 'block' }
-                ],
-                files = [
-                    'block.ext-2',
-                    'block.ext-1'
-                ];
+            const bundle = new TestNode('bundle');
+
+            const deps = [
+                { block: 'block' }
+            ];
+
+            const files = [
+                'block.ext-2',
+                'block.ext-1'
+            ];
 
             return bundle.runTech(levelsTech, { levels: ['blocks'] })
-                .then(function (levels) {
+                .then(levels => {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', deps);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
-                .then(function (result) {
-                    var FileList = result['bundle.files'],
-                        filenames = FileList.getBySuffix(['ext-2', 'ext-1']).map(function (fileInfo) {
-                            return fileInfo.name;
-                        });
+                .then(result => {
+                const FileList = result['bundle.files'];
+                const filenames = FileList.getBySuffix(['ext-2', 'ext-1']).map(fileInfo => fileInfo.name);
 
-                    filenames.must.eql(files);
-                });
+                filenames.must.eql(files);
+            });
         });
 
-        it('must keep order between different entities', function () {
+        it('must keep order between different entities', () => {
             mockFs({
                 blocks: {
                     'block-1': {
@@ -185,34 +191,34 @@ describe('techs: files', function () {
                 bundle: {}
             });
 
-            var bundle = new TestNode('bundle'),
-                deps = [
-                    { block: 'block-1' },
-                    { block: 'block-2' }
-                ],
-                files = [
-                    'block-1.ext',
-                    'block-2.ext'
-                ];
+            const bundle = new TestNode('bundle');
+
+            const deps = [
+                { block: 'block-1' },
+                { block: 'block-2' }
+            ];
+
+            const files = [
+                'block-1.ext',
+                'block-2.ext'
+            ];
 
             return bundle.runTech(levelsTech, { levels: ['blocks'] })
-                .then(function (levels) {
+                .then(levels => {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', deps);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
-                .then(function (result) {
-                    var FileList = result['bundle.files'],
-                        filenames = FileList.getBySuffix(['ext']).map(function (fileInfo) {
-                            return fileInfo.name;
-                        });
+                .then(result => {
+                const FileList = result['bundle.files'];
+                const filenames = FileList.getBySuffix(['ext']).map(fileInfo => fileInfo.name);
 
-                    filenames.must.eql(files);
-                });
+                filenames.must.eql(files);
+            });
         });
 
-        it('must keep order between different entities by extensions', function () {
+        it('must keep order between different entities by extensions', () => {
             mockFs({
                 blocks: {
                     'block-1': {
@@ -227,36 +233,36 @@ describe('techs: files', function () {
                 bundle: {}
             });
 
-            var bundle = new TestNode('bundle'),
-                deps = [
-                    { block: 'block-1' },
-                    { block: 'block-2' }
-                ],
-                files = [
-                    'block-1.ext-2',
-                    'block-1.ext-1',
-                    'block-2.ext-2',
-                    'block-2.ext-1'
-                ];
+            const bundle = new TestNode('bundle');
+
+            const deps = [
+                { block: 'block-1' },
+                { block: 'block-2' }
+            ];
+
+            const files = [
+                'block-1.ext-2',
+                'block-1.ext-1',
+                'block-2.ext-2',
+                'block-2.ext-1'
+            ];
 
             return bundle.runTech(levelsTech, { levels: ['blocks'] })
-                .then(function (levels) {
+                .then(levels => {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', deps);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
-                .then(function (result) {
-                    var FileList = result['bundle.files'],
-                        filenames = FileList.getBySuffix(['ext-2', 'ext-1']).map(function (fileInfo) {
-                            return fileInfo.name;
-                        });
+                .then(result => {
+                const FileList = result['bundle.files'];
+                const filenames = FileList.getBySuffix(['ext-2', 'ext-1']).map(fileInfo => fileInfo.name);
 
-                    filenames.must.eql(files);
-                });
+                filenames.must.eql(files);
+            });
         });
 
-        it('must keep order by levels', function () {
+        it('must keep order by levels', () => {
             mockFs({
                 'level-1': {
                     block: {
@@ -271,36 +277,39 @@ describe('techs: files', function () {
                 bundle: {}
             });
 
-            var bundle = new TestNode('bundle'),
-                root = bundle.getRootDir(),
-                deps = [
-                    { block: 'block' }
-                ],
-                files = [
-                    'level-1:block.ext',
-                    'level-2:block.ext'
-                ];
+            const bundle = new TestNode('bundle');
+            const root = bundle.getRootDir();
+
+            const deps = [
+                { block: 'block' }
+            ];
+
+            const files = [
+                'level-1:block.ext',
+                'level-2:block.ext'
+            ];
 
             return bundle.runTech(levelsTech, { levels: ['level-1', 'level-2'] })
-                .then(function (levels) {
+                .then(levels => {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', deps);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
-                .then(function (result) {
-                    var FileList = result['bundle.files'],
-                        filenames = FileList.getBySuffix(['ext']).map(function (fileInfo) {
-                            var level = path.dirname(path.dirname(path.relative(root, fileInfo.fullname)));
+                .then(result => {
+                const FileList = result['bundle.files'];
 
-                            return level + ':' + fileInfo.name;
-                        });
+                const filenames = FileList.getBySuffix(['ext']).map(fileInfo => {
+                    const level = path.dirname(path.dirname(path.relative(root, fileInfo.fullname)));
 
-                    filenames.must.eql(files);
+                    return `${level}:${fileInfo.name}`;
                 });
+
+                filenames.must.eql(files);
+            });
         });
 
-        it('must keep order between by levels and extensions', function () {
+        it('must keep order between by levels and extensions', () => {
             mockFs({
                 'level-1': {
                     block: {
@@ -317,38 +326,41 @@ describe('techs: files', function () {
                 bundle: {}
             });
 
-            var bundle = new TestNode('bundle'),
-                root = bundle.getRootDir(),
-                deps = [
-                    { block: 'block' }
-                ],
-                files = [
-                    'level-1:block.ext-2',
-                    'level-1:block.ext-1',
-                    'level-2:block.ext-2',
-                    'level-2:block.ext-1'
-                ];
+            const bundle = new TestNode('bundle');
+            const root = bundle.getRootDir();
+
+            const deps = [
+                { block: 'block' }
+            ];
+
+            const files = [
+                'level-1:block.ext-2',
+                'level-1:block.ext-1',
+                'level-2:block.ext-2',
+                'level-2:block.ext-1'
+            ];
 
             return bundle.runTech(levelsTech, { levels: ['level-1', 'level-2'] })
-                .then(function (levels) {
+                .then(levels => {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', deps);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
-                .then(function (result) {
-                    var FileList = result['bundle.files'],
-                        filenames = FileList.getBySuffix(['ext-2', 'ext-1']).map(function (fileInfo) {
-                            var level = path.dirname(path.dirname(path.relative(root, fileInfo.fullname)));
+                .then(result => {
+                const FileList = result['bundle.files'];
 
-                            return level + ':' + fileInfo.name;
-                        });
+                const filenames = FileList.getBySuffix(['ext-2', 'ext-1']).map(fileInfo => {
+                    const level = path.dirname(path.dirname(path.relative(root, fileInfo.fullname)));
 
-                    filenames.must.eql(files);
+                    return `${level}:${fileInfo.name}`;
                 });
+
+                filenames.must.eql(files);
+            });
         });
 
-        it('must keep order between different entities by levels', function () {
+        it('must keep order between different entities by levels', () => {
             mockFs({
                 'level-1': {
                     'block-1': {
@@ -363,37 +375,40 @@ describe('techs: files', function () {
                 bundle: {}
             });
 
-            var bundle = new TestNode('bundle'),
-                root = bundle.getRootDir(),
-                deps = [
-                    { block: 'block-1' },
-                    { block: 'block-2' }
-                ],
-                files = [
-                    'level-1:block-1.ext',
-                    'level-2:block-2.ext'
-                ];
+            const bundle = new TestNode('bundle');
+            const root = bundle.getRootDir();
+
+            const deps = [
+                { block: 'block-1' },
+                { block: 'block-2' }
+            ];
+
+            const files = [
+                'level-1:block-1.ext',
+                'level-2:block-2.ext'
+            ];
 
             return bundle.runTech(levelsTech, { levels: ['level-1', 'level-2'] })
-                .then(function (levels) {
+                .then(levels => {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', deps);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
-                .then(function (result) {
-                    var FileList = result['bundle.files'],
-                        filenames = FileList.getBySuffix(['ext']).map(function (fileInfo) {
-                            var level = path.dirname(path.dirname(path.relative(root, fileInfo.fullname)));
+                .then(result => {
+                const FileList = result['bundle.files'];
 
-                            return level + ':' + fileInfo.name;
-                        });
+                const filenames = FileList.getBySuffix(['ext']).map(fileInfo => {
+                    const level = path.dirname(path.dirname(path.relative(root, fileInfo.fullname)));
 
-                    filenames.must.eql(files);
+                    return `${level}:${fileInfo.name}`;
                 });
+
+                filenames.must.eql(files);
+            });
         });
 
-        it('must keep order between different entities by levels and extensions', function () {
+        it('must keep order between different entities by levels and extensions', () => {
             mockFs({
                 'level-1': {
                     'block-1': {
@@ -418,267 +433,286 @@ describe('techs: files', function () {
                 bundle: {}
             });
 
-            var bundle = new TestNode('bundle'),
-                root = bundle.getRootDir(),
-                deps = [
-                    { block: 'block-1' },
-                    { block: 'block-2' }
-                ],
-                files = [
-                    'level-1:block-1.ext-2',
-                    'level-1:block-1.ext-1',
-                    'level-2:block-1.ext-2',
-                    'level-2:block-1.ext-1',
-                    'level-1:block-2.ext-2',
-                    'level-1:block-2.ext-1',
-                    'level-2:block-2.ext-2',
-                    'level-2:block-2.ext-1'
-                ];
+            const bundle = new TestNode('bundle');
+            const root = bundle.getRootDir();
+
+            const deps = [
+                { block: 'block-1' },
+                { block: 'block-2' }
+            ];
+
+            const files = [
+                'level-1:block-1.ext-2',
+                'level-1:block-1.ext-1',
+                'level-2:block-1.ext-2',
+                'level-2:block-1.ext-1',
+                'level-1:block-2.ext-2',
+                'level-1:block-2.ext-1',
+                'level-2:block-2.ext-2',
+                'level-2:block-2.ext-1'
+            ];
 
             return bundle.runTech(levelsTech, { levels: ['level-1', 'level-2'] })
-                .then(function (levels) {
+                .then(levels => {
                     bundle.provideTechData('?.levels', levels);
                     bundle.provideTechData('?.deps.js', deps);
 
                     return bundle.runTechAndGetResults(filesTech);
                 })
-                .then(function (result) {
-                    var FileList = result['bundle.files'],
-                        filenames = FileList.getBySuffix(['ext-2', 'ext-1']).map(function (fileInfo) {
-                            var level = path.dirname(path.dirname(path.relative(root, fileInfo.fullname)));
+                .then(result => {
+                const FileList = result['bundle.files'];
 
-                            return level + ':' + fileInfo.name;
-                        });
+                const filenames = FileList.getBySuffix(['ext-2', 'ext-1']).map(fileInfo => {
+                    const level = path.dirname(path.dirname(path.relative(root, fileInfo.fullname)));
 
-                    filenames.must.eql(files);
+                    return `${level}:${fileInfo.name}`;
                 });
+
+                filenames.must.eql(files);
+            });
         });
     });
 
-    describe('bem entities', function () {
-        it('must get block file by deps', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            'block.ext': ''
-                        }
-                    }
-                },
-                deps = [{ block: 'block' }],
-                files = ['blocks/block/block.ext'];
+    describe('bem entities', () => {
+        it('must get block file by deps', () => {
+            const scheme = {
+                          blocks: {
+                              block: {
+                                  'block.ext': ''
+                              }
+                          }
+                      };
+
+            const deps = [{ block: 'block' }];
+            const files = ['blocks/block/block.ext'];
 
             return hasFiles(scheme, deps, files);
         });
 
-        it('must get boolean mod of block file by deps', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            '_bool-mod': {
-                                'block_bool-mod.ext': ''
-                            }
-                        }
-                    }
-                },
-                deps = [{ block: 'block', mod: 'bool-mod', val: true }],
-                files = ['blocks/block/_bool-mod/block_bool-mod.ext'];
+        it('must get boolean mod of block file by deps', () => {
+            const scheme = {
+                          blocks: {
+                              block: {
+                                  '_bool-mod': {
+                                      'block_bool-mod.ext': ''
+                                  }
+                              }
+                          }
+                      };
+
+            const deps = [{ block: 'block', mod: 'bool-mod', val: true }];
+            const files = ['blocks/block/_bool-mod/block_bool-mod.ext'];
 
             return hasFiles(scheme, deps, files);
         });
 
-        it('must get block mod file by deps', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            '_mod-name': {
-                                'block_mod-name_mod-val.ext': ''
-                            }
-                        }
-                    }
-                },
-                deps = [{
-                    block: 'block',
-                    mod: 'mod-name',
-                    val: 'mod-val'
-                }],
-                files = ['blocks/block/_mod-name/block_mod-name_mod-val.ext'];
+        it('must get block mod file by deps', () => {
+            const scheme = {
+                          blocks: {
+                              block: {
+                                  '_mod-name': {
+                                      'block_mod-name_mod-val.ext': ''
+                                  }
+                              }
+                          }
+                      };
+
+            const deps = [{
+                block: 'block',
+                mod: 'mod-name',
+                val: 'mod-val'
+            }];
+
+            const files = ['blocks/block/_mod-name/block_mod-name_mod-val.ext'];
 
             return hasFiles(scheme, deps, files);
         });
 
-        it('must get elem file by deps', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            '__elem-name': {
-                                'block__elem-name.ext': ''
-                            }
-                        }
-                    }
-                },
-                deps = [{ block: 'block', elem: 'elem-name' }],
-                files = ['blocks/block/__elem-name/block__elem-name.ext'];
+        it('must get elem file by deps', () => {
+            const scheme = {
+                          blocks: {
+                              block: {
+                                  '__elem-name': {
+                                      'block__elem-name.ext': ''
+                                  }
+                              }
+                          }
+                      };
+
+            const deps = [{ block: 'block', elem: 'elem-name' }];
+            const files = ['blocks/block/__elem-name/block__elem-name.ext'];
 
             return hasFiles(scheme, deps, files);
         });
 
-        it('must get boolean mod of elem file by deps', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            '__elem-name': {
-                                '_bool-mod': {
-                                    'block__elem-name_bool-mod.ext': ''
-                                }
-                            }
-                        }
-                    }
-                },
-                deps = [{ block: 'block', elem: 'elem-name', mod: 'bool-mod', val: true }],
-                files = ['blocks/block/__elem-name/_bool-mod/block__elem-name_bool-mod.ext'];
+        it('must get boolean mod of elem file by deps', () => {
+            const scheme = {
+                          blocks: {
+                              block: {
+                                  '__elem-name': {
+                                      '_bool-mod': {
+                                          'block__elem-name_bool-mod.ext': ''
+                                      }
+                                  }
+                              }
+                          }
+                      };
+
+            const deps = [{ block: 'block', elem: 'elem-name', mod: 'bool-mod', val: true }];
+            const files = ['blocks/block/__elem-name/_bool-mod/block__elem-name_bool-mod.ext'];
 
             return hasFiles(scheme, deps, files);
         });
 
-        it('must get elem mod file by deps', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            '__elem-name': {
-                                '_mod-name': {
-                                    'block__elem-name_mod-name_mod-val.ext': ''
-                                }
-                            }
-                        }
-                    }
-                },
-                deps = [{ block: 'block', elem: 'elem-name', mod: 'mod-name', val: 'mod-val' }],
-                files = ['blocks/block/__elem-name/_mod-name/block__elem-name_mod-name_mod-val.ext'];
+        it('must get elem mod file by deps', () => {
+            const scheme = {
+                          blocks: {
+                              block: {
+                                  '__elem-name': {
+                                      '_mod-name': {
+                                          'block__elem-name_mod-name_mod-val.ext': ''
+                                      }
+                                  }
+                              }
+                          }
+                      };
+
+            const deps = [{ block: 'block', elem: 'elem-name', mod: 'mod-name', val: 'mod-val' }];
+            const files = ['blocks/block/__elem-name/_mod-name/block__elem-name_mod-name_mod-val.ext'];
 
             return hasFiles(scheme, deps, files);
         });
 
-        it('must get block dir by deps', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            'block.ext': {}
-                        }
-                    }
-                },
-                deps = [{ block: 'block' }],
-                files = ['blocks/block/block.ext'];
+        it('must get block dir by deps', () => {
+            const scheme = {
+                          blocks: {
+                              block: {
+                                  'block.ext': {}
+                              }
+                          }
+                      };
+
+            const deps = [{ block: 'block' }];
+            const files = ['blocks/block/block.ext'];
 
             return hasDirs(scheme, deps, files);
         });
 
-        it('must get boolean mod of block dir by deps', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            '_bool-mod': {
-                                'block_bool-mod.ext': {}
-                            }
-                        }
-                    }
-                },
-                deps = [{ block: 'block', mod: 'bool-mod', val: true }],
-                dirs = ['blocks/block/_bool-mod/block_bool-mod.ext'];
+        it('must get boolean mod of block dir by deps', () => {
+            const scheme = {
+                          blocks: {
+                              block: {
+                                  '_bool-mod': {
+                                      'block_bool-mod.ext': {}
+                                  }
+                              }
+                          }
+                      };
+
+            const deps = [{ block: 'block', mod: 'bool-mod', val: true }];
+            const dirs = ['blocks/block/_bool-mod/block_bool-mod.ext'];
 
             return hasDirs(scheme, deps, dirs);
         });
 
-        it('must get block mod dir by deps', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            '_mod-name': {
-                                'block_mod-name_mod-val.ext': {}
-                            }
-                        }
-                    }
-                },
-                deps = [{
-                    block: 'block',
-                    mod: 'mod-name',
-                    val: 'mod-val'
-                }],
-                dirs = ['blocks/block/_mod-name/block_mod-name_mod-val.ext'];
+        it('must get block mod dir by deps', () => {
+            const scheme = {
+                          blocks: {
+                              block: {
+                                  '_mod-name': {
+                                      'block_mod-name_mod-val.ext': {}
+                                  }
+                              }
+                          }
+                      };
+
+            const deps = [{
+                block: 'block',
+                mod: 'mod-name',
+                val: 'mod-val'
+            }];
+
+            const dirs = ['blocks/block/_mod-name/block_mod-name_mod-val.ext'];
 
             return hasDirs(scheme, deps, dirs);
         });
 
-        it('must get elem dir by deps', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            '__elem-name': {
-                                'block__elem-name.ext': {}
-                            }
-                        }
-                    }
-                },
-                deps = [{ block: 'block', elem: 'elem-name' }],
-                dirs = ['blocks/block/__elem-name/block__elem-name.ext'];
+        it('must get elem dir by deps', () => {
+            const scheme = {
+                          blocks: {
+                              block: {
+                                  '__elem-name': {
+                                      'block__elem-name.ext': {}
+                                  }
+                              }
+                          }
+                      };
+
+            const deps = [{ block: 'block', elem: 'elem-name' }];
+            const dirs = ['blocks/block/__elem-name/block__elem-name.ext'];
 
             return hasDirs(scheme, deps, dirs);
         });
 
-        it('must get boolean mod of elem dir by deps', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            '__elem-name': {
-                                '_bool-mod': {
-                                    'block__elem-name_bool-mod.ext': {}
-                                }
-                            }
-                        }
-                    }
-                },
-                deps = [{ block: 'block', elem: 'elem-name', mod: 'bool-mod', val: true }],
-                dirs = ['blocks/block/__elem-name/_bool-mod/block__elem-name_bool-mod.ext'];
+        it('must get boolean mod of elem dir by deps', () => {
+            const scheme = {
+                          blocks: {
+                              block: {
+                                  '__elem-name': {
+                                      '_bool-mod': {
+                                          'block__elem-name_bool-mod.ext': {}
+                                      }
+                                  }
+                              }
+                          }
+                      };
+
+            const deps = [{ block: 'block', elem: 'elem-name', mod: 'bool-mod', val: true }];
+            const dirs = ['blocks/block/__elem-name/_bool-mod/block__elem-name_bool-mod.ext'];
 
             return hasDirs(scheme, deps, dirs);
         });
 
-        it('must get elem mod dir by deps', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            '__elem-name': {
-                                '_mod-name': {
-                                    'block__elem-name_mod-name_mod-val.ext': {}
-                                }
-                            }
-                        }
-                    }
-                },
-                deps = [{ block: 'block', elem: 'elem-name', mod: 'mod-name', val: 'mod-val' }],
-                dirs = ['blocks/block/__elem-name/_mod-name/block__elem-name_mod-name_mod-val.ext'];
+        it('must get elem mod dir by deps', () => {
+            const scheme = {
+                          blocks: {
+                              block: {
+                                  '__elem-name': {
+                                      '_mod-name': {
+                                          'block__elem-name_mod-name_mod-val.ext': {}
+                                      }
+                                  }
+                              }
+                          }
+                      };
+
+            const deps = [{ block: 'block', elem: 'elem-name', mod: 'mod-name', val: 'mod-val' }];
+            const dirs = ['blocks/block/__elem-name/_mod-name/block__elem-name_mod-name_mod-val.ext'];
 
             return hasDirs(scheme, deps, dirs);
         });
 
-        it('must get boolean mod & key-val mod by deps', function () {
-            var scheme = {
-                    blocks: {
-                        block: {
-                            '_mod-name': {
-                                'block_mod-name.ext': '',
-                                'block_mod-name_mod-val.ext': ''
-                            }
-                        }
-                    }
-                },
-                deps = [
-                    { block: 'block', mod: 'mod-name' },
-                    { block: 'block', mod: 'mod-name', val: 'mod-val' }
-                ],
-                files = [
-                    'blocks/block/_mod-name/block_mod-name.ext',
-                    'blocks/block/_mod-name/block_mod-name_mod-val.ext'
-                ];
+        it('must get boolean mod & key-val mod by deps', () => {
+            const scheme = {
+                          blocks: {
+                              block: {
+                                  '_mod-name': {
+                                      'block_mod-name.ext': '',
+                                      'block_mod-name_mod-val.ext': ''
+                                  }
+                              }
+                          }
+                      };
+
+            const deps = [
+                { block: 'block', mod: 'mod-name' },
+                { block: 'block', mod: 'mod-name', val: 'mod-val' }
+            ];
+
+            const files = [
+                'blocks/block/_mod-name/block_mod-name.ext',
+                'blocks/block/_mod-name/block_mod-name_mod-val.ext'
+            ];
 
             return hasFiles(scheme, deps, files);
         });
@@ -692,27 +726,25 @@ function getEntityFiles(fsScheme, deps, filetype, levels) {
 
     mockFs(fsScheme);
 
-    var bundle = new TestNode('bundle');
+    const bundle = new TestNode('bundle');
 
-    return bundle.runTech(levelsTech, { levels: levels })
-        .then(function (levels) {
+    return bundle.runTech(levelsTech, { levels })
+        .then(levels => {
             bundle.provideTechData('?.levels', levels);
-            bundle.provideTechData('?.deps.js', { deps: deps });
+            bundle.provideTechData('?.deps.js', { deps });
 
             return bundle.runTechAndGetResults(filesTech);
         })
-        .then(function (result) {
-            return result['bundle.' + filetype];
-        });
+        .then(result => result[`bundle.${filetype}`]);
 }
 
 function has(fsScheme, deps, filenames, filetype, levels) {
     return getEntityFiles(fsScheme, deps, filetype, levels)
-        .then(function (files) {
+        .then(files => {
             files.items.must.have.length(filenames.length);
 
-            filenames.forEach(function (filename, i) {
-                var fullname = path.resolve(filename);
+            filenames.forEach((filename, i) => {
+                const fullname = path.resolve(filename);
 
                 files.items[i].fullname.must.be(fullname);
             });

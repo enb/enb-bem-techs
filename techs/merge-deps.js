@@ -1,10 +1,12 @@
-var inherit = require('inherit'),
-    vow = require('vow'),
-    enb = require('enb'),
-    vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
-    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
-    fileEval = require('file-eval'),
-    deps = require('../lib/deps/deps');
+'use strict';
+
+const inherit = require('inherit');
+const vow = require('vow');
+const enb = require('enb');
+const vfs = enb.asyncFS || require('enb/lib/fs/async-fs');
+const BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech');
+const fileEval = require('file-eval');
+const deps = require('../lib/deps/deps');
 
 /**
  * @class MergeDepsTech
@@ -44,40 +46,36 @@ var inherit = require('inherit'),
  * };
  */
 module.exports = inherit(BaseTech, {
-    getName: function () {
+    getName() {
         return 'merge-deps';
     },
 
-    configure: function () {
-        var node = this.node;
+    configure() {
+        const node = this.node;
 
         this._target = node.unmaskTargetName(this.getOption('target', node.getTargetName('deps.js')));
-        this._sources = this.getRequiredOption('sources').map(function (source) {
-            return node.unmaskTargetName(source);
-        });
+        this._sources = this.getRequiredOption('sources').map(source => node.unmaskTargetName(source));
     },
 
-    getTargets: function () {
+    getTargets() {
         return [this._target];
     },
 
-    build: function () {
-        var _this = this,
-            node = this.node,
-            target = this._target,
-            sources = this._sources,
-            cache = node.getNodeCache(target),
-            targetFilename = node.resolvePath(target),
-            sourceFilenames = sources.map(function (sourceTarget) {
-                return node.resolvePath(sourceTarget);
-            });
+    build() {
+        const _this = this;
+        const node = this.node;
+        const target = this._target;
+        const sources = this._sources;
+        const cache = node.getNodeCache(target);
+        const targetFilename = node.resolvePath(target);
+        const sourceFilenames = sources.map(sourceTarget => node.resolvePath(sourceTarget));
 
         return this.node.requireSources(sources)
-            .then(function (sourceDeps) {
-                var rebuildNeeded = cache.needRebuildFile('deps-file', targetFilename);
+            .then(sourceDeps => {
+                let rebuildNeeded = cache.needRebuildFile('deps-file', targetFilename);
 
                 if (!rebuildNeeded) {
-                    sourceFilenames.forEach(function (filename) {
+                    sourceFilenames.forEach(filename => {
                         if (cache.needRebuildFile(filename, filename)) {
                             rebuildNeeded = true;
                         }
@@ -85,36 +83,34 @@ module.exports = inherit(BaseTech, {
                 }
 
                 if (rebuildNeeded) {
-                    return vow.all(sourceDeps.map(function (source, i) {
+                    return vow.all(sourceDeps.map((source, i) => {
                             if (source) {
                                 return getDeps(source);
                             }
 
-                            var filename = sourceFilenames[i];
+                            const filename = sourceFilenames[i];
 
                             return fileEval(filename)
-                                .then(function (res) {
-                                    return getDeps(res);
-                                });
+                                .then(res => getDeps(res));
                         }))
-                        .then(function (sourceDeps) {
-                            var mergedDeps = deps.merge(sourceDeps),
-                                str = 'exports.deps = ' + JSON.stringify(mergedDeps, null, 4) + ';';
+                        .then(sourceDeps => {
+                        const mergedDeps = deps.merge(sourceDeps);
+                        const str = `exports.deps = ${JSON.stringify(mergedDeps, null, 4)};`;
 
-                            return vfs.write(targetFilename, str, 'utf-8')
-                                .then(function () {
-                                    cache.cacheFileInfo('deps-file', targetFilename);
-                                    sourceFilenames.forEach(function (filename) {
-                                        cache.cacheFileInfo(filename, filename);
-                                    });
-                                    _this.node.resolveTarget(target, { deps: mergedDeps });
+                        return vfs.write(targetFilename, str, 'utf-8')
+                            .then(() => {
+                                cache.cacheFileInfo('deps-file', targetFilename);
+                                sourceFilenames.forEach(filename => {
+                                    cache.cacheFileInfo(filename, filename);
                                 });
-                        });
+                                _this.node.resolveTarget(target, { deps: mergedDeps });
+                            });
+                    });
                 } else {
                     node.isValidTarget(target);
 
                     return fileEval(targetFilename)
-                        .then(function (result) {
+                        .then(result => {
                             node.resolveTarget(target, result);
                             return null;
                         });

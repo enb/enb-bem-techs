@@ -1,9 +1,11 @@
-var inherit = require('inherit'),
-    vow = require('vow'),
-    enb = require('enb'),
-    vfs = enb.asyncFS || require('enb/lib/fs/async-fs'),
-    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
-    fileEval = require('file-eval');
+'use strict';
+
+const inherit = require('inherit');
+const vow = require('vow');
+const enb = require('enb');
+const vfs = enb.asyncFS || require('enb/lib/fs/async-fs');
+const BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech');
+const fileEval = require('file-eval');
 
 /**
  * @class ProvideBemdeclTech
@@ -66,58 +68,58 @@ var inherit = require('inherit'),
  * };
  */
 module.exports = inherit(BaseTech, {
-    getName: function () {
+    getName() {
         return 'provide-bemdecl';
     },
 
-    configure: function () {
-        var node = this.node;
+    configure() {
+        const node = this.node;
 
         this._target = node.unmaskTargetName(this.getOption('target', '?.bemdecl.js'));
         this._fromNode = this.getRequiredOption('node');
         this._sourceTarget = node.unmaskNodeTargetName(this._fromNode, this.getOption('source', '?.bemdecl.js'));
     },
 
-    getTargets: function () {
+    getTargets() {
         return [this._target];
     },
 
-    build: function () {
-        var node = this.node,
-            target = this._target,
-            fromNode = this._fromNode,
-            sourceTarget = this._sourceTarget,
-            targetFilename = node.resolvePath(target),
-            sourceFilename = node.resolveNodePath(fromNode, sourceTarget),
-            cache = node.getNodeCache(target),
-            requirements = {};
+    build() {
+        const node = this.node;
+        const target = this._target;
+        const fromNode = this._fromNode;
+        const sourceTarget = this._sourceTarget;
+        const targetFilename = node.resolvePath(target);
+        const sourceFilename = node.resolveNodePath(fromNode, sourceTarget);
+        const cache = node.getNodeCache(target);
+        const requirements = {};
 
         requirements[fromNode] = [sourceTarget];
 
         return node.requireNodeSources(requirements)
-            .then(function (results) {
-                var preBemdecl = results[fromNode][0];
+            .then(results => {
+                const preBemdecl = results[fromNode][0];
 
                 if (cache.needRebuildFile('bemdecl-file', targetFilename) ||
                     cache.needRebuildFile('bemdecl-source-file', sourceFilename)
                 ) {
                     return requireBemdecl(preBemdecl, sourceFilename)
-                        .then(function (resBemdecl) {
-                            var blocks = resBemdecl.blocks,
-                                str = 'exports.blocks = ' + JSON.stringify(blocks, null, 4) + ';\n';
+                        .then(resBemdecl => {
+                        const blocks = resBemdecl.blocks;
+                        const str = `exports.blocks = ${JSON.stringify(blocks, null, 4)};\n`;
 
-                            return vfs.write(targetFilename, str, 'utf-8')
-                                .then(function () {
-                                    cache.cacheFileInfo('bemdecl-file', targetFilename);
-                                    cache.cacheFileInfo('bemdecl-source-file', sourceFilename);
-                                    node.resolveTarget(target, { blocks: blocks });
-                                });
-                        });
+                        return vfs.write(targetFilename, str, 'utf-8')
+                            .then(() => {
+                                cache.cacheFileInfo('bemdecl-file', targetFilename);
+                                cache.cacheFileInfo('bemdecl-source-file', sourceFilename);
+                                node.resolveTarget(target, { blocks });
+                            });
+                    });
                 } else {
                     node.isValidTarget(target);
 
                     return requireBemdecl(null, targetFilename)
-                        .then(function (resBemdecl) {
+                        .then(resBemdecl => {
                             node.resolveTarget(target, resBemdecl);
                             return null;
                         });

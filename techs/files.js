@@ -1,15 +1,16 @@
-var fs = require('fs'),
-    path = require('path'),
+'use strict';
 
-    inherit = require('inherit'),
-    vow = require('vow'),
-    enb = require('enb'),
-    fileEval = require('file-eval'),
-    bemDecl = require('@bem/sdk.decl'),
-    originNamingPreset = require('@bem/sdk.naming.presets').origin,
-    stringifyEntity = require('@bem/sdk.naming.entity.stringify')(originNamingPreset),
-    BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech'),
-    FileList = enb.FileList || require('enb/lib/file-list');
+const fs = require('fs');
+const path = require('path');
+const inherit = require('inherit');
+const vow = require('vow');
+const enb = require('enb');
+const fileEval = require('file-eval');
+const bemDecl = require('@bem/sdk.decl');
+const originNamingPreset = require('@bem/sdk.naming.presets').origin;
+const stringifyEntity = require('@bem/sdk.naming.entity.stringify')(originNamingPreset);
+const BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech');
+const FileList = enb.FileList || require('enb/lib/file-list');
 
 /**
  * @class FilesTech
@@ -54,12 +55,12 @@ var fs = require('fs'),
  * };
  */
 module.exports = inherit(BaseTech, {
-    getName: function () {
+    getName() {
         return 'files';
     },
 
-    configure: function () {
-        var node = this.node;
+    configure() {
+        const node = this.node;
 
         this._filesTarget = node.unmaskTargetName(this.getOption('filesTarget', '?.files'));
         this._dirsTarget = node.unmaskTargetName(this.getOption('dirsTarget', '?.dirs'));
@@ -67,82 +68,80 @@ module.exports = inherit(BaseTech, {
         this._depsFile = node.unmaskTargetName(this.getOption('depsFile', '?.deps.js'));
     },
 
-    getTargets: function () {
+    getTargets() {
         return [
             this._filesTarget,
             this._dirsTarget
         ];
     },
 
-    build: function () {
-        var _this = this,
-            depsFilename = this.node.resolvePath(this._depsFile),
-            filesTarget = this._filesTarget,
-            dirsTarget = this._dirsTarget;
+    build() {
+        const _this = this;
+        const depsFilename = this.node.resolvePath(this._depsFile);
+        const filesTarget = this._filesTarget;
+        const dirsTarget = this._dirsTarget;
 
         return this.node.requireSources([this._depsFile, this._levelsTarget])
-            .spread(function (data, introspection) {
-                return requireSourceDeps(data, depsFilename)
-                    .then(function (sourceDeps) {
-                        var fileList = new FileList(),
-                            dirList = new FileList(),
-                            uniqs = {};
+            .spread((data, introspection) => requireSourceDeps(data, depsFilename)
+            .then(sourceDeps => {
+            const fileList = new FileList();
+            const dirList = new FileList();
+            const uniqs = {};
 
-                        var data = sourceDeps.map(function (entity) {
-                            var id = stringifyEntity(entity);
+            const data = sourceDeps.map(entity => {
+                const id = stringifyEntity(entity);
 
-                            if (uniqs[id]) { return []; }
-                            uniqs[id] = true;
+                if (uniqs[id]) { return []; }
+                uniqs[id] = true;
 
-                            var commonModId;
+                let commonModId;
 
-                            if (entity.mod && entity.mod.val) {
-                                var commonMod = {
-                                    block: entity.block,
-                                    mod: {
-                                        name: entity.mod.name,
-                                        val: true
-                                    }
-                                };
+                if (entity.mod && entity.mod.val) {
+                    const commonMod = {
+                        block: entity.block,
+                        mod: {
+                            name: entity.mod.name,
+                            val: true
+                        }
+                    };
 
-                                entity.elem && (commonMod.elem = entity.elem);
+                    entity.elem && (commonMod.elem = entity.elem);
 
-                                commonModId = stringifyEntity(commonMod);
-                            }
+                    commonModId = stringifyEntity(commonMod);
+                }
 
-                            return introspection._introspections.map(function (levelIntrospection) {
-                                return (levelIntrospection[id] || levelIntrospection[commonModId] || []);
-                            });
-                        });
-
-                        var uniqFiles = {};
-
-                        data.forEach(function (slices) {
-                            slices.forEach(function (slice) {
-                                var files = [];
-                                var dirs = [];
-
-                                slice.forEach(function (file) {
-                                    if (uniqFiles[file.path]) { return; }
-                                    uniqFiles[file.path] = true;
-
-                                    var info = getFileInfo(file);
-
-                                    file.isDirectory ? dirs.push(info) : files.push(info);
-                                });
-
-                                fileList.addFiles(files);
-                                dirList.addFiles(dirs);
-                            });
-                        });
-
-                        _this.node.resolveTarget(filesTarget, fileList);
-                        _this.node.resolveTarget(dirsTarget, dirList);
-                    });
+                return introspection._introspections.map(levelIntrospection => {
+                    return levelIntrospection[id] || levelIntrospection[commonModId] || [];
+                });
             });
+
+            const uniqFiles = {};
+
+            data.forEach(slices => {
+                slices.forEach(slice => {
+                    const files = [];
+                    const dirs = [];
+
+                    slice.forEach(file => {
+                        if (uniqFiles[file.path]) { return; }
+                        uniqFiles[file.path] = true;
+
+                        const info = getFileInfo(file);
+
+                        file.isDirectory ? dirs.push(info) : files.push(info);
+                    });
+
+                    fileList.addFiles(files);
+                    dirList.addFiles(dirs);
+                });
+            });
+
+            _this.node.resolveTarget(filesTarget, fileList);
+            _this.node.resolveTarget(dirsTarget, dirList);
+        }));
     },
 
-    clean: function () {}
+    clean() {}
 });
 
 /**
@@ -152,41 +151,35 @@ module.exports = inherit(BaseTech, {
  * @returns {promise}
  */
 function getFileInfo(file) {
-    var filename = file.path;
-    var isDirectory = file.isDirectory;
-    var info = {
+    const filename = file.path;
+    const isDirectory = file.isDirectory;
+    const info = {
         fullname: filename,
         name: path.basename(filename),
         suffix: file.tech,
         mtime: file.mtime,
-        isDirectory: isDirectory
+        isDirectory
     };
 
     if (!isDirectory) {
         return info;
     }
 
-    var basenames = fs.readdirSync(filename);
+    const basenames = fs.readdirSync(filename);
 
-    info.files = basenames.map(function (basename) {
-        return FileList.getFileInfo(path.join(filename, basename));
-    });
+    info.files = basenames.map(basename => FileList.getFileInfo(path.join(filename, basename)));
 
     return info;
 }
 
 function requireSourceDeps(data, filename) {
     return (data ? vow.resolve(data) : fileEval(filename))
-        .then(function (sourceDeps) {
+        .then(sourceDeps => {
             if (Array.isArray(sourceDeps)) {
                 sourceDeps = { deps: sourceDeps };
             }
 
             return bemDecl.parse(sourceDeps);
         })
-        .then(function (sourceDeps) {
-            return sourceDeps.map(function (cell) {
-                return cell.entity;
-            });
-        });
+        .then(sourceDeps => sourceDeps.map(cell => cell.entity));
 }
