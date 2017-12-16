@@ -53,7 +53,8 @@
     "@bem/sdk.walk": "0.2.3",
     "file-eval": "2.0.0",
     "inherit": "2.2.6",
-    "lodash": "4.17.4",
+    "lodash.omit": "4.5.0",
+    "lodash.uniqby": "4.7.0",
     "node-eval": "2.0.0",
     "vow": "0.4.17"
   },

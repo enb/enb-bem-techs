@@ -7,8 +7,8 @@ const stream = require('stream');
 const vow = require('vow');
 const enb = require('enb');
 const walk = require('@bem/sdk.walk');
-const uniqBy = require('lodash').uniqBy;
-const omit = require('lodash').omit;
+const uniqBy = require('lodash.uniqby');
+const omit = require('lodash.omit');
 
 const vfs = enb.asyncFS || require('enb/lib/fs/async-fs');
 const buildFlow = enb.buildFlow || require('enb/lib/build-flow');
