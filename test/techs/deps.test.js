@@ -1764,7 +1764,7 @@ describe('techs: deps', () => {
 });
 
 function getResults(fsScheme, bemdecl) {
-    const levels = Object.keys(fsScheme);
+    const levelPaths = Object.keys(fsScheme);
     let fsBundle;
     let dataBundle;
 
@@ -1780,7 +1780,7 @@ function getResults(fsScheme, bemdecl) {
 
     dataBundle.provideTechData('?.bemdecl.js', { blocks: bemdecl });
 
-    return fsBundle.runTech(levelsTech, { levels })
+    return fsBundle.runTech(levelsTech, { levels: levelPaths })
         .then(levels => {
             fsBundle.provideTechData('?.levels', levels);
             dataBundle.provideTechData('?.levels', levels);

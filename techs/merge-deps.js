@@ -93,8 +93,8 @@ module.exports = inherit(BaseTech, {
                             return fileEval(filename)
                                 .then(res => getDeps(res));
                         }))
-                        .then(sourceDeps => {
-                            const mergedDeps = deps.merge(sourceDeps);
+                        .then(sourceDecl => {
+                            const mergedDeps = deps.merge(sourceDecl);
                             const str = `exports.deps = ${JSON.stringify(mergedDeps, null, 4)};`;
 
                             return vfs.write(targetFilename, str, 'utf-8')

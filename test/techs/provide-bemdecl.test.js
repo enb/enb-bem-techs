@@ -6,8 +6,6 @@ const TestNode = require('mock-enb/lib/mock-node');
 const Tech = require('../..').provideBemdecl;
 
 describe('techs: provide-deps', () => {
-    let fsBundle;
-    let dataBundle;
     let bundle;
     const bemdecl = [{ name: 'block' }];
 
@@ -19,9 +17,6 @@ describe('techs: provide-deps', () => {
             'data-bundle': {},
             bundle: {}
         });
-
-        fsBundle = new TestNode('fs-bundle');
-        dataBundle = new TestNode('data-bundle');
 
         bundle = new TestNode('bundle');
         bundle.provideNodeTechData('data-bundle', 'data-bundle.bemdecl.js', { blocks: bemdecl });
@@ -77,13 +72,13 @@ describe('techs: provide-deps', () => {
             }
         });
 
-        const bundle = new TestNode('bundle-2');
-        const cache = bundle.getNodeCache('bundle-2.bemdecl.js');
+        const bundle2 = new TestNode('bundle-2');
+        const cache = bundle2.getNodeCache('bundle-2.bemdecl.js');
 
         cache.cacheFileInfo('bemdecl-source-file', path.resolve('bundle-1/bundle-1.bemdecl.js'));
         cache.cacheFileInfo('bemdecl-file', path.resolve('bundle-2/bundle-2.bemdecl.js'));
 
-        return bundle.runTech(Tech, { node: 'bundle-1' })
+        return bundle2.runTech(Tech, { node: 'bundle-1' })
             .then(target => {
                 target.blocks.must.eql([{ block: 'other-block' }]);
             });

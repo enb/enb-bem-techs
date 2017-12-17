@@ -719,8 +719,8 @@ describe('techs: files', () => {
     });
 });
 
-function getEntityFiles(fsScheme, deps, filetype, levels) {
-    levels = levels || Object.keys(fsScheme);
+function getEntityFiles(fsScheme, deps, filetype, levelPaths) {
+    levelPaths = levelPaths || Object.keys(fsScheme);
 
     fsScheme['bundle'] = {};
 
@@ -728,7 +728,7 @@ function getEntityFiles(fsScheme, deps, filetype, levels) {
 
     const bundle = new TestNode('bundle');
 
-    return bundle.runTech(levelsTech, { levels })
+    return bundle.runTech(levelsTech, { levels: levelPaths })
         .then(levels => {
             bundle.provideTechData('?.levels', levels);
             bundle.provideTechData('?.deps.js', { deps });

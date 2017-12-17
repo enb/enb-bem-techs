@@ -6,7 +6,7 @@ const enb = require('enb');
 const vfs = enb.asyncFS || require('enb/lib/fs/async-fs');
 const BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech');
 const fileEval = require('file-eval');
-const deps = require('../lib/deps/deps');
+const depUtils = require('../lib/deps/deps');
 
 /**
  * @class SubtractDepsTech
@@ -72,19 +72,19 @@ module.exports = inherit(BaseTech, {
         const whatFilename = node.resolvePath(this._whatTarget);
 
         return this.node.requireSources([this._fromTarget, this._whatTarget])
-            .spread((fromDeps, whatDeps) => {
+            .spread((sourceFromDeps, sourceWhatDeps) => {
                 if (cache.needRebuildFile('deps-file', targetFilename) ||
                     cache.needRebuildFile('deps-from-file', fromFilename) ||
                     cache.needRebuildFile('deps-what-file', whatFilename)
                 ) {
                     return vow.all([
-                            requireDeps(fromDeps, fromFilename),
-                            requireDeps(whatDeps, whatFilename)
+                            requireDeps(sourceFromDeps, fromFilename),
+                            requireDeps(sourceWhatDeps, whatFilename)
                         ])
                         .spread((from, what) => {
                             const fromDeps = Array.isArray(from) ? from : from.deps;
                             const whatDeps = Array.isArray(what) ? what : what.deps;
-                            const subtractedDeps = deps.subtract(fromDeps, whatDeps);
+                            const subtractedDeps = depUtils.subtract(fromDeps, whatDeps);
                             const str = `exports.deps = ${JSON.stringify(subtractedDeps, null, 4)};`;
 
                             return vfs.write(targetFilename, str, 'utf-8')

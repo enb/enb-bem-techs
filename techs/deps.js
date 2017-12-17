@@ -76,12 +76,12 @@ module.exports = inherit(BaseTech, {
                     cache.needRebuildFileList('deps-file-list', depFiles)
                 ) {
                     return requireSourceDeps(sourceDeps, declFilename)
-                        .then(sourceDeps => {
+                        .then(sourceDecl => {
                             return bemDeps.read()(depFiles)
                                 .then(bemDeps.parse())
                                 .then(bemDeps.buildGraph)
                                 .then(graph => {
-                                    const resolvedDeps = graph.dependenciesOf(sourceDeps).map(convertEntity);
+                                    const resolvedDeps = graph.dependenciesOf(sourceDecl).map(convertEntity);
                                     const str = `exports.deps = ${JSON.stringify(resolvedDeps, null, 4)};\n`;
 
                                     return vfs.write(targetFilename, str, 'utf8')

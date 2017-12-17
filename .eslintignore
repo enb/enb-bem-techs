@@ -1,0 +1,6 @@
+.nyc_output
+node_modules
+test/fixtures
+coverage
+
+lib/deps
