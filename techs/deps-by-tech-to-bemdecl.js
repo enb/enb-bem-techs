@@ -101,29 +101,23 @@ module.exports = inherit(BaseTech, {
                         .then(bemDeps.parse())
                         .then(bemDeps.buildGraph)
                         .then(graph => {
-                        const resolvedDeps = graph.dependenciesOf(entities, sourceTech)
-                            .filter(cell => destTech ? cell.tech === destTech : true);
+                            const resolvedDeps = graph.dependenciesOf(entities, sourceTech)
+                                .filter(cell => destTech ? cell.tech === destTech : true);
 
-                        let decl;
-                        let data;
-                        let str;
+                            let data = bemDecl.format(resolvedDeps, { format: bemdeclFormat === 'deps' ? 'enb' : 'v1' });
 
-                        if (bemdeclFormat === 'deps') {
-                            decl = bemDecl.format(resolvedDeps, { format: 'enb' });
-                            data = { deps: decl };
-                            str = `exports.deps = ${JSON.stringify(decl, null, 4)};\n`;
-                        } else {
-                            decl = bemDecl.format(resolvedDeps, { format: 'v1' });
-                            data = { blocks: decl };
-                            str = `exports.blocks = ${JSON.stringify(decl, null, 4)};\n`;
-                        }
+                            if (bemdeclFormat !== 'deps') {
+                                data = { blocks: data };
+                            }
 
-                        return vfs.write(bemdeclFilename, str, 'utf-8')
-                            .then(() => {
-                                cache.cacheFileInfo('bemdecl-file', bemdeclFilename);
-                                cache.cacheFileList('deps-files', depsFileList);
-                                node.resolveTarget(target, data);
-                            });
+                            const str = `module.exports = ${JSON.stringify(data, null, 4)}\n`;
+
+                            return vfs.write(bemdeclFilename, str, 'utf-8')
+                                .then(() => {
+                                    cache.cacheFileInfo('bemdecl-file', bemdeclFilename);
+                                    cache.cacheFileList('deps-files', depsFileList);
+                                    node.resolveTarget(target, data);
+                                });
                     });
                 } else {
                     node.isValidTarget(target);
