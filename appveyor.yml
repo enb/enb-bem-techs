@@ -7,10 +7,7 @@ branches:
     - /^greenkeeper/.*$/
 
 environment:
-  nodejs_version: "4"
-
-matrix:
-  fast_finish: true
+  nodejs_version: "8"
 
 install:
   - ps: Install-Product node $env:nodejs_version
