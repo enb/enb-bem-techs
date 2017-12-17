@@ -90,19 +90,19 @@ module.exports = inherit(BaseTech, {
                                 .then(result => deps.fromBemdecl(result.blocks));
                         }))
                         .then(sourceDeps => {
-                        const mergedDeps = deps.merge(sourceDeps);
-                        const mergedBemdecl = deps.toBemdecl(mergedDeps);
-                        const str = `exports.blocks = ${JSON.stringify(mergedBemdecl, null, 4)};`;
+                            const mergedDeps = deps.merge(sourceDeps);
+                            const mergedBemdecl = deps.toBemdecl(mergedDeps);
+                            const str = `exports.blocks = ${JSON.stringify(mergedBemdecl, null, 4)};`;
 
-                        return vfs.write(targetFilename, str, 'utf-8')
-                            .then(() => {
-                                cache.cacheFileInfo('bemdecl-file', targetFilename);
-                                sourceFilenames.forEach(filename => {
-                                    cache.cacheFileInfo(filename, filename);
+                            return vfs.write(targetFilename, str, 'utf-8')
+                                .then(() => {
+                                    cache.cacheFileInfo('bemdecl-file', targetFilename);
+                                    sourceFilenames.forEach(filename => {
+                                        cache.cacheFileInfo(filename, filename);
+                                    });
+                                    _this.node.resolveTarget(target, { blocks: mergedBemdecl });
                                 });
-                                _this.node.resolveTarget(target, { blocks: mergedBemdecl });
-                            });
-                    });
+                        });
                 } else {
                     node.isValidTarget(target);
 

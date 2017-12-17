@@ -35,11 +35,11 @@ describe('techs: files', () => {
                 });
             })
             .then(result => {
-            const files = result['bundle.files'];
-            const file = files.getByName('block.ext')[0];
+                const files = result['bundle.files'];
+                const file = files.getByName('block.ext')[0];
 
-            file.name.must.be('block.ext');
-        });
+                file.name.must.be('block.ext');
+            });
     });
 
     it('must support deps as array', () => {
@@ -63,26 +63,26 @@ describe('techs: files', () => {
                 return bundle.runTechAndGetResults(filesTech);
             })
             .then(result => {
-            const files = result['bundle.files'];
-            const file = files.getByName('block.ext')[0];
+                const files = result['bundle.files'];
+                const file = files.getByName('block.ext')[0];
 
-            file.name.must.be('block.ext');
-        });
+                file.name.must.be('block.ext');
+            });
     });
 
     it('must get files from levels', () => {
         const scheme = {
-                      'level-1': {
-                          block: {
-                              'block.ext': ''
-                          }
-                      },
-                      'level-2': {
-                          block: {
-                              'block.ext': ''
-                          }
-                      }
-                  };
+            'level-1': {
+                block: {
+                    'block.ext': ''
+                }
+            },
+            'level-2': {
+                block: {
+                    'block.ext': ''
+                }
+            }
+        };
 
         const deps = [{ block: 'block' }];
 
@@ -97,12 +97,12 @@ describe('techs: files', () => {
     describe('duplicates', () => {
         it('must add same file only once', () => {
             const scheme = {
-                          level: {
-                              block: {
-                                  'block.ext': ''
-                              }
-                          }
-                      };
+                level: {
+                    block: {
+                        'block.ext': ''
+                    }
+                }
+            };
 
             const levels = ['level', 'level'];
             const deps = [{ block: 'block' }];
@@ -116,17 +116,17 @@ describe('techs: files', () => {
 
         it('must add files only once if level nested in another level', () => {
             const scheme = {
-                          'level-1': {
-                              'block-1': {
-                                  'block-1.ext': ''
-                              },
-                              'level-2': {
-                                  'block-2': {
-                                      'block-2.ext': ''
-                                  }
-                              }
-                          }
-                      };
+                'level-1': {
+                    'block-1': {
+                        'block-1.ext': ''
+                    },
+                    'level-2': {
+                        'block-2': {
+                            'block-2.ext': ''
+                        }
+                    }
+                }
+            };
 
             const levels = ['level-1', 'level-1/level-2'];
             const deps = [{ block: 'block-1' }, { block: 'block-2' }];
@@ -171,11 +171,11 @@ describe('techs: files', () => {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(result => {
-                const FileList = result['bundle.files'];
-                const filenames = FileList.getBySuffix(['ext-2', 'ext-1']).map(fileInfo => fileInfo.name);
+                    const FileList = result['bundle.files'];
+                    const filenames = FileList.getBySuffix(['ext-2', 'ext-1']).map(fileInfo => fileInfo.name);
 
-                filenames.must.eql(files);
-            });
+                    filenames.must.eql(files);
+                });
         });
 
         it('must keep order between different entities', () => {
@@ -255,11 +255,11 @@ describe('techs: files', () => {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(result => {
-                const FileList = result['bundle.files'];
-                const filenames = FileList.getBySuffix(['ext-2', 'ext-1']).map(fileInfo => fileInfo.name);
+                    const FileList = result['bundle.files'];
+                    const filenames = FileList.getBySuffix(['ext-2', 'ext-1']).map(fileInfo => fileInfo.name);
 
-                filenames.must.eql(files);
-            });
+                    filenames.must.eql(files);
+                });
         });
 
         it('must keep order by levels', () => {
@@ -297,16 +297,16 @@ describe('techs: files', () => {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(result => {
-                const FileList = result['bundle.files'];
+                    const FileList = result['bundle.files'];
 
-                const filenames = FileList.getBySuffix(['ext']).map(fileInfo => {
-                    const level = path.dirname(path.dirname(path.relative(root, fileInfo.fullname)));
+                    const filenames = FileList.getBySuffix(['ext']).map(fileInfo => {
+                        const level = path.dirname(path.dirname(path.relative(root, fileInfo.fullname)));
 
-                    return `${level}:${fileInfo.name}`;
+                        return `${level}:${fileInfo.name}`;
+                    });
+
+                    filenames.must.eql(files);
                 });
-
-                filenames.must.eql(files);
-            });
         });
 
         it('must keep order between by levels and extensions', () => {
@@ -348,16 +348,16 @@ describe('techs: files', () => {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(result => {
-                const FileList = result['bundle.files'];
+                    const FileList = result['bundle.files'];
 
-                const filenames = FileList.getBySuffix(['ext-2', 'ext-1']).map(fileInfo => {
-                    const level = path.dirname(path.dirname(path.relative(root, fileInfo.fullname)));
+                    const filenames = FileList.getBySuffix(['ext-2', 'ext-1']).map(fileInfo => {
+                        const level = path.dirname(path.dirname(path.relative(root, fileInfo.fullname)));
 
-                    return `${level}:${fileInfo.name}`;
+                        return `${level}:${fileInfo.name}`;
+                    });
+
+                    filenames.must.eql(files);
                 });
-
-                filenames.must.eql(files);
-            });
         });
 
         it('must keep order between different entities by levels', () => {
@@ -396,16 +396,16 @@ describe('techs: files', () => {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(result => {
-                const FileList = result['bundle.files'];
+                    const FileList = result['bundle.files'];
 
-                const filenames = FileList.getBySuffix(['ext']).map(fileInfo => {
-                    const level = path.dirname(path.dirname(path.relative(root, fileInfo.fullname)));
+                    const filenames = FileList.getBySuffix(['ext']).map(fileInfo => {
+                        const level = path.dirname(path.dirname(path.relative(root, fileInfo.fullname)));
 
-                    return `${level}:${fileInfo.name}`;
+                        return `${level}:${fileInfo.name}`;
+                    });
+
+                    filenames.must.eql(files);
                 });
-
-                filenames.must.eql(files);
-            });
         });
 
         it('must keep order between different entities by levels and extensions', () => {
@@ -460,28 +460,28 @@ describe('techs: files', () => {
                     return bundle.runTechAndGetResults(filesTech);
                 })
                 .then(result => {
-                const FileList = result['bundle.files'];
+                    const FileList = result['bundle.files'];
 
-                const filenames = FileList.getBySuffix(['ext-2', 'ext-1']).map(fileInfo => {
-                    const level = path.dirname(path.dirname(path.relative(root, fileInfo.fullname)));
+                    const filenames = FileList.getBySuffix(['ext-2', 'ext-1']).map(fileInfo => {
+                        const level = path.dirname(path.dirname(path.relative(root, fileInfo.fullname)));
 
-                    return `${level}:${fileInfo.name}`;
+                        return `${level}:${fileInfo.name}`;
+                    });
+
+                    filenames.must.eql(files);
                 });
-
-                filenames.must.eql(files);
-            });
         });
     });
 
     describe('bem entities', () => {
         it('must get block file by deps', () => {
             const scheme = {
-                          blocks: {
-                              block: {
-                                  'block.ext': ''
-                              }
-                          }
-                      };
+                blocks: {
+                    block: {
+                        'block.ext': ''
+                    }
+                }
+            };
 
             const deps = [{ block: 'block' }];
             const files = ['blocks/block/block.ext'];
@@ -491,14 +491,14 @@ describe('techs: files', () => {
 
         it('must get boolean mod of block file by deps', () => {
             const scheme = {
-                          blocks: {
-                              block: {
-                                  '_bool-mod': {
-                                      'block_bool-mod.ext': ''
-                                  }
-                              }
-                          }
-                      };
+                blocks: {
+                    block: {
+                        '_bool-mod': {
+                            'block_bool-mod.ext': ''
+                        }
+                    }
+                }
+            };
 
             const deps = [{ block: 'block', mod: 'bool-mod', val: true }];
             const files = ['blocks/block/_bool-mod/block_bool-mod.ext'];
@@ -508,14 +508,14 @@ describe('techs: files', () => {
 
         it('must get block mod file by deps', () => {
             const scheme = {
-                          blocks: {
-                              block: {
-                                  '_mod-name': {
-                                      'block_mod-name_mod-val.ext': ''
-                                  }
-                              }
-                          }
-                      };
+                blocks: {
+                    block: {
+                        '_mod-name': {
+                            'block_mod-name_mod-val.ext': ''
+                        }
+                    }
+                }
+            };
 
             const deps = [{
                 block: 'block',
@@ -530,14 +530,14 @@ describe('techs: files', () => {
 
         it('must get elem file by deps', () => {
             const scheme = {
-                          blocks: {
-                              block: {
-                                  '__elem-name': {
-                                      'block__elem-name.ext': ''
-                                  }
-                              }
-                          }
-                      };
+                blocks: {
+                    block: {
+                        '__elem-name': {
+                            'block__elem-name.ext': ''
+                        }
+                    }
+                }
+            };
 
             const deps = [{ block: 'block', elem: 'elem-name' }];
             const files = ['blocks/block/__elem-name/block__elem-name.ext'];
@@ -547,16 +547,16 @@ describe('techs: files', () => {
 
         it('must get boolean mod of elem file by deps', () => {
             const scheme = {
-                          blocks: {
-                              block: {
-                                  '__elem-name': {
-                                      '_bool-mod': {
-                                          'block__elem-name_bool-mod.ext': ''
-                                      }
-                                  }
-                              }
-                          }
-                      };
+                blocks: {
+                    block: {
+                        '__elem-name': {
+                            '_bool-mod': {
+                                'block__elem-name_bool-mod.ext': ''
+                            }
+                        }
+                    }
+                }
+            };
 
             const deps = [{ block: 'block', elem: 'elem-name', mod: 'bool-mod', val: true }];
             const files = ['blocks/block/__elem-name/_bool-mod/block__elem-name_bool-mod.ext'];
@@ -566,16 +566,16 @@ describe('techs: files', () => {
 
         it('must get elem mod file by deps', () => {
             const scheme = {
-                          blocks: {
-                              block: {
-                                  '__elem-name': {
-                                      '_mod-name': {
-                                          'block__elem-name_mod-name_mod-val.ext': ''
-                                      }
-                                  }
-                              }
-                          }
-                      };
+                blocks: {
+                    block: {
+                        '__elem-name': {
+                            '_mod-name': {
+                                'block__elem-name_mod-name_mod-val.ext': ''
+                            }
+                        }
+                    }
+                }
+            };
 
             const deps = [{ block: 'block', elem: 'elem-name', mod: 'mod-name', val: 'mod-val' }];
             const files = ['blocks/block/__elem-name/_mod-name/block__elem-name_mod-name_mod-val.ext'];
@@ -585,12 +585,12 @@ describe('techs: files', () => {
 
         it('must get block dir by deps', () => {
             const scheme = {
-                          blocks: {
-                              block: {
-                                  'block.ext': {}
-                              }
-                          }
-                      };
+                blocks: {
+                    block: {
+                        'block.ext': {}
+                    }
+                }
+            };
 
             const deps = [{ block: 'block' }];
             const files = ['blocks/block/block.ext'];
@@ -600,14 +600,14 @@ describe('techs: files', () => {
 
         it('must get boolean mod of block dir by deps', () => {
             const scheme = {
-                          blocks: {
-                              block: {
-                                  '_bool-mod': {
-                                      'block_bool-mod.ext': {}
-                                  }
-                              }
-                          }
-                      };
+                blocks: {
+                    block: {
+                        '_bool-mod': {
+                            'block_bool-mod.ext': {}
+                        }
+                    }
+                }
+            };
 
             const deps = [{ block: 'block', mod: 'bool-mod', val: true }];
             const dirs = ['blocks/block/_bool-mod/block_bool-mod.ext'];
@@ -617,14 +617,14 @@ describe('techs: files', () => {
 
         it('must get block mod dir by deps', () => {
             const scheme = {
-                          blocks: {
-                              block: {
-                                  '_mod-name': {
-                                      'block_mod-name_mod-val.ext': {}
-                                  }
-                              }
-                          }
-                      };
+                blocks: {
+                    block: {
+                        '_mod-name': {
+                            'block_mod-name_mod-val.ext': {}
+                        }
+                    }
+                }
+            };
 
             const deps = [{
                 block: 'block',
@@ -639,14 +639,14 @@ describe('techs: files', () => {
 
         it('must get elem dir by deps', () => {
             const scheme = {
-                          blocks: {
-                              block: {
-                                  '__elem-name': {
-                                      'block__elem-name.ext': {}
-                                  }
-                              }
-                          }
-                      };
+                blocks: {
+                    block: {
+                        '__elem-name': {
+                            'block__elem-name.ext': {}
+                        }
+                    }
+                }
+            };
 
             const deps = [{ block: 'block', elem: 'elem-name' }];
             const dirs = ['blocks/block/__elem-name/block__elem-name.ext'];
@@ -656,16 +656,16 @@ describe('techs: files', () => {
 
         it('must get boolean mod of elem dir by deps', () => {
             const scheme = {
-                          blocks: {
-                              block: {
-                                  '__elem-name': {
-                                      '_bool-mod': {
-                                          'block__elem-name_bool-mod.ext': {}
-                                      }
-                                  }
-                              }
-                          }
-                      };
+                blocks: {
+                    block: {
+                        '__elem-name': {
+                            '_bool-mod': {
+                                'block__elem-name_bool-mod.ext': {}
+                            }
+                        }
+                    }
+                }
+            };
 
             const deps = [{ block: 'block', elem: 'elem-name', mod: 'bool-mod', val: true }];
             const dirs = ['blocks/block/__elem-name/_bool-mod/block__elem-name_bool-mod.ext'];
@@ -675,16 +675,16 @@ describe('techs: files', () => {
 
         it('must get elem mod dir by deps', () => {
             const scheme = {
-                          blocks: {
-                              block: {
-                                  '__elem-name': {
-                                      '_mod-name': {
-                                          'block__elem-name_mod-name_mod-val.ext': {}
-                                      }
-                                  }
-                              }
-                          }
-                      };
+                blocks: {
+                    block: {
+                        '__elem-name': {
+                            '_mod-name': {
+                                'block__elem-name_mod-name_mod-val.ext': {}
+                            }
+                        }
+                    }
+                }
+            };
 
             const deps = [{ block: 'block', elem: 'elem-name', mod: 'mod-name', val: 'mod-val' }];
             const dirs = ['blocks/block/__elem-name/_mod-name/block__elem-name_mod-name_mod-val.ext'];
@@ -694,15 +694,15 @@ describe('techs: files', () => {
 
         it('must get boolean mod & key-val mod by deps', () => {
             const scheme = {
-                          blocks: {
-                              block: {
-                                  '_mod-name': {
-                                      'block_mod-name.ext': '',
-                                      'block_mod-name_mod-val.ext': ''
-                                  }
-                              }
-                          }
-                      };
+                blocks: {
+                    block: {
+                        '_mod-name': {
+                            'block_mod-name.ext': '',
+                            'block_mod-name_mod-val.ext': ''
+                        }
+                    }
+                }
+            };
 
             const deps = [
                 { block: 'block', mod: 'mod-name' },
