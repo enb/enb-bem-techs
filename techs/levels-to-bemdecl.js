@@ -4,7 +4,7 @@ const inherit = require('inherit');
 const enb = require('enb');
 const vfs = enb.asyncFS || require('enb/lib/fs/async-fs');
 const BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech');
-const deps = require('../lib/deps/deps');
+const bemDecl = require('@bem/sdk.decl');
 
 /**
  * @class LevelsToBemdeclTech
@@ -75,7 +75,8 @@ module.exports = inherit(BaseTech, {
                 data = { deps: resDeps };
                 str = `exports.deps = ${JSON.stringify(resDeps, null, 4)};\n`;
             } else {
-                const decl = deps.toBemdecl(resDeps);
+                const cells = bemDecl.parse({ deps: resDeps });
+                const decl = bemDecl.format(cells, { format: 'v1' });
 
                 data = { blocks: decl };
                 str = `exports.blocks = ${JSON.stringify(decl, null, 4)};\n`;

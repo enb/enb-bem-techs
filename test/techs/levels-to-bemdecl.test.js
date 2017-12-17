@@ -52,7 +52,7 @@ describe('techs: levels-to-bemdecl', () => {
         };
 
         const bemdecl = [
-            { name: 'block', mods: [{ name: 'bool-mod', vals: [{ name: true }] }] }
+            { name: 'block', mods: [{ name: 'bool-mod', vals: [] }] }
         ];
 
         return assert(scheme, bemdecl);
@@ -109,7 +109,7 @@ describe('techs: levels-to-bemdecl', () => {
 
         const bemdecl = [
             { name: 'block', elems: [
-                { name: 'elem-name', mods: [{ name: 'bool-mod', vals: [{ name: true }] }] }
+                { name: 'elem-name', mods: [{ name: 'bool-mod', vals: [] }] }
             ] }
         ];
 
