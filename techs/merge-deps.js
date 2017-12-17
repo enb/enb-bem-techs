@@ -6,7 +6,7 @@ const enb = require('enb');
 const vfs = enb.asyncFS || require('enb/lib/fs/async-fs');
 const BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech');
 const fileEval = require('file-eval');
-const deps = require('../lib/deps/deps');
+const bemDecl = require('@bem/sdk.decl');
 
 /**
  * @class MergeDepsTech
@@ -93,9 +93,10 @@ module.exports = inherit(BaseTech, {
                             return fileEval(filename)
                                 .then(res => getDeps(res));
                         }))
-                        .then(sourceDecl => {
-                            const mergedDeps = deps.merge(sourceDecl);
-                            const str = `exports.deps = ${JSON.stringify(mergedDeps, null, 4)};`;
+                        .then(decls => {
+                            const mergedCells = bemDecl.merge.apply(null, decls);
+                            const data = bemDecl.format(mergedCells, { format: 'enb' });
+                            const str = `module.exports = ${JSON.stringify(data, null, 4)};`;
 
                             return vfs.write(targetFilename, str, 'utf-8')
                                 .then(() => {
@@ -103,7 +104,7 @@ module.exports = inherit(BaseTech, {
                                     sourceFilenames.forEach(filename => {
                                         cache.cacheFileInfo(filename, filename);
                                     });
-                                    _this.node.resolveTarget(target, { deps: mergedDeps });
+                                    _this.node.resolveTarget(target, data);
                                 });
                     });
                 } else {
@@ -120,9 +121,9 @@ module.exports = inherit(BaseTech, {
 });
 
 function getDeps(source) {
-    if (source.blocks) {
-        return deps.fromBemdecl(source.blocks);
+    if (Array.isArray(source)) {
+        return bemDecl.parse({ deps: source });
     }
 
-    return Array.isArray(source) ? source : source.deps;
+    return bemDecl.parse(source);
 }
