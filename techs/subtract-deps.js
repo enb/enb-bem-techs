@@ -6,7 +6,7 @@ const enb = require('enb');
 const vfs = enb.asyncFS || require('enb/lib/fs/async-fs');
 const BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech');
 const fileEval = require('file-eval');
-const depUtils = require('../lib/deps/deps');
+const bemDecl = require('@bem/sdk.decl');
 
 /**
  * @class SubtractDepsTech
@@ -82,17 +82,20 @@ module.exports = inherit(BaseTech, {
                             requireDeps(sourceWhatDeps, whatFilename)
                         ])
                         .spread((from, what) => {
-                            const fromDeps = Array.isArray(from) ? from : from.deps;
-                            const whatDeps = Array.isArray(what) ? what : what.deps;
-                            const subtractedDeps = depUtils.subtract(fromDeps, whatDeps);
-                            const str = `exports.deps = ${JSON.stringify(subtractedDeps, null, 4)};`;
+                            const fromDeps = Array.isArray(from) ? { deps: from } : from;
+                            const whatDeps = Array.isArray(what) ? { deps: what } : what;
+                            const fromCells = bemDecl.parse(fromDeps);
+                            const whatCells = bemDecl.parse(whatDeps);
+                            const subtractedCells = bemDecl.subtract(fromCells, whatCells);
+                            const data = bemDecl.format(subtractedCells, { format: 'enb' });
+                            const str = `module.exports = ${JSON.stringify(data, null, 4)};`;
 
                             return vfs.write(targetFilename, str, 'utf-8')
                                 .then(() => {
                                     cache.cacheFileInfo('deps-file', targetFilename);
                                     cache.cacheFileInfo('deps-from-file', fromFilename);
                                     cache.cacheFileInfo('deps-what-file', whatFilename);
-                                    node.resolveTarget(target, { deps: subtractedDeps });
+                                    node.resolveTarget(target, data);
                                 });
                     });
                 } else {
