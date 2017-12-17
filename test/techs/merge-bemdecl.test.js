@@ -55,8 +55,7 @@ describe('techs: merge-bemdecl', () => {
         }];
 
         const exepted = [
-            { name: 'block-1' },
-            { name: 'block-1', mods: [{ name: 'mod' }] },
+            { name: 'block-1', mods: [{ name: 'mod', vals: [] }] },
             { name: 'block-2' }
         ];
 
@@ -72,7 +71,6 @@ describe('techs: merge-bemdecl', () => {
         }];
 
         const exepted = [
-            { name: 'block' },
             { name: 'block', mods: [{ name: 'mod-name', vals: [{ name: 'mod-val' }] }] }
         ];
 
@@ -88,7 +86,6 @@ describe('techs: merge-bemdecl', () => {
         }];
 
         const exepted = [
-            { name: 'block' },
             { name: 'block', elems: [{ name: 'elem' }] }
         ];
 
@@ -106,13 +103,7 @@ describe('techs: merge-bemdecl', () => {
             elems: [{ name: 'elem', mods: [{ name: 'modName', vals: [{ name: 'modVal' }] }] }]
         }];
 
-        const exepted = [
-            { name: 'block' },
-            { name: 'block', elems: [{ name: 'elem' }] },
-            { name: 'block', elems: [{ name: 'elem', mods: [
-                { name: 'modName', vals: [{ name: 'modVal' }] }
-            ] }] }
-        ];
+        const exepted = [{ name: 'block', elems: [{ name: 'elem', mods: [ { name: 'modName', vals: [{ name: 'modVal' }] } ] }] }];
 
         return assert([bemdecl1, bemdecl2], exepted);
     });
@@ -129,9 +120,7 @@ describe('techs: merge-bemdecl', () => {
         }];
 
         const exepted = [
-            { name: 'block' },
-            { name: 'block', elems: [{ name: 'elem-1' }] },
-            { name: 'block', elems: [{ name: 'elem-2' }] }
+            { name: 'block', elems: [{ name: 'elem-1' }, { name: 'elem-2' }] }
         ];
 
         return assert([bemdecl1, bemdecl2], exepted);
