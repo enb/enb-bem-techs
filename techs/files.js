@@ -84,61 +84,61 @@ module.exports = inherit(BaseTech, {
         return this.node.requireSources([this._depsFile, this._levelsTarget])
             .spread((data, introspection) => requireSourceDeps(data, depsFilename)
             .then(sourceDeps => {
-            const fileList = new FileList();
-            const dirList = new FileList();
-            const uniqs = {};
+                const fileList = new FileList();
+                const dirList = new FileList();
+                const uniqs = {};
 
-            const data = sourceDeps.map(entity => {
-                const id = stringifyEntity(entity);
+                const data = sourceDeps.map(entity => {
+                    const id = stringifyEntity(entity);
 
-                if (uniqs[id]) { return []; }
-                uniqs[id] = true;
+                    if (uniqs[id]) { return []; }
+                    uniqs[id] = true;
 
-                let commonModId;
+                    let commonModId;
 
-                if (entity.mod && entity.mod.val) {
-                    const commonMod = {
-                        block: entity.block,
-                        mod: {
-                            name: entity.mod.name,
-                            val: true
-                        }
-                    };
+                    if (entity.mod && entity.mod.val) {
+                        const commonMod = {
+                            block: entity.block,
+                            mod: {
+                                name: entity.mod.name,
+                                val: true
+                            }
+                        };
 
-                    entity.elem && (commonMod.elem = entity.elem);
+                        entity.elem && (commonMod.elem = entity.elem);
 
-                    commonModId = stringifyEntity(commonMod);
-                }
+                        commonModId = stringifyEntity(commonMod);
+                    }
 
-                return introspection._introspections.map(levelIntrospection => {
-                    return levelIntrospection[id] || levelIntrospection[commonModId] || [];
-                });
-            });
-
-            const uniqFiles = {};
-
-            data.forEach(slices => {
-                slices.forEach(slice => {
-                    const files = [];
-                    const dirs = [];
-
-                    slice.forEach(file => {
-                        if (uniqFiles[file.path]) { return; }
-                        uniqFiles[file.path] = true;
-
-                        const info = getFileInfo(file);
-
-                        file.isDirectory ? dirs.push(info) : files.push(info);
+                    return introspection._introspections.map(levelIntrospection => {
+                        return levelIntrospection[id] || levelIntrospection[commonModId] || [];
                     });
-
-                    fileList.addFiles(files);
-                    dirList.addFiles(dirs);
                 });
-            });
 
-            _this.node.resolveTarget(filesTarget, fileList);
-            _this.node.resolveTarget(dirsTarget, dirList);
-        }));
+                const uniqFiles = {};
+
+                data.forEach(slices => {
+                    slices.forEach(slice => {
+                        const files = [];
+                        const dirs = [];
+
+                        slice.forEach(file => {
+                            if (uniqFiles[file.path]) { return; }
+                            uniqFiles[file.path] = true;
+
+                            const info = getFileInfo(file);
+
+                            file.isDirectory ? dirs.push(info) : files.push(info);
+                        });
+
+                        fileList.addFiles(files);
+                        dirList.addFiles(dirs);
+                    });
+                });
+
+                _this.node.resolveTarget(filesTarget, fileList);
+                _this.node.resolveTarget(dirsTarget, dirList);
+            }));
     },
 
     clean() {}

@@ -82,18 +82,18 @@ module.exports = inherit(BaseTech, {
                             requireDeps(whatDeps, whatFilename)
                         ])
                         .spread((from, what) => {
-                        const fromDeps = Array.isArray(from) ? from : from.deps;
-                        const whatDeps = Array.isArray(what) ? what : what.deps;
-                        const subtractedDeps = deps.subtract(fromDeps, whatDeps);
-                        const str = `exports.deps = ${JSON.stringify(subtractedDeps, null, 4)};`;
+                            const fromDeps = Array.isArray(from) ? from : from.deps;
+                            const whatDeps = Array.isArray(what) ? what : what.deps;
+                            const subtractedDeps = deps.subtract(fromDeps, whatDeps);
+                            const str = `exports.deps = ${JSON.stringify(subtractedDeps, null, 4)};`;
 
-                        return vfs.write(targetFilename, str, 'utf-8')
-                            .then(() => {
-                                cache.cacheFileInfo('deps-file', targetFilename);
-                                cache.cacheFileInfo('deps-from-file', fromFilename);
-                                cache.cacheFileInfo('deps-what-file', whatFilename);
-                                node.resolveTarget(target, { deps: subtractedDeps });
-                            });
+                            return vfs.write(targetFilename, str, 'utf-8')
+                                .then(() => {
+                                    cache.cacheFileInfo('deps-file', targetFilename);
+                                    cache.cacheFileInfo('deps-from-file', fromFilename);
+                                    cache.cacheFileInfo('deps-what-file', whatFilename);
+                                    node.resolveTarget(target, { deps: subtractedDeps });
+                                });
                     });
                 } else {
                     node.isValidTarget(target);

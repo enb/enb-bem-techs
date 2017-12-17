@@ -53,8 +53,8 @@ describe('techs: merge-deps', () => {
         mockFs({
             bundle: {
                 'bundle.deps.js': `exports.deps = ${JSON.stringify([
-    { block: 'other-block' }
-])};`,
+                    { block: 'other-block' }
+                ])};`,
                 'bundle-1.deps.js': `exports.deps = ${JSON.stringify([{ block: 'block-1' }])};`,
                 'bundle-2.deps.js': `exports.deps = ${JSON.stringify([{ block: 'block-2' }])};`
             }

@@ -22,8 +22,8 @@ describe('techs: merge-bemdecl', () => {
         mockFs({
             bundle: {
                 'bundle.bemdecl.js': `exports.blocks = ${JSON.stringify([
-    { name: 'other-block' }
-])};`,
+                    { name: 'other-block' }
+                ])};`,
                 'bundle-1.bemdecl.js': `exports.blocks = ${JSON.stringify([{ name: 'block-1' }])};`,
                 'bundle-2.bemdecl.js': `exports.blocks = ${JSON.stringify([{ name: 'block-2' }])};`
             }
@@ -46,9 +46,9 @@ describe('techs: merge-bemdecl', () => {
 
     it('must support mods without vals', () => {
         const bemdecl1 = [{
-                      name: 'block-1',
-                      mods: [{ name: 'mod' }]
-                  }];
+            name: 'block-1',
+            mods: [{ name: 'mod' }]
+        }];
 
         const bemdecl2 = [{
             name: 'block-2'
