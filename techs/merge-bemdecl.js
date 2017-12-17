@@ -6,7 +6,7 @@ const enb = require('enb');
 const fileEval = require('file-eval');
 const vfs = enb.asyncFS || require('enb/lib/fs/async-fs');
 const BaseTech = enb.BaseTech || require('enb/lib/tech/base-tech');
-const deps = require('../lib/deps/deps');
+const bemDecl = require('@bem/sdk.decl');
 
 /**
  * @class MergeBemdeclTech
@@ -82,17 +82,17 @@ module.exports = inherit(BaseTech, {
                 }
                 if (rebuildNeeded) {
                     return vow.all(sourceBemdecls.map((bemdecl, i) => {
-                            if (bemdecl) { return deps.fromBemdecl(bemdecl.blocks); }
+                            if (bemdecl) { return bemDecl.parse(bemdecl); }
 
                             const filename = sourceFilenames[i];
 
                             return fileEval(filename)
-                                .then(result => deps.fromBemdecl(result.blocks));
+                                .then(result => bemDecl.parse(result));
                         }))
-                        .then(sourceDeps => {
-                            const mergedDeps = deps.merge(sourceDeps);
-                            const mergedBemdecl = deps.toBemdecl(mergedDeps);
-                            const str = `exports.blocks = ${JSON.stringify(mergedBemdecl, null, 4)};`;
+                        .then(decls => {
+                            const mergedCells = bemDecl.merge.apply(null, decls);
+                            const data = bemDecl.format(mergedCells, { format: 'v1' });
+                            const str = `exports.blocks = ${JSON.stringify(data, null, 4)};`;
 
                             return vfs.write(targetFilename, str, 'utf-8')
                                 .then(() => {
@@ -100,7 +100,7 @@ module.exports = inherit(BaseTech, {
                                     sourceFilenames.forEach(filename => {
                                         cache.cacheFileInfo(filename, filename);
                                     });
-                                    _this.node.resolveTarget(target, { blocks: mergedBemdecl });
+                                    _this.node.resolveTarget(target, { blocks: data });
                                 });
                         });
                 } else {
