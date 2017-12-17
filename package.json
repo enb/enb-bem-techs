@@ -78,10 +78,10 @@
   "scripts": {
     "test": "npm run lint && npm run unit",
     "lint": "eslint .",
-    "unit": "mocha -R spec test/unit test/techs",
+    "unit": "mocha -R spec test/techs",
     "bench": "npm run bench-deps && matcha benchmark/*.js",
     "bench-deps": "cd benchmark/fixtures && bower i",
-    "cover": "nyc mocha test/unit test/techs",
+    "cover": "nyc npm run unit",
     "coveralls": "npm i coveralls && npm run cover && nyc report --reporter=text-lcov | coveralls"
   }
 }
