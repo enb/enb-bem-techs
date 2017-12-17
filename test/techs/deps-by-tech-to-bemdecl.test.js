@@ -791,7 +791,7 @@ describe('techs: deps-by-tech-to-bemdecl', () => {
 });
 
 function getResults(fsScheme, bemdecl, options) {
-    const levels = Object.keys(fsScheme);
+    const levelPaths = Object.keys(fsScheme);
     let bundle;
 
     options || (options = {});
@@ -804,7 +804,7 @@ function getResults(fsScheme, bemdecl, options) {
     bundle = new TestNode('bundle');
     bundle.provideTechData('?.bemdecl.js', { blocks: bemdecl });
 
-    return bundle.runTech(levelsTech, { levels })
+    return bundle.runTech(levelsTech, { levels: levelPaths })
         .then(levels => {
             bundle.provideTechData('?.levels', levels);
 

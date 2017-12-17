@@ -82,13 +82,13 @@ module.exports = inherit(BaseTech, {
         const dirsTarget = this._dirsTarget;
 
         return this.node.requireSources([this._depsFile, this._levelsTarget])
-            .spread((data, introspection) => requireSourceDeps(data, depsFilename)
-            .then(sourceDeps => {
+            .spread((sourceDeps, introspection) => requireSourceDeps(sourceDeps, depsFilename)
+            .then(sourceDecl => {
                 const fileList = new FileList();
                 const dirList = new FileList();
                 const uniqs = {};
 
-                const data = sourceDeps.map(entity => {
+                const data = sourceDecl.map(entity => {
                     const id = stringifyEntity(entity);
 
                     if (uniqs[id]) { return []; }

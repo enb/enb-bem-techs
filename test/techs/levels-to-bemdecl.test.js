@@ -143,7 +143,7 @@ describe('techs: levels-to-bemdecl', () => {
 function assert(fsScheme, expected, options) {
     options || (options = {});
 
-    const levels = Object.keys(fsScheme);
+    const levelPaths = Object.keys(fsScheme);
     let dataBundle = new TestNode('data-bundle');
     let fsBundle;
 
@@ -155,7 +155,7 @@ function assert(fsScheme, expected, options) {
     dataBundle = new TestNode('data-bundle');
     fsBundle = new TestNode('fs-bundle');
 
-    return fsBundle.runTech(levelsTech, { levels })
+    return fsBundle.runTech(levelsTech, { levels: levelPaths })
         .then(levels => {
             fsBundle.provideTechData('?.levels', levels);
             dataBundle.provideTechData('?.levels', levels);
