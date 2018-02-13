@@ -1,6 +1,6 @@
-# Сборка бандла
+    # Сборка бандла
 
-[Бандл](https://github.com/enb/enb/blob/master/docs/terms.ru.md) — это файл, полученный в результате сборки исходных файлов проекта.
+[Бандл](https://github.com/enb/enb/blob/master/docs/terms/terms.ru.md) — это файл, полученный в результате сборки исходных файлов проекта.
 
 Для сборки бандла необходим список [БЭМ-сущностей](https://ru.bem.info/methodology/key-concepts/#БЭМ-сущность) и [уровни](https://ru.bem.info/methodology/redefinition-levels/) с исходным кодом блоков.
 
@@ -52,9 +52,9 @@ bundle/
 
     **d.** Получить упорядоченный список файлов по упорядоченному списку БЭМ-сущностей (c), а также по интроспекции уровней (a).
 
-2. Применить технологии для сборки (`css` и `js`) и объявить [таргеты](https://github.com/enb/enb/blob/master/docs/terms.ru.md).
+2. Применить технологии для сборки (`css` и `js`) и объявить [таргеты](https://github.com/enb/enb/blob/master/docs/terms/terms.ru.md).
 
-    [Make-файл](https://github.com/enb/enb/blob/master/docs/terms.ru.md) ENB (.enb/make.js) будет выглядеть так:
+    [Make-файл](https://github.com/enb/enb/blob/master/docs/terms/terms.ru.md) ENB (.enb/make.js) будет выглядеть так:
 
     ```js
     // Подключаем модули технологий

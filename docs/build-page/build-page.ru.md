@@ -1,8 +1,8 @@
 # Сборка страницы
 
-Страница — это частный случай [бандла](https://github.com/enb/enb/blob/master/docs/terms.ru.md). Для сборки страницы также нужны список [БЭМ-сущностей](https://ru.bem.info/methodology/key-concepts/#БЭМ-сущность) и [уровни](https://ru.bem.info/methodology/redefinition-levels/) с исходным кодом блоков.
+Страница — это частный случай [бандла](https://github.com/enb/enb/blob/master/docs/terms/terms.ru.md). Для сборки страницы также нужны список [БЭМ-сущностей](https://ru.bem.info/methodology/key-concepts/#БЭМ-сущность) и [уровни](https://ru.bem.info/methodology/redefinition-levels/) с исходным кодом блоков.
 
-> Как собирать бандлы, читайте в разделе [Сборка бандла](build-bundle.ru.md).
+> Как собирать бандлы, читайте в разделе [Сборка бандла](../build-bundle/build-bundle.ru.md).
 
 Основное отличие заключается в том, что страницы принято описывать в формате [BEMJSON](https://ru.bem.info/platform/bemjson/), а [BEMDECL](https://ru.bem.info/methodology/declarations/) получать автоматически.
 
@@ -62,7 +62,7 @@ page/
 
 3. Собрать код [шаблонов](https://ru.bem.info/platform/bem-xjst/8/) (BEMHTML или BH) и применить его к BEMJSON-файлу, чтобы получить HTML-файл.
 
-4. Объявить [таргеты](https://github.com/enb/enb/blob/master/docs/terms.ru.md).
+4. Объявить [таргеты](https://github.com/enb/enb/blob/master/docs/terms/terms.ru.md).
 
     ENB-конфиг (.enb/make.js) будет выглядить следующим образом:
 
