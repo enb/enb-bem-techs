@@ -58,35 +58,35 @@ To build a bundle, you need to complete the following steps:
 
    ```js
    // Connect the technology modules
-var techs = require('enb-bem-techs'),
-    provide = require('enb/techs/file-provider'),
-    css = require('enb-css/techs/css'), // npm install --save-dev enb-css
-    js = require('enb-js/techs/browser-js'); // npm install --save-dev enb-js
+   var techs = require('enb-bem-techs'),
+       provide = require('enb/techs/file-provider'),
+       css = require('enb-css/techs/css'), // npm install --save-dev enb-css
+       js = require('enb-js/techs/browser-js'); // npm install --save-dev enb-js
 
-module.exports = function(config) {
-    // Configure the bundle build
-    config.node('bundle', function(nodeConfig) {
-        // Declare the technology modules
-        // that can take part in building the targets.
-        nodeConfig.addTechs([
-            // Use basic technologies to get
-            // the list of files to include in the build.
-            [techs.levels, { levels: ['blocks'] }],   // (1) -> `?.levels`
-            [provide, { target: '?.bemdecl.js' }],    // (2) -> `?.bemdecl.js`
-            [techs.deps],                             // (3) `?.bemdecl.js` -> `?.deps.js`
-            [techs.files],                            // (4) `?.levels` + `?.deps.js` -> `?.files`
+   module.exports = function(config) {
+       // Configure the bundle build
+       config.node('bundle', function(nodeConfig) {
+           // Declare the technology modules
+           // that can take part in building the targets.
+           nodeConfig.addTechs([
+               // Use basic technologies to get
+               // the list of files to include in the build.
+               [techs.levels, { levels: ['blocks'] }],   // (1) -> `?.levels`
+               [provide, { target: '?.bemdecl.js' }],    // (2) -> `?.bemdecl.js`
+               [techs.deps],                             // (3) `?.bemdecl.js` -> `?.deps.js`
+               [techs.files],                            // (4) `?.levels` + `?.deps.js` -> `?.files`
 
-            // Technologies take the list of files as input. The target that stores the list of files
-            // is set with the `filesTarget` option (`?.files` by default). The build will
-            // use only the files that have suffixes set with the `sourceSuffixes` option.
-            [css],     // The `sourceSuffixes` option is set to `['css']` by default
-            [js, { target: '?.js' }],       // The `sourceSuffixes` option is set to `['vanilla.js', 'js', 'browser.js']` by default
-        ]);
+               // Technologies take the list of files as input. The target that stores the list of files
+               // is set with the `filesTarget` option (`?.files` by default). The build will
+               // use only the files that have suffixes set with the `sourceSuffixes` option.
+               [css],     // The `sourceSuffixes` option is set to `['css']` by default
+               [js, { target: '?.js' }],       // The `sourceSuffixes` option is set to `['vanilla.js', 'js', 'browser.js']` by default
+           ]);
 
-        // Declare targets to be built.
-        nodeConfig.addTargets(['?.css', '?.js']);
-    });
-};
+           // Declare targets to be built.
+           nodeConfig.addTargets(['?.css', '?.js']);
+       });
+   };
    ```
 
 3. Launch the build in the console:
