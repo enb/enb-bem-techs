@@ -28,7 +28,7 @@ var inherit = require('inherit'),
  *     config.node('bundle', function(node) {
  *         // scan levels
  *         node.addTech([bemTechs.levels, { levels: ['blocks'] }]);
-
+ *
  *         // get BEMDECL file
  *         node.addTech([FileProvideTech, { target: '?.bemdecl.js' }]);
  *
